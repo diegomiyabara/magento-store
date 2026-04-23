@@ -8,7 +8,9 @@ export function useAuthController() {
     isAuthenticated: auth.isAuthenticated,
     isBootstrapping: auth.isBootstrapping,
     isLoggingIn: auth.isLoggingIn,
+    isRegistering: auth.isRegistering,
     login: auth.login,
+    register: auth.register,
     logout: auth.logout,
   };
 }

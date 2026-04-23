@@ -48,9 +48,14 @@ export default function Header({ categories, storeConfig, isLoading }) {
               {auth.customer?.firstName || 'Minha conta'}
             </NavLink>
           ) : (
-            <NavLink className="nav-link nav-link-accent" to="/login">
-              Entrar
-            </NavLink>
+            <>
+              <NavLink className="nav-link" to="/cadastro">
+                Criar conta
+              </NavLink>
+              <NavLink className="nav-link nav-link-accent" to="/login">
+                Entrar
+              </NavLink>
+            </>
           )}
         </nav>
       </div>

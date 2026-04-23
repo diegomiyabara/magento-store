@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthController } from '../../presentation/controllers/useAuthController';
 
 export default function LoginPage() {
@@ -73,6 +73,10 @@ export default function LoginPage() {
             {auth.isLoggingIn ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
+
+        <p className="auth-switch">
+          Ainda nao tem conta? <Link to="/cadastro">Criar conta</Link>
+        </p>
       </section>
     </div>
   );

@@ -11,6 +11,7 @@ export function AuthProvider({ children }) {
     isAuthenticated: false,
     isBootstrapping: true,
     isLoggingIn: false,
+    isRegistering: false,
     token: null,
   });
 
@@ -35,6 +36,7 @@ export function AuthProvider({ children }) {
           isAuthenticated: Boolean(customer),
           isBootstrapping: false,
           isLoggingIn: false,
+          isRegistering: false,
           token,
         });
       })
@@ -45,6 +47,7 @@ export function AuthProvider({ children }) {
           isAuthenticated: false,
           isBootstrapping: false,
           isLoggingIn: false,
+          isRegistering: false,
           token: null,
         });
       });
@@ -73,6 +76,7 @@ export function AuthProvider({ children }) {
         isAuthenticated: true,
         isBootstrapping: false,
         isLoggingIn: false,
+        isRegistering: false,
         token,
       });
 
@@ -87,6 +91,44 @@ export function AuthProvider({ children }) {
     }
   }
 
+  async function register(input) {
+    const controller = new AbortController();
+
+    setState((current) => ({
+      ...current,
+      isRegistering: true,
+    }));
+
+    try {
+      await useCases.registerCustomer(input, controller.signal);
+      const token = await useCases.loginCustomer(
+        { email: input.email, password: input.password },
+        controller.signal,
+      );
+      const customer = await useCases.getCustomerProfile(token, controller.signal);
+
+      window.localStorage.setItem(CUSTOMER_TOKEN_STORAGE_KEY, token);
+
+      setState({
+        customer,
+        isAuthenticated: true,
+        isBootstrapping: false,
+        isLoggingIn: false,
+        isRegistering: false,
+        token,
+      });
+
+      return { customer, token };
+    } catch (error) {
+      setState((current) => ({
+        ...current,
+        isRegistering: false,
+      }));
+
+      throw error;
+    }
+  }
+
   function logout() {
     window.localStorage.removeItem(CUSTOMER_TOKEN_STORAGE_KEY);
     setState({
@@ -94,6 +136,7 @@ export function AuthProvider({ children }) {
       isAuthenticated: false,
       isBootstrapping: false,
       isLoggingIn: false,
+      isRegistering: false,
       token: null,
     });
   }
@@ -105,7 +148,9 @@ export function AuthProvider({ children }) {
         isAuthenticated: state.isAuthenticated,
         isBootstrapping: state.isBootstrapping,
         isLoggingIn: state.isLoggingIn,
+        isRegistering: state.isRegistering,
         login,
+        register,
         logout,
         token: state.token,
       }}

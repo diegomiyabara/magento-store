@@ -14,17 +14,29 @@ function buildCacheKey(query, variables, authToken = '') {
 }
 
 async function parseResponse(response) {
-  const payload = await response.json();
+  const responseText = await response.text();
+  let payload = null;
+
+  try {
+    payload = responseText ? JSON.parse(responseText) : null;
+  } catch (error) {
+    payload = null;
+  }
 
   if (!response.ok) {
-    throw new Error(payload?.message || 'Falha ao consultar o Magento.');
+    throw new Error(
+      payload?.message ||
+        payload?.errors?.[0]?.message ||
+        responseText ||
+        'Falha ao consultar o Magento.',
+    );
   }
 
   if (payload.errors?.length) {
     throw new Error(payload.errors[0].message || 'Erro GraphQL no Magento.');
   }
 
-  return payload.data;
+  return payload?.data;
 }
 
 export async function executeMagentoQuery(query, variables = {}, options = {}) {

@@ -159,6 +159,18 @@ export const GENERATE_CUSTOMER_TOKEN_MUTATION = `
   }
 `;
 
+export const CREATE_CUSTOMER_MUTATION = `
+  mutation CreateCustomerMutation($input: CustomerCreateInput!) {
+    createCustomerV2(input: $input) {
+      customer {
+        firstname
+        lastname
+        email
+      }
+    }
+  }
+`;
+
 export const CUSTOMER_PROFILE_QUERY = `
   query CustomerProfileQuery {
     customer {

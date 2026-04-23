@@ -79,9 +79,9 @@ export function createCustomerModel(customer) {
 
   return {
     email: customer.email,
-    firstName: customer.firstname,
+    firstName: customer.firstname || '',
     fullName: [customer.firstname, customer.lastname].filter(Boolean).join(' '),
-    lastName: customer.lastname,
+    lastName: customer.lastname || '',
     raw: customer,
   };
 }

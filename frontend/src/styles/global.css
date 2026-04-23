@@ -551,6 +551,12 @@ img {
   margin-top: 1.5rem;
 }
 
+.auth-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
 .form-field {
   display: grid;
   gap: 0.45rem;
@@ -581,6 +587,17 @@ img {
   color: var(--danger);
 }
 
+.checkbox-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  color: var(--text-muted);
+}
+
+.checkbox-field input {
+  margin-top: 0.2rem;
+}
+
 .auth-submit {
   justify-content: center;
   cursor: pointer;
@@ -597,6 +614,15 @@ img {
   gap: 0.75rem;
   margin: 1.5rem 0;
   color: var(--text-muted);
+}
+
+.auth-switch {
+  margin: 1.25rem 0 0;
+  color: var(--text-muted);
+}
+
+.auth-switch a {
+  color: var(--accent-soft);
 }
 
 .product-gallery,
@@ -647,7 +673,8 @@ img {
 
   .feature-band,
   .collection-grid,
-  .promo-strip-inner {
+  .promo-strip-inner,
+  .auth-grid {
     grid-template-columns: 1fr;
     display: grid;
   }

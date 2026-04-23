@@ -20,6 +20,10 @@ export function createStorefrontUseCases(repository) {
       return repository.loginCustomer(credentials, signal);
     },
 
+    registerCustomer(input, signal) {
+      return repository.registerCustomer(input, signal);
+    },
+
     getCustomerProfile(token, signal) {
       return repository.getCustomerProfile(token, signal);
     },

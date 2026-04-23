@@ -10,6 +10,7 @@ import {
   CATEGORY_BY_URL_KEY_QUERY,
   CATEGORY_PRODUCTS_QUERY,
   CUSTOMER_PROFILE_QUERY,
+  CREATE_CUSTOMER_MUTATION,
   GENERATE_CUSTOMER_TOKEN_MUTATION,
   HOME_BOOTSTRAP_QUERY,
   NAVIGATION_QUERY,
@@ -91,6 +92,16 @@ export function createMagentoStorefrontRepository() {
       );
 
       return data.generateCustomerToken?.token ?? null;
+    },
+
+    async registerCustomer(input, signal) {
+      const data = await executeMagentoQuery(
+        CREATE_CUSTOMER_MUTATION,
+        { input },
+        { signal, skipCache: true },
+      );
+
+      return createCustomerModel(data.createCustomerV2?.customer ?? null);
     },
 
     async getCustomerProfile(token, signal) {
