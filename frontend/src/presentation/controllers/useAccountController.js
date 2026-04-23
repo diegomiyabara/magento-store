@@ -26,5 +26,8 @@ export function useAccountController() {
     isSubscribed: state.data?.isSubscribed ?? false,
     orders: state.data?.orders ?? [],
     ordersTotalCount: state.data?.ordersTotalCount ?? 0,
+    reload: state.reload,
+    token: auth.token,
+    useCases,
   };
 }

@@ -638,10 +638,11 @@ img {
 
 .orders-row {
   display: grid;
-  grid-template-columns: 1.1fr 1fr 1fr 1fr;
+  grid-template-columns: 1.1fr 1fr 1fr 1fr auto;
   gap: 1rem;
   padding: 1rem 1.2rem;
   border-top: 1px solid var(--surface-border);
+  align-items: center;
 }
 
 .orders-row:first-child {
@@ -657,6 +658,74 @@ img {
 
 .account-logout {
   width: 100%;
+}
+
+.auth-form-compact {
+  margin-top: 0;
+}
+
+.account-inline-action {
+  width: auto;
+}
+
+.account-inline-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.account-table-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.account-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.account-subsection {
+  display: grid;
+  gap: 0.3rem;
+  margin-top: 0.75rem;
+}
+
+.account-subsection strong {
+  color: #f3efe8;
+}
+
+.account-order-item {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.account-checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.account-form-section {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.account-form-section strong {
+  color: #f3efe8;
+}
+
+.account-form-section p,
+.form-field-help {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.form-field-error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 0.86rem;
 }
 
 .auth-page {
@@ -697,6 +766,10 @@ img {
   gap: 1rem;
 }
 
+.auth-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .form-field {
   display: grid;
   gap: 0.45rem;
@@ -707,7 +780,8 @@ img {
   color: var(--accent-soft);
 }
 
-.form-field input {
+.form-field input,
+.form-field select {
   width: 100%;
   padding: 0.95rem 1rem;
   border: 1px solid var(--surface-border);
@@ -717,7 +791,8 @@ img {
   outline: none;
 }
 
-.form-field input:focus {
+.form-field input:focus,
+.form-field select:focus {
   border-color: rgba(75, 167, 255, 0.45);
   box-shadow: 0 0 0 4px rgba(75, 167, 255, 0.12);
 }
@@ -725,6 +800,11 @@ img {
 .form-error {
   margin: 0;
   color: var(--danger);
+}
+
+.form-success {
+  margin: 0;
+  color: #9ee6b8;
 }
 
 .checkbox-field {
@@ -816,13 +896,15 @@ img {
   .collection-grid,
   .promo-strip-inner,
   .auth-grid,
-  .account-grid {
+  .auth-grid-3,
+  .account-grid,
+  .account-checkbox-grid {
     grid-template-columns: 1fr;
     display: grid;
   }
 
   .orders-row {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
 
   .account-sidebar {

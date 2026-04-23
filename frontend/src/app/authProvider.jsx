@@ -129,6 +129,23 @@ export function AuthProvider({ children }) {
     }
   }
 
+  async function refreshCustomer() {
+    if (!state.token) {
+      return null;
+    }
+
+    const controller = new AbortController();
+    const customer = await useCases.getCustomerProfile(state.token, controller.signal);
+
+    setState((current) => ({
+      ...current,
+      customer,
+      isAuthenticated: Boolean(customer),
+    }));
+
+    return customer;
+  }
+
   function logout() {
     window.localStorage.removeItem(CUSTOMER_TOKEN_STORAGE_KEY);
     setState({
@@ -151,6 +168,7 @@ export function AuthProvider({ children }) {
         isRegistering: state.isRegistering,
         login,
         register,
+        refreshCustomer,
         logout,
         token: state.token,
       }}

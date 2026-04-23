@@ -11,6 +11,7 @@ export function useAuthController() {
     isRegistering: auth.isRegistering,
     login: auth.login,
     register: auth.register,
+    refreshCustomer: auth.refreshCustomer,
     logout: auth.logout,
   };
 }

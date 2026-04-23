@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 export function useAsyncData(loader, deps = []) {
+  const [reloadKey, setReloadKey] = useState(0);
   const [state, setState] = useState({
     data: null,
     error: null,
@@ -43,7 +44,12 @@ export function useAsyncData(loader, deps = []) {
     return () => {
       controller.abort();
     };
-  }, deps);
+  }, [...deps, reloadKey]);
 
-  return state;
+  return {
+    ...state,
+    reload() {
+      setReloadKey((current) => current + 1);
+    },
+  };
 }

@@ -1,5 +1,6 @@
 import {
   createCustomerDashboardModel,
+  createCustomerOrderModel,
   createCategoryModel,
   createCmsPageModel,
   createCustomerModel,
@@ -10,14 +11,23 @@ import { executeMagentoQuery } from './magentoClient';
 import {
   CATEGORY_BY_URL_KEY_QUERY,
   CATEGORY_PRODUCTS_QUERY,
+  CHANGE_CUSTOMER_PASSWORD_MUTATION,
+  CREATE_CUSTOMER_ADDRESS_MUTATION,
+  COUNTRY_QUERY,
   CUSTOMER_DASHBOARD_QUERY,
+  CUSTOMER_ORDER_DETAILS_QUERY,
+  CUSTOMER_ORDERS_QUERY,
   CUSTOMER_PROFILE_QUERY,
   CREATE_CUSTOMER_MUTATION,
+  DELETE_CUSTOMER_ADDRESS_MUTATION,
   GENERATE_CUSTOMER_TOKEN_MUTATION,
   HOME_BOOTSTRAP_QUERY,
   NAVIGATION_QUERY,
   PRODUCT_BY_URL_KEY_QUERY,
   STORE_CONFIG_QUERY,
+  UPDATE_CUSTOMER_ADDRESS_MUTATION,
+  UPDATE_CUSTOMER_EMAIL_MUTATION,
+  UPDATE_CUSTOMER_MUTATION,
 } from './queries';
 
 export function createMagentoStorefrontRepository() {
@@ -122,6 +132,20 @@ export function createMagentoStorefrontRepository() {
       return createCustomerModel(data.customer);
     },
 
+    async getCountryRegions(countryCode, signal) {
+      const data = await executeMagentoQuery(
+        COUNTRY_QUERY,
+        { id: countryCode },
+        { signal },
+      );
+
+      return (data.country?.available_regions ?? []).map((region) => ({
+        code: region?.code || '',
+        id: region?.id ?? null,
+        name: region?.name || '',
+      }));
+    },
+
     async getCustomerDashboard(token, signal) {
       const data = await executeMagentoQuery(
         CUSTOMER_DASHBOARD_QUERY,
@@ -130,6 +154,89 @@ export function createMagentoStorefrontRepository() {
       );
 
       return createCustomerDashboardModel(data.customer);
+    },
+
+    async updateCustomer(token, input, signal) {
+      const data = await executeMagentoQuery(
+        UPDATE_CUSTOMER_MUTATION,
+        { input },
+        { authToken: token, signal, skipCache: true },
+      );
+
+      return createCustomerModel(data.updateCustomerV2?.customer ?? null);
+    },
+
+    async updateCustomerEmail(token, payload, signal) {
+      const data = await executeMagentoQuery(
+        UPDATE_CUSTOMER_EMAIL_MUTATION,
+        payload,
+        { authToken: token, signal, skipCache: true },
+      );
+
+      return createCustomerModel(data.updateCustomerEmail?.customer ?? null);
+    },
+
+    async changeCustomerPassword(token, payload, signal) {
+      const data = await executeMagentoQuery(
+        CHANGE_CUSTOMER_PASSWORD_MUTATION,
+        payload,
+        { authToken: token, signal, skipCache: true },
+      );
+
+      return createCustomerModel(data.changeCustomerPassword ?? null);
+    },
+
+    async createCustomerAddress(token, input, signal) {
+      const data = await executeMagentoQuery(
+        CREATE_CUSTOMER_ADDRESS_MUTATION,
+        { input },
+        { authToken: token, signal, skipCache: true },
+      );
+
+      return data.createCustomerAddress;
+    },
+
+    async updateCustomerAddress(token, addressId, input, signal) {
+      const data = await executeMagentoQuery(
+        UPDATE_CUSTOMER_ADDRESS_MUTATION,
+        { id: Number(addressId), input },
+        { authToken: token, signal, skipCache: true },
+      );
+
+      return data.updateCustomerAddress;
+    },
+
+    async deleteCustomerAddress(token, addressId, signal) {
+      const data = await executeMagentoQuery(
+        DELETE_CUSTOMER_ADDRESS_MUTATION,
+        { id: Number(addressId) },
+        { authToken: token, signal, skipCache: true },
+      );
+
+      return Boolean(data.deleteCustomerAddress);
+    },
+
+    async getCustomerOrders(token, signal) {
+      const data = await executeMagentoQuery(
+        CUSTOMER_ORDERS_QUERY,
+        {},
+        { authToken: token, signal, skipCache: true },
+      );
+
+      return {
+        orders: (data.customer?.orders?.items ?? []).map(createCustomerOrderModel),
+        totalCount: data.customer?.orders?.total_count ?? 0,
+      };
+    },
+
+    async getCustomerOrderByNumber(token, orderNumber, signal) {
+      const data = await executeMagentoQuery(
+        CUSTOMER_ORDER_DETAILS_QUERY,
+        { orderNumber },
+        { authToken: token, signal, skipCache: true },
+      );
+
+      return createCustomerOrderModel(data.customer?.orders?.items?.[0] ?? null);
     },
   };
 }
