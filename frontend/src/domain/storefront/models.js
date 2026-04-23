@@ -71,3 +71,17 @@ export function createCmsPageModel(page) {
     raw: page,
   };
 }
+
+export function createCustomerModel(customer) {
+  if (!customer) {
+    return null;
+  }
+
+  return {
+    email: customer.email,
+    firstName: customer.firstname,
+    fullName: [customer.firstname, customer.lastname].filter(Boolean).join(' '),
+    lastName: customer.lastname,
+    raw: customer,
+  };
+}

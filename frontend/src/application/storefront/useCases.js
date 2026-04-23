@@ -15,5 +15,13 @@ export function createStorefrontUseCases(repository) {
     getProductPage(urlKey, signal) {
       return repository.getProductByUrlKey(urlKey, signal);
     },
+
+    loginCustomer(credentials, signal) {
+      return repository.loginCustomer(credentials, signal);
+    },
+
+    getCustomerProfile(token, signal) {
+      return repository.getCustomerProfile(token, signal);
+    },
   };
 }

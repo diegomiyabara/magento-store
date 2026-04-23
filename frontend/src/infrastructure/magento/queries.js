@@ -150,3 +150,21 @@ export const PRODUCT_BY_URL_KEY_QUERY = `
     }
   }
 `;
+
+export const GENERATE_CUSTOMER_TOKEN_MUTATION = `
+  mutation GenerateCustomerTokenMutation($email: String!, $password: String!) {
+    generateCustomerToken(email: $email, password: $password) {
+      token
+    }
+  }
+`;
+
+export const CUSTOMER_PROFILE_QUERY = `
+  query CustomerProfileQuery {
+    customer {
+      firstname
+      lastname
+      email
+    }
+  }
+`;

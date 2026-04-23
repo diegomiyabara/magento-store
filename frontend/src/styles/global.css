@@ -153,6 +153,11 @@ img {
   background: rgba(255, 255, 255, 0.08);
 }
 
+.nav-link-accent {
+  border-color: rgba(255, 141, 58, 0.32);
+  background: rgba(255, 141, 58, 0.1);
+}
+
 .hero-card,
 .state-card,
 .cms-block,
@@ -512,6 +517,86 @@ img {
   display: grid;
   grid-template-columns: minmax(320px, 0.95fr) minmax(320px, 1.05fr);
   gap: 1.5rem;
+}
+
+.auth-page {
+  display: grid;
+  min-height: 60vh;
+  align-items: center;
+}
+
+.auth-card {
+  width: min(100%, 560px);
+  margin: 0 auto;
+  padding: 2rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 28px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.auth-card h1 {
+  margin: 0.3rem 0 0.8rem;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.05;
+}
+
+.auth-copy {
+  color: var(--text-muted);
+}
+
+.auth-form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.form-field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.form-field span {
+  font-size: 0.92rem;
+  color: var(--accent-soft);
+}
+
+.form-field input {
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f3efe8;
+  outline: none;
+}
+
+.form-field input:focus {
+  border-color: rgba(75, 167, 255, 0.45);
+  box-shadow: 0 0 0 4px rgba(75, 167, 255, 0.12);
+}
+
+.form-error {
+  margin: 0;
+  color: var(--danger);
+}
+
+.auth-submit {
+  justify-content: center;
+  cursor: pointer;
+  font: inherit;
+}
+
+.auth-submit:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.account-summary {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+  color: var(--text-muted);
 }
 
 .product-gallery,

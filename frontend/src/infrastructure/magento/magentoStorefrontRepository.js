@@ -1,6 +1,7 @@
 import {
   createCategoryModel,
   createCmsPageModel,
+  createCustomerModel,
   createProductModel,
   createStoreConfigModel,
 } from '../../domain/storefront/models';
@@ -8,6 +9,8 @@ import { executeMagentoQuery } from './magentoClient';
 import {
   CATEGORY_BY_URL_KEY_QUERY,
   CATEGORY_PRODUCTS_QUERY,
+  CUSTOMER_PROFILE_QUERY,
+  GENERATE_CUSTOMER_TOKEN_MUTATION,
   HOME_BOOTSTRAP_QUERY,
   NAVIGATION_QUERY,
   PRODUCT_BY_URL_KEY_QUERY,
@@ -78,6 +81,26 @@ export function createMagentoStorefrontRepository() {
       );
 
       return createProductModel(data.products?.items?.[0] ?? null);
+    },
+
+    async loginCustomer(credentials, signal) {
+      const data = await executeMagentoQuery(
+        GENERATE_CUSTOMER_TOKEN_MUTATION,
+        credentials,
+        { signal, skipCache: true },
+      );
+
+      return data.generateCustomerToken?.token ?? null;
+    },
+
+    async getCustomerProfile(token, signal) {
+      const data = await executeMagentoQuery(
+        CUSTOMER_PROFILE_QUERY,
+        {},
+        { authToken: token, signal, skipCache: true },
+      );
+
+      return createCustomerModel(data.customer);
     },
   };
 }

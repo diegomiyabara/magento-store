@@ -4,8 +4,9 @@ const responseCache = new Map();
 const inFlightRequests = new Map();
 const DEFAULT_CACHE_TTL_MS = 60_000;
 
-function buildCacheKey(query, variables) {
+function buildCacheKey(query, variables, authToken = '') {
   return JSON.stringify({
+    authToken,
     store: apiConfig.storeCode,
     query,
     variables,
@@ -27,8 +28,14 @@ async function parseResponse(response) {
 }
 
 export async function executeMagentoQuery(query, variables = {}, options = {}) {
-  const { cacheTtlMs = DEFAULT_CACHE_TTL_MS, skipCache = false, signal } = options;
-  const cacheKey = buildCacheKey(query, variables);
+  const {
+    authToken,
+    cacheTtlMs = DEFAULT_CACHE_TTL_MS,
+    extraHeaders = {},
+    skipCache = false,
+    signal,
+  } = options;
+  const cacheKey = buildCacheKey(query, variables, authToken);
   const cachedEntry = responseCache.get(cacheKey);
 
   if (!skipCache && cachedEntry && cachedEntry.expiresAt > Date.now()) {
@@ -44,6 +51,8 @@ export async function executeMagentoQuery(query, variables = {}, options = {}) {
     headers: {
       'Content-Type': 'application/json',
       Store: apiConfig.storeCode,
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+      ...extraHeaders,
     },
     body: JSON.stringify({ query, variables }),
     signal,

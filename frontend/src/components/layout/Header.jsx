@@ -1,6 +1,9 @@
 import { Link, NavLink } from 'react-router-dom';
+import { useAuthController } from '../../presentation/controllers/useAuthController';
 
 export default function Header({ categories, storeConfig, isLoading }) {
+  const auth = useAuthController();
+
   return (
     <header className="site-header">
       <div className="promo-strip">
@@ -36,6 +39,18 @@ export default function Header({ categories, storeConfig, isLoading }) {
             ))
           ) : (
             <span className="nav-placeholder">Nenhuma categoria publicada ainda.</span>
+          )}
+
+          {auth.isBootstrapping ? (
+            <span className="nav-placeholder">Conta...</span>
+          ) : auth.isAuthenticated ? (
+            <NavLink className="nav-link nav-link-accent" to="/minha-conta">
+              {auth.customer?.firstName || 'Minha conta'}
+            </NavLink>
+          ) : (
+            <NavLink className="nav-link nav-link-accent" to="/login">
+              Entrar
+            </NavLink>
           )}
         </nav>
       </div>
