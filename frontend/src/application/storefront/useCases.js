@@ -27,5 +27,9 @@ export function createStorefrontUseCases(repository) {
     getCustomerProfile(token, signal) {
       return repository.getCustomerProfile(token, signal);
     },
+
+    getCustomerDashboard(token, signal) {
+      return repository.getCustomerDashboard(token, signal);
+    },
   };
 }

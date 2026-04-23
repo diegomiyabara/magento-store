@@ -87,3 +87,62 @@ export function createCustomerModel(customer) {
     raw: customer,
   };
 }
+
+export function createCustomerAddressModel(address) {
+  if (!address) {
+    return null;
+  }
+
+  return {
+    city: address.city || '',
+    countryCode: address.country_code || '',
+    defaultBilling: Boolean(address.default_billing),
+    defaultShipping: Boolean(address.default_shipping),
+    firstName: address.firstname || '',
+    id: address.id,
+    lastName: address.lastname || '',
+    postcode: address.postcode || '',
+    region: address.region?.region || '',
+    street: address.street || [],
+    telephone: address.telephone || '',
+    raw: address,
+  };
+}
+
+export function createCustomerOrderModel(order) {
+  if (!order) {
+    return null;
+  }
+
+  return {
+    date: order.order_date || '',
+    grandTotalCurrency: order.total?.grand_total?.currency || 'BRL',
+    grandTotalValue: order.total?.grand_total?.value ?? null,
+    id: order.id,
+    number: order.number || '',
+    status: order.status || '',
+    raw: order,
+  };
+}
+
+export function createCustomerDashboardModel(customer) {
+  if (!customer) {
+    return null;
+  }
+
+  return {
+    customer: createCustomerModel(customer),
+    defaultBillingAddress:
+      customer.addresses
+        ?.map(createCustomerAddressModel)
+        .find((address) => address?.defaultBilling) ?? null,
+    defaultShippingAddress:
+      customer.addresses
+        ?.map(createCustomerAddressModel)
+        .find((address) => address?.defaultShipping) ?? null,
+    isSubscribed: Boolean(customer.is_subscribed),
+    orders: (customer.orders?.items ?? []).map(createCustomerOrderModel),
+    ordersTotalCount: customer.orders?.total_count ?? 0,
+    addresses: (customer.addresses ?? []).map(createCustomerAddressModel),
+  };
+}

@@ -1,4 +1,5 @@
 import {
+  createCustomerDashboardModel,
   createCategoryModel,
   createCmsPageModel,
   createCustomerModel,
@@ -9,6 +10,7 @@ import { executeMagentoQuery } from './magentoClient';
 import {
   CATEGORY_BY_URL_KEY_QUERY,
   CATEGORY_PRODUCTS_QUERY,
+  CUSTOMER_DASHBOARD_QUERY,
   CUSTOMER_PROFILE_QUERY,
   CREATE_CUSTOMER_MUTATION,
   GENERATE_CUSTOMER_TOKEN_MUTATION,
@@ -118,6 +120,16 @@ export function createMagentoStorefrontRepository() {
       );
 
       return createCustomerModel(data.customer);
+    },
+
+    async getCustomerDashboard(token, signal) {
+      const data = await executeMagentoQuery(
+        CUSTOMER_DASHBOARD_QUERY,
+        {},
+        { authToken: token, signal, skipCache: true },
+      );
+
+      return createCustomerDashboardModel(data.customer);
     },
   };
 }

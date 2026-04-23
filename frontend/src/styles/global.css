@@ -519,6 +519,146 @@ img {
   gap: 1.5rem;
 }
 
+.account-page-shell {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.account-sidebar,
+.account-hero,
+.account-block,
+.orders-table {
+  border: 1px solid var(--surface-border);
+  border-radius: 28px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.account-sidebar {
+  position: sticky;
+  top: 7rem;
+  padding: 1.5rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.account-sidebar-title h1,
+.account-hero h2,
+.account-section-title h3 {
+  margin: 0.35rem 0 0;
+  line-height: 1.05;
+}
+
+.account-sidebar-title h1 {
+  font-size: clamp(1.5rem, 2vw, 2.2rem);
+}
+
+.account-nav {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.account-nav-link {
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  border: 1px solid var(--surface-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-muted);
+}
+
+.account-nav-link.is-active,
+.account-nav-link:hover {
+  color: #f3efe8;
+  background: rgba(75, 167, 255, 0.12);
+  border-color: rgba(75, 167, 255, 0.28);
+}
+
+.account-dashboard {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.account-hero {
+  padding: 1.75rem;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(75, 167, 255, 0.18), transparent 28%),
+    linear-gradient(135deg, rgba(10, 23, 39, 0.92), rgba(18, 34, 56, 0.84));
+}
+
+.account-hero p {
+  color: var(--text-muted);
+  max-width: 60ch;
+}
+
+.account-section {
+  display: grid;
+  gap: 1rem;
+}
+
+.account-section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.account-section-title span {
+  color: var(--text-muted);
+}
+
+.account-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.account-block {
+  overflow: hidden;
+}
+
+.account-block-header {
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.account-block-body {
+  padding: 1.2rem;
+  color: var(--text-muted);
+}
+
+.account-block-body p {
+  margin: 0 0 0.45rem;
+}
+
+.orders-table {
+  overflow: hidden;
+}
+
+.orders-row {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  border-top: 1px solid var(--surface-border);
+}
+
+.orders-row:first-child {
+  border-top: 0;
+}
+
+.orders-row-head {
+  color: var(--accent-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.76rem;
+}
+
+.account-logout {
+  width: 100%;
+}
+
 .auth-page {
   display: grid;
   min-height: 60vh;
@@ -662,7 +802,8 @@ img {
   .footer-bar,
   .product-page,
   .hero-showcase,
-  .editorial-panel-split {
+  .editorial-panel-split,
+  .account-page-shell {
     grid-template-columns: 1fr;
     display: grid;
   }
@@ -674,9 +815,18 @@ img {
   .feature-band,
   .collection-grid,
   .promo-strip-inner,
-  .auth-grid {
+  .auth-grid,
+  .account-grid {
     grid-template-columns: 1fr;
     display: grid;
+  }
+
+  .orders-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .account-sidebar {
+    position: static;
   }
 
   .hero-orb {
