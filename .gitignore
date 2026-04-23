@@ -1,0 +1,63 @@
+.codex
+.editorconfig
+.htaccess
+.htaccess.sample
+.php-cs-fixer.dist.php
+.user.ini
+auth.json.sample
+CHANGELOG.md
+COPYING.txt
+grunt-config.json.sample
+Gruntfile.js.sample
+LICENSE_AFL.txt
+LICENSE.txt
+SECURITY.md
+nginx.conf.sample
+package.json.sample
+docker-compose.opensearch.yml
+
+# Magento dependencies and generated files
+/vendor/
+/bin/
+/dev/
+/devops/
+/generated/
+/lib/
+/phpserver/
+/pub/
+/setup/
+/var/
+/pub/static/
+/pub/media/catalog/product/cache/
+/pub/media/customer/
+/pub/media/import/
+/pub/media/tmp/
+/pub/media/wysiwyg/.thumbs/
+/pub/errors/local.xml
+/pub/errors/report.*
+/app/etc/env.php
+/app/etc/config.php.bak
+/app/etc/*.local.php
+
+# Magento tooling and local auth
+/auth.json
+/phpserver/.htrouter.php
+
+# Frontend build artifacts
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.env.local
+/frontend/.env.*.local
+
+# IDE and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
