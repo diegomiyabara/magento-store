@@ -20,27 +20,25 @@ n98-magerun2.phar.sha256
 .gitignore
 
 # Magento dependencies and generated files
-/vendor/
-/bin/
-/dev/
-/devops/
-/generated/
-/lib/
-/phpserver/
-/pub/
-/setup/
-/var/
-/pub/static/
-/pub/media/catalog/product/cache/
-/pub/media/customer/
-/pub/media/import/
-/pub/media/tmp/
-/pub/media/wysiwyg/.thumbs/
-/pub/errors/local.xml
-/pub/errors/report.*
-/app/etc/env.php
-/app/etc/config.php.bak
-/app/etc/*.local.php
+vendor/
+generated/
+var/
+pub/static/
+pub/media/
+pub/media/catalog/product/
+pub/media/tmp/
+pub/media/import/
+app/etc/env.php
+auth.json
+.env
+*.sql
+*.gz
+*.zip
+*.tar
+*.log
+.idea/
+.vscode/               # opcional, depende do time
+node_modules/
 
 # Magento tooling and local auth
 /auth.json
