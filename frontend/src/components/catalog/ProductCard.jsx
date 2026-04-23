@@ -1,12 +1,35 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { formatPrice, normalizeMediaUrl } from '../../lib/utils/formatters';
 import { apiConfig } from '../../lib/api/config';
+import { useCart } from '../../application/cart/CartContext';
 
 export default function ProductCard({ product, storeConfig }) {
   const finalPrice = product.finalPrice;
   const regularPrice = product.regularPrice;
   const currency = product.currency;
   const image = product.imageUrl;
+  const { addToCart, isLoading: isCartLoading } = useCart();
+  const [isAdding, setIsAdding] = useState(false);
+  const [addedSuccess, setAddedSuccess] = useState(false);
+
+  async function handleAddToCart(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (isAdding || isCartLoading) return;
+
+    setIsAdding(true);
+    try {
+      await addToCart(product, 1);
+      setAddedSuccess(true);
+      setTimeout(() => setAddedSuccess(false), 2000);
+    } catch (error) {
+      console.error('Erro ao adicionar ao carrinho:', error);
+    } finally {
+      setIsAdding(false);
+    }
+  }
 
   return (
     <article className="product-card">
@@ -40,6 +63,22 @@ export default function ProductCard({ product, storeConfig }) {
             <span>Preço indisponível</span>
           )}
         </div>
+
+        <button
+          className={`product-add-to-cart ${addedSuccess ? 'added' : ''}`}
+          onClick={handleAddToCart}
+          disabled={isAdding || isCartLoading || product.stockStatus !== 'IN_STOCK'}
+        >
+          {isAdding ? (
+            'Adicionando...'
+          ) : addedSuccess ? (
+            'Adicionado!'
+          ) : product.stockStatus !== 'IN_STOCK' ? (
+            'Indisponível'
+          ) : (
+            'Adicionar ao carrinho'
+          )}
+        </button>
       </div>
     </article>
   );

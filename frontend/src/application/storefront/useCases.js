@@ -16,6 +16,54 @@ export function createStorefrontUseCases(repository) {
       return repository.getProductByUrlKey(urlKey, signal);
     },
 
+    getGuestCart(cartId, signal) {
+      return repository.getGuestCart(cartId, signal);
+    },
+
+    getCustomerCart(token, signal) {
+      return repository.getCustomerCart(token, signal);
+    },
+
+    createGuestCart(signal) {
+      return repository.createGuestCart(signal);
+    },
+
+    addProductsToCart(cartId, cartItems, token, signal) {
+      return repository.addProductsToCart(cartId, cartItems, token, signal);
+    },
+
+    updateCartItem(cartId, cartItemId, quantity, token, signal) {
+      return repository.updateCartItem(cartId, cartItemId, quantity, token, signal);
+    },
+
+    removeCartItem(cartId, cartItemId, token, signal) {
+      return repository.removeCartItem(cartId, cartItemId, token, signal);
+    },
+
+    applyCouponToCart(cartId, couponCode, token, signal) {
+      return repository.applyCouponToCart(cartId, couponCode, token, signal);
+    },
+
+    removeCouponFromCart(cartId, token, signal) {
+      return repository.removeCouponFromCart(cartId, token, signal);
+    },
+
+    estimateShippingMethods(cartId, address, token, signal) {
+      return repository.estimateShippingMethods(cartId, address, token, signal);
+    },
+
+    setShippingMethodOnCart(cartId, carrierCode, methodCode, token, signal) {
+      return repository.setShippingMethodOnCart(cartId, carrierCode, methodCode, token, signal);
+    },
+
+    setGuestEmailOnCart(cartId, email, token, signal) {
+      return repository.setGuestEmailOnCart(cartId, email, token, signal);
+    },
+
+    mergeCarts(token, sourceCartId, signal) {
+      return repository.mergeCarts(token, sourceCartId, signal);
+    },
+
     loginCustomer(credentials, signal) {
       return repository.loginCustomer(credentials, signal);
     },

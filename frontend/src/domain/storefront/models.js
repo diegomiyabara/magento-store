@@ -74,6 +74,107 @@ export function createCmsPageModel(page) {
   };
 }
 
+export function createCartModel(cart) {
+  if (!cart) {
+    return null;
+  }
+
+  return {
+    id: cart.id || '',
+    totalQuantity: cart.total_quantity ?? 0,
+    isVirtual: Boolean(cart.is_virtual),
+    items: (cart.items ?? []).map(createCartItemModel),
+    subtotal: createMoneyModel(cart.subtotal),
+    grandTotal: createMoneyModel(cart.grand_total),
+    totalTax: createMoneyModel(cart.total_tax),
+    totalShipping: createMoneyModel(cart.total_shipping),
+    discounts: (cart.discounts ?? []).map(createDiscountModel),
+    shippingAddresses: (cart.shipping_addresses ?? []).map(createCartAddressModel),
+    billingAddress: createCartAddressModel(cart.billing_address),
+    availablePaymentMethods: (cart.available_payment_methods ?? []).map((method) => ({
+      code: method.code || '',
+      title: method.title || '',
+    })),
+    raw: cart,
+  };
+}
+
+function createCartItemModel(item) {
+  if (!item) {
+    return null;
+  }
+
+  const product = item.product || {};
+  const configuredVariant = item.configured_variant || {};
+  const priceRange = configuredVariant.price_range || product.price_range || {};
+  const minimumPrice = priceRange.minimum_price || {};
+
+  return {
+    uid: item.uid || '',
+    id: item.id || '',
+    quantity: item.quantity ?? 0,
+    product: {
+      uid: product.uid || '',
+      sku: product.sku || '',
+      name: product.name || '',
+      urlKey: product.url_key || '',
+      imageUrl: product.image?.url || '',
+      imageLabel: product.image?.label || product.name || '',
+      regularPrice: minimumPrice.regular_price?.value ?? null,
+      finalPrice: minimumPrice.final_price?.value ?? null,
+      currency: minimumPrice.final_price?.currency || minimumPrice.regular_price?.currency || 'BRL',
+    },
+    configuredVariant: configuredVariant.uid
+      ? {
+          uid: configuredVariant.uid || '',
+          sku: configuredVariant.sku || '',
+          name: configuredVariant.name || '',
+          finalPrice: configuredVariant.price_range?.minimum_price?.final_price?.value ?? null,
+          currency: configuredVariant.price_range?.minimum_price?.final_price?.currency || 'BRL',
+        }
+      : null,
+    raw: item,
+  };
+}
+
+function createMoneyModel(money) {
+  if (!money) {
+    return null;
+  }
+  return {
+    value: money.value ?? null,
+    currency: money.currency || 'BRL',
+  };
+}
+
+function createDiscountModel(discount) {
+  if (!discount) {
+    return null;
+  }
+  return {
+    label: discount.label || '',
+    value: discount.value ?? 0,
+    code: discount.code || '',
+  };
+}
+
+function createCartAddressModel(address) {
+  if (!address) {
+    return null;
+  }
+  return {
+    firstName: address.firstname || '',
+    lastName: address.lastname || '',
+    company: address.company || '',
+    street: address.street || [],
+    city: address.city || '',
+    region: address.region || '',
+    postcode: address.postcode || '',
+    countryCode: address.country_code || '',
+    telephone: address.telephone || '',
+  };
+}
+
 export function createCustomerModel(customer) {
   if (!customer) {
     return null;

@@ -6,6 +6,7 @@ import AccountShell from '../features/account/AccountShell';
 import AddressBookPage from '../features/account/AddressBookPage';
 import OrderDetailsPage from '../features/account/OrderDetailsPage';
 import OrdersPage from '../features/account/OrdersPage';
+import CartPage from '../features/cart/CartPage';
 import HomePage from '../features/home/HomePage';
 import LoginPage from '../features/login/LoginPage';
 import RegisterPage from '../features/register/RegisterPage';
@@ -18,6 +19,7 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<HomePage />} />
+        <Route path="/carrinho" element={<CartPage />} />
         <Route path="/categoria/:urlKey" element={<CategoryPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/cadastro" element={<RegisterPage />} />

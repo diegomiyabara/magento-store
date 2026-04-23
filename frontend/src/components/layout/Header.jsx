@@ -1,5 +1,6 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useAuthController } from '../../presentation/controllers/useAuthController';
+import MiniCart from '../cart/MiniCart';
 
 export default function Header({ categories, storeConfig, isLoading }) {
   const auth = useAuthController();
@@ -58,6 +59,8 @@ export default function Header({ categories, storeConfig, isLoading }) {
             </>
           )}
         </nav>
+
+        <MiniCart />
       </div>
     </header>
   );

@@ -15,6 +15,9 @@ SECURITY.md
 nginx.conf.sample
 package.json.sample
 docker-compose.opensearch.yml
+n98-magerun2.phar
+n98-magerun2.phar.sha256
+.gitignore
 
 # Magento dependencies and generated files
 /vendor/
