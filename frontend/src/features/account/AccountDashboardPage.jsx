@@ -5,6 +5,7 @@ import { formatDate, formatPrice } from '../../lib/utils/formatters';
 
 export default function AccountDashboardPage() {
   const account = useAccountController();
+  const isInitialLoading = account.isInitialLoading && !account.customer;
 
   return (
     <>
@@ -17,7 +18,6 @@ export default function AccountDashboardPage() {
         </p>
       </section>
 
-      {account.isLoading ? <InlineLoadingState title="Carregando informacoes da conta..." /> : null}
       {account.error ? (
         <InlineErrorState
           title="Nao foi possivel carregar sua conta."
@@ -28,36 +28,44 @@ export default function AccountDashboardPage() {
       <section className="account-section">
         <div className="account-section-title">
           <h3>Account Information</h3>
-          <Link className="button-link account-table-action" to="/minha-conta/informacoes">
-            Editar conta
-          </Link>
+          {account.isRefreshing ? (
+            <span>Atualizando...</span>
+          ) : (
+            <Link className="button-link account-table-action" to="/minha-conta/informacoes">
+              Editar conta
+            </Link>
+          )}
         </div>
 
-        <div className="account-grid">
-          <article className="account-block">
-            <div className="account-block-header">
-              <strong>Contact Information</strong>
-            </div>
-            <div className="account-block-body">
-              <p>{account.customer?.fullName || '-'}</p>
-              <p>{account.customer?.email || '-'}</p>
-              {account.customer?.createdAt ? <p>Conta criada em {formatDate(account.customer.createdAt)}</p> : null}
-            </div>
-          </article>
+        {isInitialLoading ? (
+          <InlineLoadingState title="Carregando informacoes da conta..." />
+        ) : (
+          <div className="account-grid">
+            <article className="account-block">
+              <div className="account-block-header">
+                <strong>Contact Information</strong>
+              </div>
+              <div className="account-block-body">
+                <p>{account.customer?.fullName || '-'}</p>
+                <p>{account.customer?.email || '-'}</p>
+                {account.customer?.createdAt ? <p>Conta criada em {formatDate(account.customer.createdAt)}</p> : null}
+              </div>
+            </article>
 
-          <article className="account-block">
-            <div className="account-block-header">
-              <strong>Newsletters</strong>
-            </div>
-            <div className="account-block-body">
-              <p>
-                {account.isSubscribed
-                  ? 'You are subscribed to General Subscription.'
-                  : 'You are currently not subscribed to any newsletter.'}
-              </p>
-            </div>
-          </article>
-        </div>
+            <article className="account-block">
+              <div className="account-block-header">
+                <strong>Newsletters</strong>
+              </div>
+              <div className="account-block-body">
+                <p>
+                  {account.isSubscribed
+                    ? 'You are subscribed to General Subscription.'
+                    : 'You are currently not subscribed to any newsletter.'}
+                </p>
+              </div>
+            </article>
+          </div>
+        )}
       </section>
 
       <section className="account-section">
@@ -68,45 +76,49 @@ export default function AccountDashboardPage() {
           </Link>
         </div>
 
-        <div className="account-grid">
-          <article className="account-block">
-            <div className="account-block-header">
-              <strong>Default Billing</strong>
-            </div>
-            <div className="account-block-body">
-              {account.defaultBillingAddress ? (
-                <>
-                  <p>{[account.defaultBillingAddress.firstName, account.defaultBillingAddress.lastName].filter(Boolean).join(' ')}</p>
-                  {account.defaultBillingAddress.street.map((line) => (
-                    <p key={`billing-${line}`}>{line}</p>
-                  ))}
-                  <p>{[account.defaultBillingAddress.city, account.defaultBillingAddress.region, account.defaultBillingAddress.postcode].filter(Boolean).join(', ')}</p>
-                </>
-              ) : (
-                <p>Nenhum endereco de cobranca cadastrado.</p>
-              )}
-            </div>
-          </article>
+        {account.isInitialLoading ? (
+          <InlineLoadingState title="Carregando enderecos..." />
+        ) : (
+          <div className="account-grid">
+            <article className="account-block">
+              <div className="account-block-header">
+                <strong>Default Billing</strong>
+              </div>
+              <div className="account-block-body">
+                {account.defaultBillingAddress ? (
+                  <>
+                    <p>{[account.defaultBillingAddress.firstName, account.defaultBillingAddress.lastName].filter(Boolean).join(' ')}</p>
+                    {account.defaultBillingAddress.street.map((line) => (
+                      <p key={`billing-${line}`}>{line}</p>
+                    ))}
+                    <p>{[account.defaultBillingAddress.city, account.defaultBillingAddress.region, account.defaultBillingAddress.postcode].filter(Boolean).join(', ')}</p>
+                  </>
+                ) : (
+                  <p>Nenhum endereco de cobranca cadastrado.</p>
+                )}
+              </div>
+            </article>
 
-          <article className="account-block">
-            <div className="account-block-header">
-              <strong>Default Shipping</strong>
-            </div>
-            <div className="account-block-body">
-              {account.defaultShippingAddress ? (
-                <>
-                  <p>{[account.defaultShippingAddress.firstName, account.defaultShippingAddress.lastName].filter(Boolean).join(' ')}</p>
-                  {account.defaultShippingAddress.street.map((line) => (
-                    <p key={`shipping-${line}`}>{line}</p>
-                  ))}
-                  <p>{[account.defaultShippingAddress.city, account.defaultShippingAddress.region, account.defaultShippingAddress.postcode].filter(Boolean).join(', ')}</p>
-                </>
-              ) : (
-                <p>Nenhum endereco de entrega cadastrado.</p>
-              )}
-            </div>
-          </article>
-        </div>
+            <article className="account-block">
+              <div className="account-block-header">
+                <strong>Default Shipping</strong>
+              </div>
+              <div className="account-block-body">
+                {account.defaultShippingAddress ? (
+                  <>
+                    <p>{[account.defaultShippingAddress.firstName, account.defaultShippingAddress.lastName].filter(Boolean).join(' ')}</p>
+                    {account.defaultShippingAddress.street.map((line) => (
+                      <p key={`shipping-${line}`}>{line}</p>
+                    ))}
+                    <p>{[account.defaultShippingAddress.city, account.defaultShippingAddress.region, account.defaultShippingAddress.postcode].filter(Boolean).join(', ')}</p>
+                  </>
+                ) : (
+                  <p>Nenhum endereco de entrega cadastrado.</p>
+                )}
+              </div>
+            </article>
+          </div>
+        )}
       </section>
 
       <section className="account-section">
@@ -117,7 +129,9 @@ export default function AccountDashboardPage() {
           </Link>
         </div>
 
-        {account.orders.length ? (
+        {account.isInitialLoading ? (
+          <InlineLoadingState title="Carregando pedidos..." />
+        ) : account.orders.length ? (
           <div className="orders-table">
             <div className="orders-row orders-row-head">
               <span>Order #</span>
@@ -144,7 +158,7 @@ export default function AccountDashboardPage() {
         ) : (
           <article className="account-block">
             <div className="account-block-body">
-              <p>You have placed no orders.</p>
+              <p>Voce ainda nao realizou nenhum pedido.</p>
             </div>
           </article>
         )}

@@ -42,7 +42,7 @@ export default function OrderDetailsPage() {
     [account.token, account.useCases, orderNumber],
   );
 
-  if (!orderState.isLoading && !orderState.data && !orderState.error) {
+  if (!orderState.isInitialLoading && !orderState.data && !orderState.error) {
     return <Navigate replace to="/minha-conta/pedidos" />;
   }
 
@@ -62,12 +62,17 @@ export default function OrderDetailsPage() {
         </Link>
       </div>
 
-      {orderState.isLoading ? <InlineLoadingState title="Carregando detalhes do pedido..." /> : null}
       {orderState.error ? (
         <InlineErrorState
           title="Nao foi possivel carregar os detalhes do pedido."
           detail={orderState.error.message}
         />
+      ) : null}
+
+      {orderState.isInitialLoading ? (
+        <section className="account-section">
+          <InlineLoadingState title="Carregando detalhes do pedido..." />
+        </section>
       ) : null}
 
       {order ? (

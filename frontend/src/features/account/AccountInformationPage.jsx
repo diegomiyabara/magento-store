@@ -244,7 +244,6 @@ export default function AccountInformationPage() {
         <p>Manage your personal data, email and password from this page.</p>
       </section>
 
-      {account.isLoading ? <InlineLoadingState title="Carregando informacoes da conta..." /> : null}
       {account.error ? (
         <InlineErrorState
           title="Nao foi possivel carregar sua conta."
@@ -252,6 +251,13 @@ export default function AccountInformationPage() {
         />
       ) : null}
 
+      {account.isInitialLoading ? (
+        <section className="account-section">
+          <InlineLoadingState title="Carregando informacoes da conta..." />
+        </section>
+      ) : null}
+
+      {!account.isInitialLoading ? (
       <section className="account-section">
         <div className="account-grid">
           <article className="account-block">
@@ -499,6 +505,7 @@ export default function AccountInformationPage() {
           </div>
         </article>
       </section>
+      ) : null}
     </>
   );
 }

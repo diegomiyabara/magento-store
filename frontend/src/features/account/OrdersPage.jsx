@@ -19,6 +19,7 @@ export default function OrdersPage() {
 
   const orders = ordersState.data?.orders ?? [];
   const totalCount = ordersState.data?.totalCount ?? 0;
+  const isInitialLoading = ordersState.isInitialLoading;
 
   return (
     <>
@@ -28,7 +29,6 @@ export default function OrdersPage() {
         <p>Track the history of your purchases and review the latest statuses from Magento.</p>
       </section>
 
-      {ordersState.isLoading ? <InlineLoadingState title="Carregando pedidos..." /> : null}
       {ordersState.error || account.error ? (
         <InlineErrorState
           title="Nao foi possivel carregar seus pedidos."
@@ -39,10 +39,18 @@ export default function OrdersPage() {
       <section className="account-section">
         <div className="account-section-title">
           <h3>My Orders</h3>
-          <span>{totalCount} pedido(s)</span>
+          <span>
+            {isInitialLoading
+              ? 'Carregando pedidos...'
+              : ordersState.isRefreshing
+                ? 'Atualizando pedidos...'
+                : `${totalCount} pedido(s)`}
+          </span>
         </div>
 
-        {orders.length ? (
+        {isInitialLoading ? (
+          <InlineLoadingState title="Carregando pedidos..." />
+        ) : orders.length ? (
           <div className="orders-table">
             <div className="orders-row orders-row-head">
               <span>Order #</span>
@@ -69,7 +77,7 @@ export default function OrdersPage() {
         ) : (
           <article className="account-block">
             <div className="account-block-body">
-              <p>You have placed no orders.</p>
+              <p>Voce ainda nao realizou nenhum pedido.</p>
             </div>
           </article>
         )}

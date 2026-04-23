@@ -11,11 +11,11 @@ export function useAsyncData(loader, deps = []) {
   useEffect(() => {
     const controller = new AbortController();
 
-    setState({
-      data: null,
+    setState((current) => ({
+      data: current.data,
       error: null,
       isLoading: true,
-    });
+    }));
 
     loader(controller.signal)
       .then((data) => {
@@ -34,11 +34,11 @@ export function useAsyncData(loader, deps = []) {
           return;
         }
 
-        setState({
-          data: null,
+        setState((current) => ({
+          data: current.data,
           error,
           isLoading: false,
-        });
+        }));
       });
 
     return () => {
@@ -48,6 +48,8 @@ export function useAsyncData(loader, deps = []) {
 
   return {
     ...state,
+    isInitialLoading: state.isLoading && state.data == null,
+    isRefreshing: state.isLoading && state.data != null,
     reload() {
       setReloadKey((current) => current + 1);
     },
