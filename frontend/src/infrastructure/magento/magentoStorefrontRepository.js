@@ -21,13 +21,19 @@ import {
 export function createMagentoStorefrontRepository() {
   return {
     async getStorefrontShell(signal) {
-      const [storeConfigData, navigationData] = await Promise.all([
-        executeMagentoQuery(STORE_CONFIG_QUERY, {}, { signal }),
-        executeMagentoQuery(NAVIGATION_QUERY, {}, { signal }),
-      ]);
+      const storeConfigData = await executeMagentoQuery(STORE_CONFIG_QUERY, {}, { signal });
+      const storeConfig = createStoreConfigModel(storeConfigData.storeConfig);
+
+      const navigationData = storeConfig?.rootCategoryId
+        ? await executeMagentoQuery(
+            NAVIGATION_QUERY,
+            { parentId: String(storeConfig.rootCategoryId) },
+            { signal },
+          )
+        : { categoryList: [] };
 
       return {
-        storeConfig: createStoreConfigModel(storeConfigData.storeConfig),
+        storeConfig,
         navigation: (navigationData.categoryList ?? []).map(createCategoryModel),
       };
     },

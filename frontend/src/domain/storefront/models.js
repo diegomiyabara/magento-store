@@ -6,6 +6,8 @@ export function createStoreConfigModel(storeConfig) {
   return {
     storeCode: storeConfig.store_code,
     storeName: storeConfig.store_name,
+    rootCategoryId: storeConfig.root_category_id || null,
+    rootCategoryUid: storeConfig.root_category_uid || null,
     baseUrl: storeConfig.base_url,
     baseMediaUrl: storeConfig.base_media_url,
     secureBaseUrl: storeConfig.secure_base_url,
