@@ -35,6 +35,12 @@ export default function ProductCard({ product, storeConfig }) {
   return (
     <article className="product-card">
       <Link className="product-card-media" to={`/produto/${product.urlKey}`}>
+        <div className="product-card-badges">
+          <span className="product-card-badge product-card-badge-accent">Destaque</span>
+          <span className={`product-card-badge ${isAvailableForSale ? '' : 'product-card-badge-muted'}`}>
+            {isAvailableForSale ? 'Disponivel' : 'Indisponivel'}
+          </span>
+        </div>
         <div className="product-card-media-frame">
           {image ? (
             <img
@@ -66,6 +72,10 @@ export default function ProductCard({ product, storeConfig }) {
             <span>Preço indisponível</span>
           )}
         </div>
+
+        <Link className="product-card-link" to={`/produto/${product.urlKey}`}>
+          Ver detalhes
+        </Link>
 
         <button
           className={`product-add-to-cart ${addedSuccess ? 'added' : ''}`}

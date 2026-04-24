@@ -31,6 +31,7 @@ export default function HomePage() {
   const { storeConfig, navigation } = useOutletContext();
   const home = useHomeController();
   const featuredCategories = navigation?.slice(0, 3) ?? [];
+  const quickLinks = navigation?.slice(0, 4) ?? [];
   const storeName = storeConfig?.storeName?.trim();
   const heroStoreName = !storeName || storeName === 'Default Store View'
     ? 'DM3D Tech'
@@ -43,22 +44,55 @@ export default function HomePage() {
           <p className="eyebrow">Loja online</p>
           <h1>{heroStoreName}: produtos em destaque para comprar online.</h1>
           <p className="hero-text">
-            Encontre novidades, produtos em destaque e categorias principais em um so lugar.
-            Navegue pela loja e adicione ao carrinho com rapidez.
+            Descubra produtos, categorias e oportunidades da loja em uma navegação mais clara,
+            com compra rápida e acesso direto ao carrinho.
           </p>
 
           <div className="hero-actions">
             <a className="button-link button-link-primary" href="#destaques">Ver produtos</a>
             <a className="button-link" href="#categorias">Ver categorias</a>
           </div>
-        </div>
 
-        <div className="hero-orb">
-          <div className="hero-orb-core">
-            <span>DM3D</span>
-            <small>STORE</small>
+          <div className="hero-metrics">
+            <div className="hero-metric">
+              <strong>{navigation?.length || 0}</strong>
+              <span>Categorias</span>
+            </div>
+            <div className="hero-metric">
+              <strong>{home.featuredProducts?.length || 0}</strong>
+              <span>Destaques</span>
+            </div>
+            <div className="hero-metric">
+              <strong>PIX</strong>
+              <span>Pagamento</span>
+            </div>
           </div>
         </div>
+
+        <aside className="hero-aside">
+          <div className="hero-panel hero-panel-primary">
+            <p className="eyebrow">Compra segura</p>
+            <h3>Uma vitrine mais objetiva para comprar melhor.</h3>
+            <div className="hero-panel-list">
+              <p>Produtos em destaque com acesso rápido ao carrinho.</p>
+              <p>Categorias visíveis para encurtar o caminho até a compra.</p>
+              <p>Topo fixo com carrinho e conta sempre acessíveis.</p>
+            </div>
+          </div>
+
+          <div className="hero-panel">
+            <p className="eyebrow">Acesso rápido</p>
+            <div className="hero-quick-links">
+              {quickLinks.length ? quickLinks.map((category) => (
+                <Link key={category.uid} to={`/categoria/${category.urlKey}`}>
+                  {category.name}
+                </Link>
+              )) : (
+                <a href="#categorias">Ver categorias da loja</a>
+              )}
+            </div>
+          </div>
+        </aside>
       </section>
 
       <section className="feature-band">

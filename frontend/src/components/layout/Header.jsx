@@ -12,14 +12,20 @@ export default function Header({ categories, storeConfig, isLoading }) {
 
     if (auth.isAuthenticated) {
       return (
-        <NavLink className="header-user-link nav-link nav-link-accent" to="/minha-conta">
+        <NavLink
+          className={({ isActive }) => `header-user-link nav-link nav-link-accent${isActive ? ' active' : ''}`}
+          to="/minha-conta"
+        >
           {auth.customer?.firstName || 'Minha conta'}
         </NavLink>
       );
     }
 
     return (
-      <NavLink className="header-user-link nav-link" to="/login">
+      <NavLink
+        className={({ isActive }) => `header-user-link nav-link${isActive ? ' active' : ''}`}
+        to="/login"
+      >
         Entrar
       </NavLink>
     );
@@ -52,7 +58,7 @@ export default function Header({ categories, storeConfig, isLoading }) {
             categories.map((category) => (
               <NavLink
                 key={category.uid}
-                className="nav-link"
+                className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
                 to={`/categoria/${category.urlKey}`}
               >
                 {category.name}

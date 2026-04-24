@@ -32,16 +32,22 @@ export default function CategoryPage() {
 
   return (
     <div className="container page-stack">
-      <section className="hero-card hero-card-compact">
-        <p className="eyebrow">Categoria</p>
-        <h1>{category.category.name}</h1>
-        <p>
-          {category.totalCount} produto(s) encontrado(s) para esta categoria.
-        </p>
+      <section className="hero-card hero-card-compact category-hero">
+        <div>
+          <p className="eyebrow">Categoria</p>
+          <h1>{category.category.name}</h1>
+          <p>
+            {category.totalCount} produto(s) encontrado(s) para esta categoria.
+          </p>
+        </div>
+        <div className="category-hero-summary">
+          <span>Selecao da loja</span>
+          <strong>Navegue, compare e adicione ao carrinho com rapidez.</strong>
+        </div>
       </section>
 
       {category.products.length ? (
-        <section className="product-grid">
+        <section className="product-grid product-grid-catalog category-products-grid">
           {category.products.map((product) => (
             <ProductCard key={product.uid} product={product} storeConfig={storeConfig} />
           ))}

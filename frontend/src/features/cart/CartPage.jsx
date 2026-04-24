@@ -1,6 +1,8 @@
-import { Link } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import { useCart } from '../../application/cart/CartContext';
 import { InlineLoadingState } from '../../components/ui/PageState';
+import { normalizeMediaUrl } from '../../lib/utils/formatters';
+import { apiConfig } from '../../lib/api/config';
 
 function formatPrice(value, currency = 'BRL') {
   return new Intl.NumberFormat('pt-BR', {
@@ -10,6 +12,7 @@ function formatPrice(value, currency = 'BRL') {
 }
 
 export default function CartPage() {
+  const { storeConfig } = useOutletContext();
   const {
     items,
     isLoading,
@@ -55,105 +58,118 @@ export default function CartPage() {
 
   return (
     <div className="container cart-page">
-      <h1>Meu Carrinho ({itemCount} {itemCount === 1 ? 'item' : 'itens'})</h1>
-
-      <div className="cart-items">
-        {items.map((item) => {
-          const price =
-            item.configuredVariant?.finalPrice ??
-            item.product?.finalPrice ??
-            item.product?.regularPrice ??
-            0;
-          const itemSubtotal = price * item.quantity;
-
-          return (
-            <div key={item.uid} className="cart-item">
-              <div className="cart-item-image">
-                {item.product?.imageUrl ? (
-                  <img src={item.product.imageUrl} alt={item.product.name} />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', background: 'var(--surface-border)' }} />
-                )}
-              </div>
-
-              <div className="cart-item-details">
-                <Link to={`/produto/${item.product?.urlKey}`} className="cart-item-name">
-                  {item.product?.name}
-                </Link>
-                <div className="cart-item-price">
-                  {formatPrice(price)} cada
-                </div>
-                <div className="cart-item-quantity">
-                  <button
-                    onClick={() => handleQuantityChange(item.uid, item.quantity - 1)}
-                    disabled={item.quantity <= 1}
-                    aria-label="Diminuir quantidade"
-                  >
-                    −
-                  </button>
-                  <span>{item.quantity}</span>
-                  <button
-                    onClick={() => handleQuantityChange(item.uid, item.quantity + 1)}
-                    aria-label="Aumentar quantidade"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-
-              <div className="cart-item-actions">
-                <button
-                  className="cart-item-remove"
-                  onClick={() => handleRemove(item.uid)}
-                  aria-label="Remover item"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                  </svg>
-                </button>
-                <div className="cart-item-subtotal">
-                  {formatPrice(itemSubtotal)}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="cart-summary">
-        <div className="cart-summary-row">
-          <span>Subtotal</span>
-          <span>{formatPrice(subtotal?.value ?? 0)}</span>
+      <section className="cart-header">
+        <div>
+          <p className="eyebrow">Carrinho</p>
+          <h1>Meu Carrinho ({itemCount} {itemCount === 1 ? 'item' : 'itens'})</h1>
         </div>
-        <div className="cart-summary-row">
-          <span>Frete</span>
-          <span>
-            {totalShipping?.value != null ? formatPrice(totalShipping.value, totalShipping.currency) : 'Calculado no checkout'}
-          </span>
-        </div>
-        <div className="cart-summary-row">
-          <span>Impostos</span>
-          <span>{formatPrice(totalTax?.value ?? 0, totalTax?.currency ?? 'BRL')}</span>
-        </div>
-        <div className="cart-summary-row total">
-          <span>Total</span>
-          <span>{formatPrice(grandTotal?.value ?? 0, grandTotal?.currency ?? 'BRL')}</span>
-        </div>
-
-        <Link className="cart-checkout-button" to="/checkout">
-          Finalizar Compra
+        <Link to="/" className="button-link">
+          Continuar comprando
         </Link>
+      </section>
+
+      <div className="cart-layout">
+        <div className="cart-items">
+          {items.map((item) => {
+            const price =
+              item.configuredVariant?.finalPrice ??
+              item.product?.finalPrice ??
+              item.product?.regularPrice ??
+              0;
+            const itemSubtotal = price * item.quantity;
+
+            return (
+              <div key={item.uid} className="cart-item">
+                <div className="cart-item-image">
+                  {item.product?.imageUrl ? (
+                    <img
+                      src={normalizeMediaUrl(item.product.imageUrl, storeConfig, apiConfig.mediaBaseUrl)}
+                      alt={item.product.name}
+                    />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', background: 'var(--surface-border)' }} />
+                  )}
+                </div>
+
+                <div className="cart-item-details">
+                  <Link to={`/produto/${item.product?.urlKey}`} className="cart-item-name">
+                    {item.product?.name}
+                  </Link>
+                  <div className="cart-item-price">
+                    {formatPrice(price)} cada
+                  </div>
+                  <div className="cart-item-quantity">
+                    <button
+                      onClick={() => handleQuantityChange(item.uid, item.quantity - 1)}
+                      disabled={item.quantity <= 1}
+                      aria-label="Diminuir quantidade"
+                    >
+                      −
+                    </button>
+                    <span>{item.quantity}</span>
+                    <button
+                      onClick={() => handleQuantityChange(item.uid, item.quantity + 1)}
+                      aria-label="Aumentar quantidade"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <div className="cart-item-actions">
+                  <button
+                    className="cart-item-remove"
+                    onClick={() => handleRemove(item.uid)}
+                    aria-label="Remover item"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                  </button>
+                  <div className="cart-item-subtotal">
+                    {formatPrice(itemSubtotal)}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <aside className="cart-summary">
+          <div className="cart-summary-row">
+            <span>Subtotal</span>
+            <span>{formatPrice(subtotal?.value ?? 0)}</span>
+          </div>
+          <div className="cart-summary-row">
+            <span>Frete</span>
+            <span>
+              {totalShipping?.value != null ? formatPrice(totalShipping.value, totalShipping.currency) : 'Calculado no checkout'}
+            </span>
+          </div>
+          <div className="cart-summary-row">
+            <span>Impostos</span>
+            <span>{formatPrice(totalTax?.value ?? 0, totalTax?.currency ?? 'BRL')}</span>
+          </div>
+          <div className="cart-summary-row total">
+            <span>Total</span>
+            <span>{formatPrice(grandTotal?.value ?? 0, grandTotal?.currency ?? 'BRL')}</span>
+          </div>
+
+          <Link className="cart-checkout-button" to="/checkout">
+            Finalizar Compra
+          </Link>
+        </aside>
       </div>
     </div>
   );
