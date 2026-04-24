@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8da7bd7a9724ca131b2e4685b8e1b1b4",
+    "content-hash": "46268574d234467a06c4e9471b78d78c",
     "packages": [
         {
             "name": "2tvenom/cborencode",
@@ -2511,6 +2511,52 @@
                 }
             ],
             "time": "2026-03-10T16:41:02+00:00"
+        },
+        {
+            "name": "imaginationmedia/correios",
+            "version": "1.2.7",
+            "source": {
+                "type": "git",
+                "url": "https://bitbucket.org/imagination-media/correios.git",
+                "reference": "ab3aaf5a752b5ef7f29200c98179098f54946a41"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://bitbucket.org/imagination-media/correios/get/ab3aaf5a752b5ef7f29200c98179098f54946a41.zip",
+                "reference": "ab3aaf5a752b5ef7f29200c98179098f54946a41",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*"
+            },
+            "type": "magento2-module",
+            "autoload": {
+                "files": [
+                    "registration.php"
+                ],
+                "psr-4": {
+                    "ImaginationMedia\\Correios\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "OSL-3.0",
+                "AFL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Igor Ludgero Miura",
+                    "email": "igor@imaginationmedia.com",
+                    "homepage": "http://www.imaginationmedia.com.br/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Correios shipping method integration for Magento 2.x",
+            "homepage": "https://bitbucket.org/imagination-media/correios",
+            "support": {
+                "source": "https://bitbucket.org/imagination-media/correios/src/ab3aaf5a752b5ef7f29200c98179098f54946a41/?at=1.2.7"
+            },
+            "time": "2023-09-25T12:56:34+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
