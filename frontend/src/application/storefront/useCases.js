@@ -60,6 +60,22 @@ export function createStorefrontUseCases(repository) {
       return repository.setGuestEmailOnCart(cartId, email, token, signal);
     },
 
+    setShippingAddressOnCart(cartId, shippingAddress, token, signal) {
+      return repository.setShippingAddressOnCart(cartId, shippingAddress, token, signal);
+    },
+
+    setBillingAddressOnCart(cartId, billingAddress, token, signal) {
+      return repository.setBillingAddressOnCart(cartId, billingAddress, token, signal);
+    },
+
+    setPaymentMethodOnCart(cartId, paymentMethod, token, signal) {
+      return repository.setPaymentMethodOnCart(cartId, paymentMethod, token, signal);
+    },
+
+    placeOrder(cartId, token, signal) {
+      return repository.placeOrder(cartId, token, signal);
+    },
+
     mergeCarts(token, sourceCartId, signal) {
       return repository.mergeCarts(token, sourceCartId, signal);
     },

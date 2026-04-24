@@ -16,6 +16,8 @@ export default function CartPage() {
     itemCount,
     subtotal,
     grandTotal,
+    totalTax,
+    totalShipping,
     updateItemQuantity,
     removeFromCart,
   } = useCart();
@@ -57,7 +59,11 @@ export default function CartPage() {
 
       <div className="cart-items">
         {items.map((item) => {
-          const price = item.product?.finalPrice ?? item.product?.regularPrice ?? 0;
+          const price =
+            item.configuredVariant?.finalPrice ??
+            item.product?.finalPrice ??
+            item.product?.regularPrice ??
+            0;
           const itemSubtotal = price * item.quantity;
 
           return (
@@ -132,20 +138,22 @@ export default function CartPage() {
         </div>
         <div className="cart-summary-row">
           <span>Frete</span>
-          <span>Calculado no checkout</span>
+          <span>
+            {totalShipping?.value != null ? formatPrice(totalShipping.value, totalShipping.currency) : 'Calculado no checkout'}
+          </span>
         </div>
         <div className="cart-summary-row">
           <span>Impostos</span>
-          <span>{formatPrice(totalTax?.value ?? 0)}</span>
+          <span>{formatPrice(totalTax?.value ?? 0, totalTax?.currency ?? 'BRL')}</span>
         </div>
         <div className="cart-summary-row total">
           <span>Total</span>
-          <span>{formatPrice(grandTotal?.value ?? 0)}</span>
+          <span>{formatPrice(grandTotal?.value ?? 0, grandTotal?.currency ?? 'BRL')}</span>
         </div>
 
-        <button className="cart-checkout-button">
+        <Link className="cart-checkout-button" to="/checkout">
           Finalizar Compra
-        </button>
+        </Link>
       </div>
     </div>
   );

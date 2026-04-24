@@ -42,7 +42,7 @@ export const CART_ITEM_FIELDS = `
 `;
 
 export const CART_PRICE_FIELDS = `
-  subtotal {
+  subtotal_excluding_tax {
     value
     currency
   }
@@ -50,19 +50,48 @@ export const CART_PRICE_FIELDS = `
     value
     currency
   }
-  total_tax {
-    value
-    currency
-  }
-  total_shipping {
-    value
-    currency
-  }
   discounts {
     label
-    value
-    code
+    amount {
+      value
+      currency
+    }
   }
+  applied_taxes {
+    label
+    amount {
+      value
+      currency
+    }
+  }
+`;
+
+export const SELECTED_SHIPPING_METHOD_FIELDS = `
+  carrier_code
+  method_code
+  carrier_title
+  method_title
+  amount {
+    value
+    currency
+  }
+`;
+
+export const AVAILABLE_SHIPPING_METHOD_FIELDS = `
+  carrier_code
+  method_code
+  carrier_title
+  method_title
+  error_message
+  available
+  amount {
+    value
+    currency
+  }
+`;
+
+export const APPLIED_COUPON_FIELDS = `
+  code
 `;
 
 export const CART_ADDRESS_FIELDS = `
@@ -71,10 +100,53 @@ export const CART_ADDRESS_FIELDS = `
   company
   street
   city
-  region
+  region {
+    code
+    label
+    region_id
+  }
   postcode
-  country_code
+  country {
+    code
+    label
+  }
   telephone
+`;
+
+export const CART_EMAIL_FIELDS = `
+  email
+`;
+
+export const CART_PAYMENT_FIELDS = `
+  available_payment_methods {
+    code
+    title
+  }
+  selected_payment_method {
+    code
+    title
+    purchase_order_number
+  }
+`;
+
+export const CART_SHIPPING_ADDRESS_FIELDS = `
+  ${CART_ADDRESS_FIELDS}
+  available_shipping_methods {
+    ${AVAILABLE_SHIPPING_METHOD_FIELDS}
+  }
+  selected_shipping_method {
+    ${SELECTED_SHIPPING_METHOD_FIELDS}
+  }
+`;
+
+export const CART_BILLING_ADDRESS_FIELDS = `
+  ${CART_ADDRESS_FIELDS}
+`;
+
+export const CART_PRICES_FIELDS = `
+  prices {
+    ${CART_PRICE_FIELDS}
+  }
 `;
 
 export const CART_SUMMARY_FIELDS = `
@@ -86,20 +158,21 @@ export const CART_DETAIL_FIELDS = `
   id
   total_quantity
   is_virtual
-  ${CART_PRICE_FIELDS}
+  ${CART_EMAIL_FIELDS}
+  applied_coupons {
+    ${APPLIED_COUPON_FIELDS}
+  }
+  ${CART_PRICES_FIELDS}
   items {
     ${CART_ITEM_FIELDS}
   }
   shipping_addresses {
-    ${CART_ADDRESS_FIELDS}
+    ${CART_SHIPPING_ADDRESS_FIELDS}
   }
   billing_address {
-    ${CART_ADDRESS_FIELDS}
+    ${CART_BILLING_ADDRESS_FIELDS}
   }
-  available_payment_methods {
-    code
-    title
-  }
+  ${CART_PAYMENT_FIELDS}
 `;
 
 export const GUEST_CART_QUERY = `
@@ -143,12 +216,12 @@ export const ADD_PRODUCTS_TO_CART_MUTATION = `
 `;
 
 export const UPDATE_CART_ITEM_MUTATION = `
-  mutation UpdateCartItemMutation($cartId: String!, $cartItemId: String!, $quantity: Float!) {
-    updateCartItems(cartId: $cartId, cartItems: [{ cart_item_id: $cartItemId, quantity: $quantity }]) {
+  mutation UpdateCartItemMutation($cartId: String!, $cartItemUid: ID!, $quantity: Float!) {
+    updateCartItems(input: { cart_id: $cartId, cart_items: [{ cart_item_uid: $cartItemUid, quantity: $quantity }] }) {
       cart {
         ${CART_DETAIL_FIELDS}
       }
-      user_errors {
+      errors {
         code
         message
       }
@@ -157,14 +230,10 @@ export const UPDATE_CART_ITEM_MUTATION = `
 `;
 
 export const REMOVE_CART_ITEM_MUTATION = `
-  mutation RemoveCartItemMutation($cartId: String!, $cartItemId: String!) {
-    removeItemFromCart(cartId: $cartId, cartItemId: $cartItemId) {
+  mutation RemoveCartItemMutation($cartId: String!, $cartItemUid: ID!) {
+    removeItemFromCart(input: { cart_id: $cartId, cart_item_uid: $cartItemUid }) {
       cart {
         ${CART_DETAIL_FIELDS}
-      }
-      user_errors {
-        code
-        message
       }
     }
   }
@@ -172,13 +241,9 @@ export const REMOVE_CART_ITEM_MUTATION = `
 
 export const APPLY_COUPON_TO_CART_MUTATION = `
   mutation ApplyCouponToCartMutation($cartId: String!, $couponCode: String!) {
-    applyCouponToCart(cartId: $cartId, couponCode: $couponCode) {
+    applyCouponToCart(input: { cart_id: $cartId, coupon_code: $couponCode }) {
       cart {
         ${CART_DETAIL_FIELDS}
-      }
-      user_errors {
-        code
-        message
       }
     }
   }
@@ -186,13 +251,9 @@ export const APPLY_COUPON_TO_CART_MUTATION = `
 
 export const REMOVE_COUPON_FROM_CART_MUTATION = `
   mutation RemoveCouponFromCartMutation($cartId: String!) {
-    removeCouponFromCart(cartId: $cartId) {
+    removeCouponFromCart(input: { cart_id: $cartId }) {
       cart {
         ${CART_DETAIL_FIELDS}
-      }
-      user_errors {
-        code
-        message
       }
     }
   }
@@ -208,29 +269,17 @@ export const MERGE_CARTS_MUTATION = `
 
 export const ESTIMATE_SHIPPING_METHODS_MUTATION = `
   mutation EstimateShippingMethodsMutation($cartId: String!, $address: CartAddressInput!) {
-    estimateShippingMethods(cartId: $cartId, address: $address) {
-      carrier_code
-      method_code
-      carrier_title
-      method_title
-      price {
-        value
-        currency
-      }
-      error_message
+    estimateShippingMethods(input: { cart_id: $cartId, address: $address }) {
+      ${AVAILABLE_SHIPPING_METHOD_FIELDS}
     }
   }
 `;
 
 export const SET_SHIPPING_METHOD_ON_CART_MUTATION = `
   mutation SetShippingMethodOnCartMutation($cartId: String!, $carrierCode: String!, $methodCode: String!) {
-    setShippingMethodsOnCart(cartId: $cartId, shippingMethods: [{ carrier_code: $carrierCode, method_code: $methodCode }]) {
+    setShippingMethodsOnCart(input: { cart_id: $cartId, shipping_methods: [{ carrier_code: $carrierCode, method_code: $methodCode }] }) {
       cart {
         ${CART_DETAIL_FIELDS}
-      }
-      user_errors {
-        code
-        message
       }
     }
   }
@@ -238,11 +287,54 @@ export const SET_SHIPPING_METHOD_ON_CART_MUTATION = `
 
 export const SET_GUEST_EMAIL_ON_CART_MUTATION = `
   mutation SetGuestEmailOnCartMutation($cartId: String!, $email: String!) {
-    setGuestEmailOnCart(cartId: $cartId, email: $email) {
+    setGuestEmailOnCart(input: { cart_id: $cartId, email: $email }) {
       cart {
         ${CART_DETAIL_FIELDS}
       }
-      user_errors {
+    }
+  }
+`;
+
+export const SET_SHIPPING_ADDRESS_ON_CART_MUTATION = `
+  mutation SetShippingAddressOnCartMutation($cartId: String!, $shippingAddress: ShippingAddressInput!) {
+    setShippingAddressesOnCart(input: { cart_id: $cartId, shipping_addresses: [$shippingAddress] }) {
+      cart {
+        ${CART_DETAIL_FIELDS}
+      }
+    }
+  }
+`;
+
+export const SET_BILLING_ADDRESS_ON_CART_MUTATION = `
+  mutation SetBillingAddressOnCartMutation($cartId: String!, $billingAddress: BillingAddressInput!) {
+    setBillingAddressOnCart(input: { cart_id: $cartId, billing_address: $billingAddress }) {
+      cart {
+        ${CART_DETAIL_FIELDS}
+      }
+    }
+  }
+`;
+
+export const SET_PAYMENT_METHOD_ON_CART_MUTATION = `
+  mutation SetPaymentMethodOnCartMutation($cartId: String!, $paymentMethod: PaymentMethodInput!) {
+    setPaymentMethodOnCart(input: { cart_id: $cartId, payment_method: $paymentMethod }) {
+      cart {
+        ${CART_DETAIL_FIELDS}
+      }
+    }
+  }
+`;
+
+export const PLACE_ORDER_MUTATION = `
+  mutation PlaceOrderMutation($cartId: String!) {
+    placeOrder(input: { cart_id: $cartId }) {
+      order {
+        order_number
+      }
+      orderV2 {
+        number
+      }
+      errors {
         code
         message
       }

@@ -60,7 +60,12 @@ export default function Header({ categories, storeConfig, isLoading }) {
           )}
         </nav>
 
-        <MiniCart />
+        <div className="header-actions">
+          <Link className="header-cart-link" to="/carrinho">
+            Ver carrinho
+          </Link>
+          <MiniCart />
+        </div>
       </div>
     </header>
   );

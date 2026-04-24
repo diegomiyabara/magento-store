@@ -1,14 +1,14 @@
-import { useCart } from '../../app/cartContext';
+import { useCart } from '../../application/cart/CartContext';
 
 export function useCartController() {
   const cart = useCart();
 
   return {
-    addSimpleProduct: cart.addSimpleProduct,
+    addSimpleProduct: cart.addToCart,
     cart: cart.cart,
     error: cart.error,
-    isBootstrapping: cart.isBootstrapping,
-    isMutating: cart.isMutating,
-    totalQuantity: cart.totalQuantity,
+    isBootstrapping: !cart.isInitialized && cart.isLoading,
+    isMutating: cart.isLoading,
+    totalQuantity: cart.itemCount,
   };
 }

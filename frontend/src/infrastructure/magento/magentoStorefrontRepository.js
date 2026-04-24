@@ -34,7 +34,11 @@ import {
   PRODUCT_BY_URL_KEY_QUERY,
   REMOVE_CART_ITEM_MUTATION,
   REMOVE_COUPON_FROM_CART_MUTATION,
+  PLACE_ORDER_MUTATION,
   SET_GUEST_EMAIL_ON_CART_MUTATION,
+  SET_BILLING_ADDRESS_ON_CART_MUTATION,
+  SET_PAYMENT_METHOD_ON_CART_MUTATION,
+  SET_SHIPPING_ADDRESS_ON_CART_MUTATION,
   SET_SHIPPING_METHOD_ON_CART_MUTATION,
   STORE_CONFIG_QUERY,
   UPDATE_CART_ITEM_MUTATION,
@@ -161,14 +165,14 @@ export function createMagentoStorefrontRepository() {
       return createCartModel(data.addProductsToCart?.cart ?? null);
     },
 
-    async updateCartItem(cartId, cartItemId, quantity, token, signal) {
+    async updateCartItem(cartId, cartItemUid, quantity, token, signal) {
       const data = await executeMagentoQuery(
         UPDATE_CART_ITEM_MUTATION,
-        { cartId, cartItemId, quantity },
+        { cartId, cartItemUid, quantity },
         { authToken: token, signal, skipCache: true },
       );
 
-      const userError = data.updateCartItems?.user_errors?.[0];
+      const userError = data.updateCartItems?.errors?.[0];
 
       if (userError?.message) {
         throw new Error(userError.message);
@@ -177,18 +181,12 @@ export function createMagentoStorefrontRepository() {
       return createCartModel(data.updateCartItems?.cart ?? null);
     },
 
-    async removeCartItem(cartId, cartItemId, token, signal) {
+    async removeCartItem(cartId, cartItemUid, token, signal) {
       const data = await executeMagentoQuery(
         REMOVE_CART_ITEM_MUTATION,
-        { cartId, cartItemId },
+        { cartId, cartItemUid },
         { authToken: token, signal, skipCache: true },
       );
-
-      const userError = data.removeItemFromCart?.user_errors?.[0];
-
-      if (userError?.message) {
-        throw new Error(userError.message);
-      }
 
       return createCartModel(data.removeItemFromCart?.cart ?? null);
     },
@@ -200,12 +198,6 @@ export function createMagentoStorefrontRepository() {
         { authToken: token, signal, skipCache: true },
       );
 
-      const userError = data.applyCouponToCart?.user_errors?.[0];
-
-      if (userError?.message) {
-        throw new Error(userError.message);
-      }
-
       return createCartModel(data.applyCouponToCart?.cart ?? null);
     },
 
@@ -215,12 +207,6 @@ export function createMagentoStorefrontRepository() {
         { cartId },
         { authToken: token, signal, skipCache: true },
       );
-
-      const userError = data.removeCouponFromCart?.user_errors?.[0];
-
-      if (userError?.message) {
-        throw new Error(userError.message);
-      }
 
       return createCartModel(data.removeCouponFromCart?.cart ?? null);
     },
@@ -237,9 +223,10 @@ export function createMagentoStorefrontRepository() {
         methodCode: method.method_code || '',
         carrierTitle: method.carrier_title || '',
         methodTitle: method.method_title || '',
-        price: method.price?.value ?? 0,
-        currency: method.price?.currency || 'BRL',
+        price: method.amount?.value ?? 0,
+        currency: method.amount?.currency || 'BRL',
         errorMessage: method.error_message || '',
+        available: Boolean(method.available),
       }));
     },
 
@@ -249,12 +236,6 @@ export function createMagentoStorefrontRepository() {
         { cartId, carrierCode, methodCode },
         { authToken: token, signal, skipCache: true },
       );
-
-      const userError = data.setShippingMethodsOnCart?.user_errors?.[0];
-
-      if (userError?.message) {
-        throw new Error(userError.message);
-      }
 
       return createCartModel(data.setShippingMethodsOnCart?.cart ?? null);
     },
@@ -266,13 +247,56 @@ export function createMagentoStorefrontRepository() {
         { authToken: token, signal, skipCache: true },
       );
 
-      const userError = data.setGuestEmailOnCart?.user_errors?.[0];
+      return createCartModel(data.setGuestEmailOnCart?.cart ?? null);
+    },
 
-      if (userError?.message) {
-        throw new Error(userError.message);
+    async setShippingAddressOnCart(cartId, shippingAddress, token, signal) {
+      const data = await executeMagentoQuery(
+        SET_SHIPPING_ADDRESS_ON_CART_MUTATION,
+        { cartId, shippingAddress },
+        { authToken: token, signal, skipCache: true },
+      );
+
+      return createCartModel(data.setShippingAddressesOnCart?.cart ?? null);
+    },
+
+    async setBillingAddressOnCart(cartId, billingAddress, token, signal) {
+      const data = await executeMagentoQuery(
+        SET_BILLING_ADDRESS_ON_CART_MUTATION,
+        { cartId, billingAddress },
+        { authToken: token, signal, skipCache: true },
+      );
+
+      return createCartModel(data.setBillingAddressOnCart?.cart ?? null);
+    },
+
+    async setPaymentMethodOnCart(cartId, paymentMethod, token, signal) {
+      const data = await executeMagentoQuery(
+        SET_PAYMENT_METHOD_ON_CART_MUTATION,
+        { cartId, paymentMethod },
+        { authToken: token, signal, skipCache: true },
+      );
+
+      return createCartModel(data.setPaymentMethodOnCart?.cart ?? null);
+    },
+
+    async placeOrder(cartId, token, signal) {
+      const data = await executeMagentoQuery(
+        PLACE_ORDER_MUTATION,
+        { cartId },
+        { authToken: token, signal, skipCache: true },
+      );
+
+      const orderError = data.placeOrder?.errors?.[0];
+
+      if (orderError?.message) {
+        throw new Error(orderError.message);
       }
 
-      return createCartModel(data.setGuestEmailOnCart?.cart ?? null);
+      return {
+        number: data.placeOrder?.orderV2?.number || data.placeOrder?.order?.order_number || '',
+        raw: data.placeOrder,
+      };
     },
 
     async mergeCarts(token, sourceCartId, signal) {

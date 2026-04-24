@@ -57,6 +57,26 @@ export function CartProvider({ children }) {
   const auth = useAuth();
   const { useCases } = useStorefrontServices();
 
+  const persistGuestCartId = useCallback((cartId) => {
+    if (cartId) {
+      localStorage.setItem(CART_STORAGE_KEY, cartId);
+      return;
+    }
+
+    localStorage.removeItem(CART_STORAGE_KEY);
+  }, []);
+
+  const syncCart = useCallback((cart, { persistGuest = !auth.token } = {}) => {
+    const nextCartId = cart?.id || null;
+
+    if (persistGuest) {
+      persistGuestCartId(nextCartId);
+    }
+
+    dispatch({ type: 'INIT_CART', payload: { cartId: nextCartId } });
+    dispatch({ type: 'SET_CART', payload: { cart } });
+  }, [auth.token, persistGuestCartId]);
+
   // Carregar cartId do localStorage ao iniciar
   useEffect(() => {
     const storedCartId = localStorage.getItem(CART_STORAGE_KEY);
@@ -67,38 +87,64 @@ export function CartProvider({ children }) {
     }
   }, []);
 
-  // Carregar carrinho quando cartId mudar
   useEffect(() => {
-    async function loadCart() {
-      if (!state.cartId || !state.isInitialized) return;
+    if (!state.isInitialized) return;
 
+    const controller = new AbortController();
+
+    async function loadCart() {
       dispatch({ type: 'SET_LOADING', payload: { isLoading: true } });
 
+      const guestCartId = state.cartId;
+
       try {
-        let cart;
         if (auth.token) {
-          cart = await useCases.getCustomerCart(auth.token);
-        } else {
-          cart = await useCases.getGuestCart(state.cartId);
+          let cart = null;
+
+          if (guestCartId) {
+            try {
+              cart = await useCases.mergeCarts(auth.token, guestCartId, controller.signal);
+              persistGuestCartId(null);
+            } catch {
+              persistGuestCartId(null);
+            }
+          }
+
+          if (!cart) {
+            cart = await useCases.getCustomerCart(auth.token, controller.signal);
+          }
+
+          syncCart(cart, { persistGuest: false });
+          return;
         }
-        dispatch({ type: 'SET_CART', payload: { cart } });
+
+        if (!guestCartId) {
+          dispatch({ type: 'SET_CART', payload: { cart: null } });
+          return;
+        }
+
+        const cart = await useCases.getGuestCart(guestCartId, controller.signal);
+        syncCart(cart);
       } catch (error) {
+        persistGuestCartId(null);
+        dispatch({ type: 'INIT_CART', payload: { cartId: null } });
         dispatch({ type: 'SET_ERROR', payload: { error: error.message } });
       }
     }
 
     loadCart();
-  }, [state.cartId, state.isInitialized, auth.token, useCases]);
 
-  // Função para criar carrinho guest
+    return () => {
+      controller.abort();
+    };
+  }, [state.cartId, state.isInitialized, auth.token, persistGuestCartId, syncCart, useCases]);
+
   const createCart = useCallback(async (signal) => {
     dispatch({ type: 'SET_LOADING', payload: { isLoading: true } });
     try {
       const cart = await useCases.createGuestCart(signal);
       if (cart?.id) {
-        localStorage.setItem(CART_STORAGE_KEY, cart.id);
-        dispatch({ type: 'INIT_CART', payload: { cartId: cart.id } });
-        dispatch({ type: 'SET_CART', payload: { cart } });
+        syncCart(cart);
         return cart;
       }
       throw new Error('Falha ao criar carrinho');
@@ -106,13 +152,12 @@ export function CartProvider({ children }) {
       dispatch({ type: 'SET_ERROR', payload: { error: error.message } });
       throw error;
     }
-  }, [useCases]);
+  }, [syncCart, useCases]);
 
-  // Função para adicionar produto ao carrinho
   const addToCart = useCallback(async (product, quantity = 1, signal) => {
     let cartId = state.cartId;
 
-    if (!cartId) {
+    if (!cartId && !auth.token) {
       const newCart = await createCart(signal);
       cartId = newCart.id;
     }
@@ -124,52 +169,60 @@ export function CartProvider({ children }) {
         {
           sku: product.sku,
           quantity,
-          parent_product_id: product.uid,
         },
       ];
 
-      const cart = await useCases.addProductsToCart(cartId, cartItems, auth.token, signal);
-      dispatch({ type: 'SET_CART', payload: { cart } });
+      const resolvedCartId = cartId || state.cart?.id || null;
+      let targetCartId = resolvedCartId;
+
+      if (!targetCartId && auth.token) {
+        const customerCart = await useCases.getCustomerCart(auth.token, signal);
+        targetCartId = customerCart?.id || null;
+      }
+
+      if (!targetCartId) {
+        throw new Error('Falha ao localizar um carrinho válido.');
+      }
+
+      const cart = await useCases.addProductsToCart(targetCartId, cartItems, auth.token, signal);
+      syncCart(cart, { persistGuest: !auth.token });
       return cart;
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: { error: error.message } });
       throw error;
     }
-  }, [state.cartId, auth.token, createCart, useCases]);
+  }, [state.cartId, state.cart?.id, auth.token, createCart, syncCart, useCases]);
 
-  // Função para atualizar quantidade de item
-  const updateItemQuantity = useCallback(async (cartItemId, quantity, signal) => {
+  const updateItemQuantity = useCallback(async (cartItemUid, quantity, signal) => {
     if (!state.cartId) return;
 
     dispatch({ type: 'SET_LOADING', payload: { isLoading: true } });
 
     try {
-      const cart = await useCases.updateCartItem(state.cartId, cartItemId, quantity, auth.token, signal);
-      dispatch({ type: 'SET_CART', payload: { cart } });
+      const cart = await useCases.updateCartItem(state.cartId, cartItemUid, quantity, auth.token, signal);
+      syncCart(cart, { persistGuest: !auth.token });
       return cart;
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: { error: error.message } });
       throw error;
     }
-  }, [state.cartId, auth.token, useCases]);
+  }, [state.cartId, auth.token, syncCart, useCases]);
 
-  // Função para remover item do carrinho
-  const removeFromCart = useCallback(async (cartItemId, signal) => {
+  const removeFromCart = useCallback(async (cartItemUid, signal) => {
     if (!state.cartId) return;
 
     dispatch({ type: 'SET_LOADING', payload: { isLoading: true } });
 
     try {
-      const cart = await useCases.removeCartItem(state.cartId, cartItemId, auth.token, signal);
-      dispatch({ type: 'SET_CART', payload: { cart } });
+      const cart = await useCases.removeCartItem(state.cartId, cartItemUid, auth.token, signal);
+      syncCart(cart, { persistGuest: !auth.token });
       return cart;
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: { error: error.message } });
       throw error;
     }
-  }, [state.cartId, auth.token, useCases]);
+  }, [state.cartId, auth.token, syncCart, useCases]);
 
-  // Função para aplicar cupom
   const applyCoupon = useCallback(async (couponCode, signal) => {
     if (!state.cartId) return;
 
@@ -177,15 +230,14 @@ export function CartProvider({ children }) {
 
     try {
       const cart = await useCases.applyCouponToCart(state.cartId, couponCode, auth.token, signal);
-      dispatch({ type: 'SET_CART', payload: { cart } });
+      syncCart(cart, { persistGuest: !auth.token });
       return cart;
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: { error: error.message } });
       throw error;
     }
-  }, [state.cartId, auth.token, useCases]);
+  }, [state.cartId, auth.token, syncCart, useCases]);
 
-  // Função para remover cupom
   const removeCoupon = useCallback(async (signal) => {
     if (!state.cartId) return;
 
@@ -193,19 +245,22 @@ export function CartProvider({ children }) {
 
     try {
       const cart = await useCases.removeCouponFromCart(state.cartId, auth.token, signal);
-      dispatch({ type: 'SET_CART', payload: { cart } });
+      syncCart(cart, { persistGuest: !auth.token });
       return cart;
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: { error: error.message } });
       throw error;
     }
-  }, [state.cartId, auth.token, useCases]);
+  }, [state.cartId, auth.token, syncCart, useCases]);
 
-  // Função para limpar carrinho
   const clearCart = useCallback(() => {
-    localStorage.removeItem(CART_STORAGE_KEY);
+    persistGuestCartId(null);
     dispatch({ type: 'CLEAR_CART' });
-  }, []);
+  }, [persistGuestCartId]);
+
+  const setCartSnapshot = useCallback((cart, options = {}) => {
+    syncCart(cart, options);
+  }, [syncCart]);
 
   const value = {
     cartId: state.cartId,
@@ -217,6 +272,9 @@ export function CartProvider({ children }) {
     items: state.cart?.items ?? [],
     subtotal: state.cart?.subtotal,
     grandTotal: state.cart?.grandTotal,
+    totalTax: state.cart?.totalTax,
+    totalShipping: state.cart?.totalShipping,
+    appliedCoupons: state.cart?.appliedCoupons ?? [],
     createCart,
     addToCart,
     updateItemQuantity,
@@ -224,6 +282,7 @@ export function CartProvider({ children }) {
     applyCoupon,
     removeCoupon,
     clearCart,
+    setCartSnapshot,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

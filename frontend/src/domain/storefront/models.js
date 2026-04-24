@@ -79,22 +79,48 @@ export function createCartModel(cart) {
     return null;
   }
 
+  const prices = cart.prices || {};
+  const shippingAddress = cart.shipping_addresses?.[0] || null;
+  const appliedTaxes = prices.applied_taxes ?? [];
+  const totalTaxValue = appliedTaxes.reduce(
+    (sum, tax) => sum + (tax?.amount?.value ?? 0),
+    0,
+  );
+
   return {
     id: cart.id || '',
     totalQuantity: cart.total_quantity ?? 0,
     isVirtual: Boolean(cart.is_virtual),
+    email: cart.email || '',
     items: (cart.items ?? []).map(createCartItemModel),
-    subtotal: createMoneyModel(cart.subtotal),
-    grandTotal: createMoneyModel(cart.grand_total),
-    totalTax: createMoneyModel(cart.total_tax),
-    totalShipping: createMoneyModel(cart.total_shipping),
-    discounts: (cart.discounts ?? []).map(createDiscountModel),
+    subtotal: createMoneyModel(prices.subtotal_excluding_tax),
+    grandTotal: createMoneyModel(prices.grand_total),
+    totalTax: createMoneyModel(
+      appliedTaxes.length
+        ? {
+            value: totalTaxValue,
+            currency: appliedTaxes[0]?.amount?.currency || prices.grand_total?.currency || 'BRL',
+          }
+        : null,
+    ),
+    totalShipping: createMoneyModel(shippingAddress?.selected_shipping_method?.amount),
+    discounts: (prices.discounts ?? []).map(createCartDiscountModel),
+    appliedCoupons: (cart.applied_coupons ?? []).map((coupon) => ({
+      code: coupon?.code || '',
+    })),
     shippingAddresses: (cart.shipping_addresses ?? []).map(createCartAddressModel),
     billingAddress: createCartAddressModel(cart.billing_address),
     availablePaymentMethods: (cart.available_payment_methods ?? []).map((method) => ({
       code: method.code || '',
       title: method.title || '',
     })),
+    selectedPaymentMethod: cart.selected_payment_method
+      ? {
+          code: cart.selected_payment_method.code || '',
+          title: cart.selected_payment_method.title || '',
+          purchaseOrderNumber: cart.selected_payment_method.purchase_order_number || '',
+        }
+      : null,
     raw: cart,
   };
 }
@@ -147,14 +173,15 @@ function createMoneyModel(money) {
   };
 }
 
-function createDiscountModel(discount) {
+function createCartDiscountModel(discount) {
   if (!discount) {
     return null;
   }
   return {
     label: discount.label || '',
-    value: discount.value ?? 0,
-    code: discount.code || '',
+    value: discount.amount?.value ?? 0,
+    currency: discount.amount?.currency || 'BRL',
+    appliedTo: discount.applied_to || '',
   };
 }
 
@@ -168,10 +195,33 @@ function createCartAddressModel(address) {
     company: address.company || '',
     street: address.street || [],
     city: address.city || '',
-    region: address.region || '',
+    region: address.region?.label || address.region?.code || '',
+    regionCode: address.region?.code || '',
+    regionId: address.region?.region_id ?? null,
     postcode: address.postcode || '',
-    countryCode: address.country_code || '',
+    countryCode: address.country?.code || '',
+    countryLabel: address.country?.label || '',
     telephone: address.telephone || '',
+    availableShippingMethods: (address.available_shipping_methods ?? []).map((method) => ({
+      carrierCode: method.carrier_code || '',
+      methodCode: method.method_code || '',
+      carrierTitle: method.carrier_title || '',
+      methodTitle: method.method_title || '',
+      price: method.amount?.value ?? 0,
+      currency: method.amount?.currency || 'BRL',
+      errorMessage: method.error_message || '',
+      available: Boolean(method.available),
+    })),
+    selectedShippingMethod: address.selected_shipping_method
+      ? {
+          carrierCode: address.selected_shipping_method.carrier_code || '',
+          methodCode: address.selected_shipping_method.method_code || '',
+          carrierTitle: address.selected_shipping_method.carrier_title || '',
+          methodTitle: address.selected_shipping_method.method_title || '',
+          price: address.selected_shipping_method.amount?.value ?? 0,
+          currency: address.selected_shipping_method.amount?.currency || 'BRL',
+        }
+      : null,
   };
 }
 
