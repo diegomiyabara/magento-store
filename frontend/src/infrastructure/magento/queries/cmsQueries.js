@@ -13,6 +13,7 @@ export const HOME_BOOTSTRAP_QUERY = `
         sku
         name
         url_key
+        stock_status
         small_image {
           url
           label

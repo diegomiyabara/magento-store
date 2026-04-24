@@ -31,13 +31,17 @@ export default function HomePage() {
   const { storeConfig, navigation } = useOutletContext();
   const home = useHomeController();
   const featuredCategories = navigation?.slice(0, 3) ?? [];
+  const storeName = storeConfig?.storeName?.trim();
+  const heroStoreName = !storeName || storeName === 'Default Store View'
+    ? 'DM3D Tech'
+    : storeName;
 
   return (
     <div className="container page-stack">
       <section className="hero-showcase">
         <div className="hero-copy">
           <p className="eyebrow">Loja online</p>
-          <h1>{storeConfig?.storeName || 'DM3D Tech'}: produtos em destaque para comprar online.</h1>
+          <h1>{heroStoreName}: produtos em destaque para comprar online.</h1>
           <p className="hero-text">
             Encontre novidades, produtos em destaque e categorias principais em um so lugar.
             Navegue pela loja e adicione ao carrinho com rapidez.
@@ -103,6 +107,7 @@ export default function HomePage() {
           <p className="eyebrow">Produtos em destaque</p>
           <h2>Escolha seus produtos e adicione ao carrinho.</h2>
         </div>
+        <p className="section-heading-note">Deslize para ver mais produtos.</p>
       </section>
 
       {home.isLoading && !home.isReady ? (
@@ -113,7 +118,7 @@ export default function HomePage() {
           detail={home.error.message}
         />
       ) : home.featuredProducts.length ? (
-        <section className="product-grid">
+        <section className="product-carousel" aria-label="Produtos em destaque">
           {home.featuredProducts.map((product) => (
             <ProductCard key={product.uid} product={product} storeConfig={storeConfig} />
           ))}

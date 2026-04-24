@@ -41,9 +41,10 @@ export default function ProductPage() {
   const regularPrice = productState.product.regularPrice;
   const currency = productState.product.currency;
   const productImage = productState.product.imageUrl;
+  const isAvailableForSale = productState.product.isAvailableForSale !== false;
 
   async function handleAddToCart() {
-    if (isAdding || isCartLoading || productState.product.stockStatus !== 'IN_STOCK') {
+    if (isAdding || isCartLoading || !isAvailableForSale) {
       return;
     }
 
@@ -77,7 +78,7 @@ export default function ProductPage() {
         <p className="eyebrow">Produto</p>
         <h1>{productState.product.name}</h1>
         <p className="product-stock">
-          Estoque: {productState.product.stockStatus === 'IN_STOCK' ? 'Disponível' : 'Indisponível'}
+          Estoque: {isAvailableForSale ? 'Disponível' : 'Indisponível'}
         </p>
 
         <div className="product-page-price">
@@ -121,7 +122,7 @@ export default function ProductPage() {
               type="button"
               className="product-add-to-cart product-add-to-cart-large"
               onClick={handleAddToCart}
-              disabled={isAdding || isCartLoading || productState.product.stockStatus !== 'IN_STOCK'}
+              disabled={isAdding || isCartLoading || !isAvailableForSale}
             >
               {isAdding ? 'Adicionando...' : 'Adicionar ao carrinho'}
             </button>

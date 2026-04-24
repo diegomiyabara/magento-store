@@ -9,6 +9,7 @@ export default function ProductCard({ product, storeConfig }) {
   const regularPrice = product.regularPrice;
   const currency = product.currency;
   const image = product.imageUrl;
+  const isAvailableForSale = product.isAvailableForSale !== false;
   const { addToCart, isLoading: isCartLoading } = useCart();
   const [isAdding, setIsAdding] = useState(false);
   const [addedSuccess, setAddedSuccess] = useState(false);
@@ -34,15 +35,17 @@ export default function ProductCard({ product, storeConfig }) {
   return (
     <article className="product-card">
       <Link className="product-card-media" to={`/produto/${product.urlKey}`}>
-        {image ? (
-          <img
-            src={normalizeMediaUrl(image, storeConfig, apiConfig.mediaBaseUrl)}
-            alt={product.imageLabel || product.name}
-            loading="lazy"
-          />
-        ) : (
-          <div className="product-card-placeholder">Sem imagem</div>
-        )}
+        <div className="product-card-media-frame">
+          {image ? (
+            <img
+              src={normalizeMediaUrl(image, storeConfig, apiConfig.mediaBaseUrl)}
+              alt={product.imageLabel || product.name}
+              loading="lazy"
+            />
+          ) : (
+            <div className="product-card-placeholder">Sem imagem</div>
+          )}
+        </div>
       </Link>
 
       <div className="product-card-body">
@@ -67,13 +70,13 @@ export default function ProductCard({ product, storeConfig }) {
         <button
           className={`product-add-to-cart ${addedSuccess ? 'added' : ''}`}
           onClick={handleAddToCart}
-          disabled={isAdding || isCartLoading || product.stockStatus !== 'IN_STOCK'}
+          disabled={isAdding || isCartLoading || !isAvailableForSale}
         >
           {isAdding ? (
             'Adicionando...'
           ) : addedSuccess ? (
             'Adicionado!'
-          ) : product.stockStatus !== 'IN_STOCK' ? (
+          ) : !isAvailableForSale ? (
             'Indisponível'
           ) : (
             'Adicionar ao carrinho'

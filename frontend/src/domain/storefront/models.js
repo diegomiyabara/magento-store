@@ -40,6 +40,7 @@ export function createProductModel(product) {
   }
 
   const minimumPrice = product.price_range?.minimum_price;
+  const stockStatus = product.stock_status || null;
 
   return {
     uid: product.uid,
@@ -47,7 +48,8 @@ export function createProductModel(product) {
     name: product.name,
     urlKey: product.url_key,
     urlSuffix: product.url_suffix || '',
-    stockStatus: product.stock_status || 'OUT_OF_STOCK',
+    stockStatus,
+    isAvailableForSale: stockStatus ? stockStatus === 'IN_STOCK' : true,
     imageUrl: product.image?.url || product.small_image?.url || '',
     imageLabel: product.image?.label || product.small_image?.label || product.name,
     descriptionHtml: product.description?.html || product.short_description?.html || '',

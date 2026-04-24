@@ -23,6 +23,7 @@ export const CATEGORY_PRODUCTS_QUERY = `
         name
         url_key
         url_suffix
+        stock_status
         short_description {
           html
         }
