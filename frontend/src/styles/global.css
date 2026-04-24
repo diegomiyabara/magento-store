@@ -146,7 +146,7 @@ img {
   gap: 0.75rem;
 }
 
-.header-cart-link {
+.header-user-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -159,7 +159,7 @@ img {
   font-weight: 600;
 }
 
-.header-cart-link:hover {
+.header-user-link:hover {
   background: rgba(255, 141, 58, 0.18);
 }
 
@@ -978,7 +978,7 @@ img {
     flex-wrap: wrap;
   }
 
-  .header-cart-link,
+  .header-user-link,
   .mini-cart-trigger {
     width: 100%;
     justify-content: center;

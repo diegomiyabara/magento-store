@@ -5,20 +5,40 @@ import MiniCart from '../cart/MiniCart';
 export default function Header({ categories, storeConfig, isLoading }) {
   const auth = useAuthController();
 
+  function renderAccountAction() {
+    if (auth.isBootstrapping) {
+      return <span className="header-user-link nav-placeholder">Conta...</span>;
+    }
+
+    if (auth.isAuthenticated) {
+      return (
+        <NavLink className="header-user-link nav-link nav-link-accent" to="/minha-conta">
+          {auth.customer?.firstName || 'Minha conta'}
+        </NavLink>
+      );
+    }
+
+    return (
+      <NavLink className="header-user-link nav-link" to="/login">
+        Entrar
+      </NavLink>
+    );
+  }
+
   return (
     <header className="site-header">
       <div className="promo-strip">
         <div className="container promo-strip-inner">
           <span>5% OFF no PIX</span>
           <span>Envio para todo o Brasil</span>
-          <span>Lancamentos em ambiente headless</span>
+          <span>Compra online com praticidade</span>
         </div>
       </div>
       <div className="container header-bar">
         <Link className="brand" to="/">
           <span className="brand-mark">DM3D</span>
           <span className="brand-copy">
-            <span className="brand-kicker">ART COMMERCE</span>
+            <span className="brand-kicker">LOJA ONLINE</span>
             <span className="brand-text">
               {storeConfig?.storeName || 'DM3D Art'}
             </span>
@@ -41,30 +61,11 @@ export default function Header({ categories, storeConfig, isLoading }) {
           ) : (
             <span className="nav-placeholder">Nenhuma categoria publicada ainda.</span>
           )}
-
-          {auth.isBootstrapping ? (
-            <span className="nav-placeholder">Conta...</span>
-          ) : auth.isAuthenticated ? (
-            <NavLink className="nav-link nav-link-accent" to="/minha-conta">
-              {auth.customer?.firstName || 'Minha conta'}
-            </NavLink>
-          ) : (
-            <>
-              <NavLink className="nav-link" to="/cadastro">
-                Criar conta
-              </NavLink>
-              <NavLink className="nav-link nav-link-accent" to="/login">
-                Entrar
-              </NavLink>
-            </>
-          )}
         </nav>
 
         <div className="header-actions">
-          <Link className="header-cart-link" to="/carrinho">
-            Ver carrinho
-          </Link>
           <MiniCart />
+          {renderAccountAction()}
         </div>
       </div>
     </header>

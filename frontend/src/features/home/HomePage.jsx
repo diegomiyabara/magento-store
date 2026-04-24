@@ -1,59 +1,58 @@
-import { useOutletContext } from 'react-router-dom';
-import CmsContent from '../../components/cms/CmsContent';
+import { Link, useOutletContext } from 'react-router-dom';
 import { InlineErrorState, InlineLoadingState } from '../../components/ui/PageState';
 import ProductCard from '../../components/catalog/ProductCard';
 import { useHomeController } from '../../presentation/controllers/useHomeController';
 
 const fallbackCollections = [
   {
-    title: 'Colecao Nebula',
-    text: 'Uma curadoria com visual cosmico, brilho metalico e pecas de alto impacto.',
+    title: 'Novidades',
+    text: 'Confira os ultimos produtos adicionados a loja.',
+    href: '/#destaques',
   },
   {
-    title: 'Studio Drops',
-    text: 'Lancamentos menores para destacar novidades, kits especiais e edicoes limitadas.',
+    title: 'Mais vendidos',
+    text: 'Produtos com maior procura para facilitar sua escolha.',
+    href: '/#destaques',
   },
   {
-    title: 'Universo DM3D',
-    text: 'Linha principal com atmosfera industrial, acabamento premium e narrativa visual forte.',
+    title: 'Ofertas',
+    text: 'Aproveite as melhores oportunidades para comprar mais pagando menos.',
+    href: '/#destaques',
   },
 ];
 
 const fallbackHighlights = [
-  'Lancamentos com estetica sci-fi e acabamento premium',
-  'Blocos pensados para categorias, colecoes e vitrines sazonais',
-  'Base pronta para evoluir depois para carrinho e checkout headless',
+  'Compra segura',
+  'Envio para todo o Brasil',
+  'Atendimento para pedidos e duvidas',
 ];
 
 export default function HomePage() {
-  const { storeConfig } = useOutletContext();
+  const { storeConfig, navigation } = useOutletContext();
   const home = useHomeController();
+  const featuredCategories = navigation?.slice(0, 3) ?? [];
 
   return (
     <div className="container page-stack">
       <section className="hero-showcase">
         <div className="hero-copy">
-          <p className="eyebrow">DM3D Art Headless Store</p>
-          <h1>Uma vitrine de e-commerce com impacto visual de galaxia industrial.</h1>
+          <p className="eyebrow">Loja online</p>
+          <h1>{storeConfig?.storeName || 'DM3D Tech'}: produtos em destaque para comprar online.</h1>
           <p className="hero-text">
-            Estrutura inspirada em uma flagship fashion commerce, mas reinterpretada
-            com a identidade da DM3D: azul profundo, reflexos cromados e energia neon.
+            Encontre novidades, produtos em destaque e categorias principais em um so lugar.
+            Navegue pela loja e adicione ao carrinho com rapidez.
           </p>
 
           <div className="hero-actions">
-            <a className="button-link button-link-primary" href="#destaques">
-              Ver destaques
-            </a>
-            <a className="button-link" href="#colecoes">
-              Explorar colecoes
-            </a>
+            <a className="button-link button-link-primary" href="#destaques">Ver produtos</a>
+            <a className="button-link" href="#categorias">Ver categorias</a>
           </div>
         </div>
 
         <div className="hero-orb">
           <div className="hero-orb-core">
             <span>DM3D</span>
-            <small>ART</small>
+            <small>STORE</small>
           </div>
         </div>
       </section>
@@ -66,27 +65,43 @@ export default function HomePage() {
         ))}
       </section>
 
-      <section className="section-heading" id="colecoes">
+      <section className="section-heading" id="categorias">
         <div>
-          <p className="eyebrow">Colecoes em destaque</p>
-          <h2>Blocos editoriais para campanhas, categorias e narrativas de marca.</h2>
+          <p className="eyebrow">Categorias</p>
+          <h2>Compre por categoria.</h2>
         </div>
       </section>
 
       <section className="collection-grid">
-        {fallbackCollections.map((collection, index) => (
-          <article className={`collection-card collection-card-${index + 1}`} key={collection.title}>
-            <p className="eyebrow">Curadoria</p>
-            <h3>{collection.title}</h3>
-            <p>{collection.text}</p>
-          </article>
-        ))}
+        {featuredCategories.length
+          ? featuredCategories.map((category, index) => (
+              <Link
+                className={`collection-card collection-card-${(index % 3) + 1}`}
+                key={category.uid}
+                to={`/categoria/${category.urlKey}`}
+              >
+                <p className="eyebrow">Categoria</p>
+                <h3>{category.name}</h3>
+                <p>Veja os produtos disponiveis nesta categoria.</p>
+              </Link>
+            ))
+          : fallbackCollections.map((collection, index) => (
+              <a
+                className={`collection-card collection-card-${index + 1}`}
+                key={collection.title}
+                href={collection.href}
+              >
+                <p className="eyebrow">Destaque</p>
+                <h3>{collection.title}</h3>
+                <p>{collection.text}</p>
+              </a>
+            ))}
       </section>
 
       <section className="section-heading" id="destaques">
         <div>
-          <p className="eyebrow">Vitrine principal</p>
-          <h2>Produtos em evidência para compor a homepage da loja.</h2>
+          <p className="eyebrow">Produtos em destaque</p>
+          <h2>Escolha seus produtos e adicione ao carrinho.</h2>
         </div>
       </section>
 
@@ -106,39 +121,23 @@ export default function HomePage() {
       ) : (
         <section className="editorial-panel">
           <div>
-            <p className="eyebrow">Catalogo aguardando produtos</p>
-            <h3>A estrutura de vitrine ja esta pronta.</h3>
+            <p className="eyebrow">Catalogo vazio</p>
+            <h3>Nenhum produto em destaque foi encontrado.</h3>
           </div>
           <p>
-            Assim que voce cadastrar itens e categorias no Magento, esta area passa
-            a exibir cards reais do catalogo automaticamente.
+            Cadastre produtos no Magento para exibir a vitrine principal da loja nesta pagina.
           </p>
         </section>
       )}
-
-      {home.isLoading && !home.isReady ? (
-        <InlineLoadingState title="Carregando conteudo do Magento..." />
-      ) : home.error ? (
-        <InlineErrorState
-          title="Nao foi possivel carregar o conteudo dinamico."
-          detail={home.error.message}
-        />
-      ) : (
-        <CmsContent
-          title={home.cmsPage?.title}
-          content={home.cmsPage?.content}
-        />
-      )}
-
       <section className="editorial-panel editorial-panel-split">
         <div>
-          <p className="eyebrow">Experiencia de compra</p>
-          <h3>Base para um e-commerce premium, modular e expansivel.</h3>
+          <p className="eyebrow">Compre com facilidade</p>
+          <h3>Uma home mais direta para ajudar o cliente a encontrar o que procura.</h3>
         </div>
         <div className="editorial-list">
-          <p>Home editorial com seções de campanha e prova social visual.</p>
-          <p>Navegacao superior para categorias e futuras colecoes.</p>
-          <p>Cards de produto prontos para receber wishlist, quick buy e badges.</p>
+          <p>Acesso rapido as principais categorias da loja.</p>
+          <p>Produtos em destaque logo na primeira tela.</p>
+          <p>Carrinho e conta sempre visiveis no topo.</p>
         </div>
       </section>
     </div>
