@@ -1,5 +1,5 @@
 {
-    "name": "magento/project-community-edition",
+    "name": "mage-os/project-community-edition",
     "description": "eCommerce Platform for Growth (Community Edition)",
     "type": "project",
     "license": [
@@ -10,6 +10,9 @@
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "laminas/laminas-dependency-plugin": true,
+            "mage-os/composer-dependency-version-audit-plugin": true,
+            "mage-os/inventory-composer-installer": true,
+            "mage-os/magento-composer-installer": true,
             "magento/*": true,
             "php-http/discovery": true
         },
@@ -19,9 +22,7 @@
     "version": "2.4.8-p4",
     "require": {
         "imaginationmedia/correios": "^1.2",
-        "magento/composer-dependency-version-audit-plugin": "~0.1",
-        "magento/composer-root-update-plugin": "^2.0.4",
-        "magento/product-community-edition": "2.4.8-p4"
+        "mage-os/product-community-edition": "^3.0"
     },
     "autoload": {
         "exclude-from-classmap": [
@@ -39,23 +40,25 @@
             ]
         },
         "psr-4": {
+            "MageOS\\Installer\\": "setup/src/MageOS/Installer/",
             "Magento\\Setup\\": "setup/src/Magento/Setup/"
         }
     },
     "require-dev": {
-        "allure-framework/allure-phpunit": "^3.1",
+        "allure-framework/allure-phpunit": "*",
         "carlos-mg89/oauth": "^0.8.17",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7 || ^1.0",
         "dg/bypass-finals": "^1.4",
         "friendsofphp/php-cs-fixer": "^3.22",
+        "magento/magento-allure-phpunit": "^3.0.2",
         "magento/magento-coding-standard": "*",
-        "magento/magento2-functional-testing-framework": "^5.0",
+        "magento/magento2-functional-testing-framework": "*",
         "pdepend/pdepend": "3.x-dev",
         "phpmd/phpmd": "3.x-dev",
-        "phpstan/phpstan": "^1.9",
-        "phpunit/phpunit": "^10.5",
-        "symfony/finder": "^6.4",
-        "magento/magento-allure-phpunit": "^3.0.2"
+        "phpstan/phpstan": "*",
+        "phpunit/phpunit": "*",
+        "sebastian/phpcpd": "*",
+        "symfony/finder": "^7.4"
     },
     "conflict": {
         "gene/bluefoot": "*"
@@ -72,12 +75,16 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
-    "repositories": [
-        {
+    "repositories": {
+        "mage-os": {
+            "type": "composer",
+            "url": "https://repo.mage-os.org/"
+        },
+        "0": {
             "type": "composer",
             "url": "https://repo.magento.com/"
         }
-    ],
+    },
     "extra": {
         "magento-force": "override"
     }
