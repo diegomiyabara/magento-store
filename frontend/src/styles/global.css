@@ -1010,6 +1010,112 @@ img {
   color: var(--accent-soft);
 }
 
+.product-shipping-box {
+  display: grid;
+  gap: 0.9rem;
+  margin-bottom: 1.5rem;
+  padding: 1.15rem 1.25rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.product-shipping-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.9rem;
+  align-items: end;
+}
+
+.product-shipping-field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.product-shipping-field span {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.product-shipping-field input {
+  min-height: 48px;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  background: rgba(7, 12, 20, 0.58);
+  color: var(--text);
+}
+
+.product-shipping-field input:focus {
+  outline: 2px solid rgba(75, 167, 255, 0.35);
+  outline-offset: 2px;
+}
+
+.product-shipping-submit {
+  min-height: 48px;
+  padding: 0.85rem 1.25rem;
+  border: none;
+  border-radius: 12px;
+  background: rgba(75, 167, 255, 0.18);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.product-shipping-submit:hover:not(:disabled) {
+  background: rgba(75, 167, 255, 0.28);
+}
+
+.product-shipping-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.product-shipping-caption {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.94rem;
+}
+
+.product-shipping-error {
+  margin: 0;
+  color: #ff9f8f;
+}
+
+.product-shipping-results {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.product-shipping-method {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.95rem 1rem;
+  border: 1px solid rgba(75, 167, 255, 0.18);
+  border-radius: 14px;
+  background: rgba(75, 167, 255, 0.06);
+}
+
+.product-shipping-method strong {
+  display: block;
+}
+
+.product-shipping-method p {
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.product-shipping-method span {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .site-footer {
   border-top: 1px solid var(--surface-border);
   background: rgba(7, 12, 20, 0.48);
@@ -1083,6 +1189,10 @@ img {
   }
 
   .product-page-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .product-shipping-form {
     grid-template-columns: 1fr;
   }
 

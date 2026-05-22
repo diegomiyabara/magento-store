@@ -15,7 +15,11 @@ export const CATEGORY_BY_URL_KEY_QUERY = `
 
 export const CATEGORY_PRODUCTS_QUERY = `
   query CategoryProductsQuery($categoryId: String!) {
-    products(filter: { category_id: { eq: $categoryId } }, pageSize: 24) {
+    products(
+      filter: { category_id: { eq: $categoryId } }
+      pageSize: 24
+      sort: { name: ASC }
+    ) {
       total_count
       items {
         uid

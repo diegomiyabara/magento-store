@@ -60,6 +60,7 @@ export async function executeMagentoQuery(query, variables = {}, options = {}) {
 
   const response = await fetch(apiConfig.graphqlUrl, {
     method: 'POST',
+    credentials: 'omit',
     headers: {
       'Content-Type': 'application/json',
       Store: apiConfig.storeCode,
