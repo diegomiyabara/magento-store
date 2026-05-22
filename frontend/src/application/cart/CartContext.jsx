@@ -67,10 +67,12 @@ export function CartProvider({ children }) {
   }, []);
 
   const syncCart = useCallback((cart, { persistGuest = !auth.token } = {}) => {
-    const nextCartId = cart?.id || null;
+    const nextCartId = persistGuest ? (cart?.id || null) : null;
 
     if (persistGuest) {
       persistGuestCartId(nextCartId);
+    } else {
+      persistGuestCartId(null);
     }
 
     dispatch({ type: 'INIT_CART', payload: { cartId: nextCartId } });
@@ -95,7 +97,7 @@ export function CartProvider({ children }) {
     async function loadCart() {
       dispatch({ type: 'SET_LOADING', payload: { isLoading: true } });
 
-      const guestCartId = state.cartId;
+      const guestCartId = localStorage.getItem(CART_STORAGE_KEY);
 
       try {
         if (auth.token) {
@@ -154,6 +156,19 @@ export function CartProvider({ children }) {
     }
   }, [syncCart, useCases]);
 
+  const resolveActiveCartId = useCallback(async (signal) => {
+    if (auth.token) {
+      if (state.cart?.id) {
+        return state.cart.id;
+      }
+
+      const customerCart = await useCases.getCustomerCart(auth.token, signal);
+      return customerCart?.id || null;
+    }
+
+    return state.cartId || state.cart?.id || null;
+  }, [auth.token, state.cart?.id, state.cartId, useCases]);
+
   const addToCart = useCallback(async (product, quantity = 1, signal) => {
     let cartId = state.cartId;
 
@@ -172,13 +187,9 @@ export function CartProvider({ children }) {
         },
       ];
 
-      const resolvedCartId = cartId || state.cart?.id || null;
-      let targetCartId = resolvedCartId;
-
-      if (!targetCartId && auth.token) {
-        const customerCart = await useCases.getCustomerCart(auth.token, signal);
-        targetCartId = customerCart?.id || null;
-      }
+      let targetCartId = auth.token
+        ? await resolveActiveCartId(signal)
+        : cartId || state.cart?.id || null;
 
       if (!targetCartId) {
         throw new Error('Falha ao localizar um carrinho válido.');
@@ -191,67 +202,75 @@ export function CartProvider({ children }) {
       dispatch({ type: 'SET_ERROR', payload: { error: error.message } });
       throw error;
     }
-  }, [state.cartId, state.cart?.id, auth.token, createCart, syncCart, useCases]);
+  }, [state.cartId, state.cart?.id, auth.token, createCart, resolveActiveCartId, syncCart, useCases]);
 
   const updateItemQuantity = useCallback(async (cartItemUid, quantity, signal) => {
-    if (!state.cartId) return;
-
     dispatch({ type: 'SET_LOADING', payload: { isLoading: true } });
 
     try {
-      const cart = await useCases.updateCartItem(state.cartId, cartItemUid, quantity, auth.token, signal);
+      const cartId = await resolveActiveCartId(signal);
+
+      if (!cartId) return;
+
+      const cart = await useCases.updateCartItem(cartId, cartItemUid, quantity, auth.token, signal);
       syncCart(cart, { persistGuest: !auth.token });
       return cart;
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: { error: error.message } });
       throw error;
     }
-  }, [state.cartId, auth.token, syncCart, useCases]);
+  }, [auth.token, resolveActiveCartId, syncCart, useCases]);
 
   const removeFromCart = useCallback(async (cartItemUid, signal) => {
-    if (!state.cartId) return;
-
     dispatch({ type: 'SET_LOADING', payload: { isLoading: true } });
 
     try {
-      const cart = await useCases.removeCartItem(state.cartId, cartItemUid, auth.token, signal);
+      const cartId = await resolveActiveCartId(signal);
+
+      if (!cartId) return;
+
+      const cart = await useCases.removeCartItem(cartId, cartItemUid, auth.token, signal);
       syncCart(cart, { persistGuest: !auth.token });
       return cart;
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: { error: error.message } });
       throw error;
     }
-  }, [state.cartId, auth.token, syncCart, useCases]);
+  }, [auth.token, resolveActiveCartId, syncCart, useCases]);
 
   const applyCoupon = useCallback(async (couponCode, signal) => {
-    if (!state.cartId) return;
-
     dispatch({ type: 'SET_LOADING', payload: { isLoading: true } });
 
     try {
-      const cart = await useCases.applyCouponToCart(state.cartId, couponCode, auth.token, signal);
+      const cartId = await resolveActiveCartId(signal);
+
+      if (!cartId) return;
+
+      const cart = await useCases.applyCouponToCart(cartId, couponCode, auth.token, signal);
       syncCart(cart, { persistGuest: !auth.token });
       return cart;
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: { error: error.message } });
       throw error;
     }
-  }, [state.cartId, auth.token, syncCart, useCases]);
+  }, [auth.token, resolveActiveCartId, syncCart, useCases]);
 
   const removeCoupon = useCallback(async (signal) => {
-    if (!state.cartId) return;
-
     dispatch({ type: 'SET_LOADING', payload: { isLoading: true } });
 
     try {
-      const cart = await useCases.removeCouponFromCart(state.cartId, auth.token, signal);
+      const cartId = await resolveActiveCartId(signal);
+
+      if (!cartId) return;
+
+      const cart = await useCases.removeCouponFromCart(cartId, auth.token, signal);
       syncCart(cart, { persistGuest: !auth.token });
       return cart;
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: { error: error.message } });
       throw error;
     }
-  }, [state.cartId, auth.token, syncCart, useCases]);
+  }, [auth.token, resolveActiveCartId, syncCart, useCases]);
 
   const clearCart = useCallback(() => {
     persistGuestCartId(null);

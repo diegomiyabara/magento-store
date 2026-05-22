@@ -1,7 +1,7 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * Copyright 2014 Adobe
+ * All Rights Reserved.
  */
 
 use Laminas\Http\PhpEnvironment\Request;
@@ -41,7 +41,7 @@ $metaClass = $objectManager->create(ProductMetadata::class);
 /** @var License $license */
 $license = $licenseClass->getContents();
 /** @var ProductMetadata $version */
-$version = $metaClass->getVersion();
+$version = $metaClass->getDistributionVersion();
 
 $request = new Request();
 $basePath = $request->getBasePath();

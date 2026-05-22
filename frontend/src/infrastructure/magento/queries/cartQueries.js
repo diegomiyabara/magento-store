@@ -268,7 +268,7 @@ export const MERGE_CARTS_MUTATION = `
 `;
 
 export const ESTIMATE_SHIPPING_METHODS_MUTATION = `
-  mutation EstimateShippingMethodsMutation($cartId: String!, $address: CartAddressInput!) {
+  mutation EstimateShippingMethodsMutation($cartId: String!, $address: EstimateAddressInput!) {
     estimateShippingMethods(input: { cart_id: $cartId, address: $address }) {
       ${AVAILABLE_SHIPPING_METHOD_FIELDS}
     }

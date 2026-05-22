@@ -21,6 +21,7 @@ n98-magerun2.phar.sha256
 
 # Magento dependencies and generated files
 vendor/
+dev/
 generated/
 var/
 pub/static/
