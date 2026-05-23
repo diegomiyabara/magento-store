@@ -27005,30 +27005,28 @@
     "packages-dev": [
         {
             "name": "allure-framework/allure-codeception",
-            "version": "v2.4.0",
+            "version": "v2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/allure-framework/allure-codeception.git",
-                "reference": "854320894b5e65952eb0cafd1555e9efb4543350"
+                "reference": "c32f7bfb559b877ce1c5fbaeda18b53731610c4f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/allure-framework/allure-codeception/zipball/854320894b5e65952eb0cafd1555e9efb4543350",
-                "reference": "854320894b5e65952eb0cafd1555e9efb4543350",
+                "url": "https://api.github.com/repos/allure-framework/allure-codeception/zipball/c32f7bfb559b877ce1c5fbaeda18b53731610c4f",
+                "reference": "c32f7bfb559b877ce1c5fbaeda18b53731610c4f",
                 "shasum": ""
             },
             "require": {
-                "allure-framework/allure-php-commons": "^2.3.1",
+                "allure-framework/allure-php-commons": "^2.4.0",
                 "codeception/codeception": "^5.0.3",
                 "ext-json": "*",
                 "php": "^8"
             },
             "require-dev": {
-                "psalm/plugin-phpunit": "^0.19.0",
-                "remorhaz/php-json-data": "^0.5.3",
-                "remorhaz/php-json-path": "^0.7.7",
-                "squizlabs/php_codesniffer": "^3.7.2",
-                "vimeo/psalm": "^5.12"
+                "psalm/plugin-phpunit": "^0.19.0 || ^0.20.1",
+                "squizlabs/php_codesniffer": "^4.0.1",
+                "vimeo/psalm": "^5.26.1 || ^6.16.1"
             },
             "type": "library",
             "autoload": {
@@ -27068,20 +27066,20 @@
                 "issues": "https://github.com/allure-framework/allure-codeception/issues",
                 "source": "https://github.com/allure-framework/allure-codeception"
             },
-            "time": "2024-05-28T09:54:01+00:00"
+            "time": "2026-05-01T15:12:25+00:00"
         },
         {
             "name": "allure-framework/allure-php-commons",
-            "version": "v2.3.1",
+            "version": "v2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/allure-framework/allure-php-commons2.git",
-                "reference": "5d7ed5ab510339652163ca1473eb499d4b7ec488"
+                "reference": "30bfd2a2f97d4edfe37a4cf05be4a5234ad87ed4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/allure-framework/allure-php-commons2/zipball/5d7ed5ab510339652163ca1473eb499d4b7ec488",
-                "reference": "5d7ed5ab510339652163ca1473eb499d4b7ec488",
+                "url": "https://api.github.com/repos/allure-framework/allure-php-commons2/zipball/30bfd2a2f97d4edfe37a4cf05be4a5234ad87ed4",
+                "reference": "30bfd2a2f97d4edfe37a4cf05be4a5234ad87ed4",
                 "shasum": ""
             },
             "require": {
@@ -27099,7 +27097,7 @@
                 "phpunit/phpunit": "^9.6.8",
                 "psalm/plugin-phpunit": "^0.18.4",
                 "squizlabs/php_codesniffer": "^3.7.2",
-                "vimeo/psalm": "^5.12"
+                "vimeo/psalm": "^5.17"
             },
             "type": "library",
             "autoload": {
@@ -27125,7 +27123,7 @@
                 }
             ],
             "description": "Allure PHP commons",
-            "homepage": "http://allure.qatools.ru/",
+            "homepage": "https://allurereport.org/",
             "keywords": [
                 "allure",
                 "commons",
@@ -27138,20 +27136,97 @@
                 "issues": "https://github.com/allure-framework/allure-php-commons2/issues",
                 "source": "https://github.com/allure-framework/allure-php-commons"
             },
-            "time": "2023-05-30T10:55:43+00:00"
+            "time": "2026-04-29T08:02:46+00:00"
         },
         {
-            "name": "behat/gherkin",
-            "version": "v4.16.1",
+            "name": "allure-framework/allure-phpunit",
+            "version": "v3.3.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Behat/Gherkin.git",
-                "reference": "e26037937dfd48528746764dd870bc5d0836665f"
+                "url": "https://github.com/allure-framework/allure-phpunit.git",
+                "reference": "38371ef307c11bf148a5c2a3353f49d9c39c3344"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Behat/Gherkin/zipball/e26037937dfd48528746764dd870bc5d0836665f",
-                "reference": "e26037937dfd48528746764dd870bc5d0836665f",
+                "url": "https://api.github.com/repos/allure-framework/allure-phpunit/zipball/38371ef307c11bf148a5c2a3353f49d9c39c3344",
+                "reference": "38371ef307c11bf148a5c2a3353f49d9c39c3344",
+                "shasum": ""
+            },
+            "require": {
+                "allure-framework/allure-php-commons": "^2.4",
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+                "phpunit/phpunit": "^10.0.5 || ^11 || ^12.0.1 || ^13"
+            },
+            "conflict": {
+                "amphp/byte-stream": "<1.5.1",
+                "amphp/cache": "<2.0.1",
+                "amphp/dns": "<2.2.0",
+                "amphp/parser": "<1.1.1",
+                "amphp/process": "<2.0.3",
+                "amphp/socket": "<2.3.1",
+                "brianium/paratest": "<7.0.3",
+                "daverandom/libdns": "<2.1.0",
+                "ramsey/uuid": "<4.3.0",
+                "spatie/array-to-xml": "<3.3.0"
+            },
+            "require-dev": {
+                "brianium/paratest": "^7",
+                "psalm/plugin-phpunit": "^0.19.5",
+                "squizlabs/php_codesniffer": "^3.7.2",
+                "vimeo/psalm": "^6.14.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Qameta\\Allure\\PHPUnit\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Ivan Krutov",
+                    "email": "vania-pooh@yandex-team.ru",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Edward Surov",
+                    "email": "zoohie@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Allure PHPUnit integration",
+            "homepage": "https://allurereport.org/",
+            "keywords": [
+                "allure",
+                "attachments",
+                "cases",
+                "phpunit",
+                "report",
+                "steps",
+                "testing"
+            ],
+            "support": {
+                "email": "allure@qameta.io",
+                "issues": "https://github.com/allure-framework/allure-phpunit/issues",
+                "source": "https://github.com/allure-framework/allure-phpunit"
+            },
+            "time": "2026-04-29T15:20:12+00:00"
+        },
+        {
+            "name": "behat/gherkin",
+            "version": "v4.17.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Behat/Gherkin.git",
+                "reference": "5c8b3149fac39b5a79942b64eeec59a5ee4001c0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Behat/Gherkin/zipball/5c8b3149fac39b5a79942b64eeec59a5ee4001c0",
+                "reference": "5c8b3149fac39b5a79942b64eeec59a5ee4001c0",
                 "shasum": ""
             },
             "require": {
@@ -27159,7 +27234,7 @@
                 "php": ">=8.1 <8.6"
             },
             "require-dev": {
-                "cucumber/gherkin-monorepo": "dev-gherkin-v37.0.0",
+                "cucumber/gherkin-monorepo": "dev-gherkin-v39.1.0",
                 "friendsofphp/php-cs-fixer": "^3.77",
                 "mikey179/vfsstream": "^1.6",
                 "phpstan/extension-installer": "^1",
@@ -27205,7 +27280,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Behat/Gherkin/issues",
-                "source": "https://github.com/Behat/Gherkin/tree/v4.16.1"
+                "source": "https://github.com/Behat/Gherkin/tree/v4.17.0"
             },
             "funding": [
                 {
@@ -27221,7 +27296,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-12-08T16:12:58+00:00"
+            "time": "2026-05-18T09:33:47+00:00"
         },
         {
             "name": "carlos-mg89/oauth",
@@ -27816,16 +27891,16 @@
         },
         {
             "name": "dealerdirect/phpcodesniffer-composer-installer",
-            "version": "v1.2.0",
+            "version": "v1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCSStandards/composer-installer.git",
-                "reference": "845eb62303d2ca9b289ef216356568ccc075ffd1"
+                "reference": "963f0c67bffde0eac41b56be71ac0e8ba132f0bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCSStandards/composer-installer/zipball/845eb62303d2ca9b289ef216356568ccc075ffd1",
-                "reference": "845eb62303d2ca9b289ef216356568ccc075ffd1",
+                "url": "https://api.github.com/repos/PHPCSStandards/composer-installer/zipball/963f0c67bffde0eac41b56be71ac0e8ba132f0bd",
+                "reference": "963f0c67bffde0eac41b56be71ac0e8ba132f0bd",
                 "shasum": ""
             },
             "require": {
@@ -27908,7 +27983,7 @@
                     "type": "thanks_dev"
                 }
             ],
-            "time": "2025-11-11T04:32:07+00:00"
+            "time": "2026-05-06T08:26:05+00:00"
         },
         {
             "name": "dg/bypass-finals",
@@ -28042,42 +28117,42 @@
         },
         {
             "name": "ergebnis/agent-detector",
-            "version": "1.1.1",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ergebnis/agent-detector.git",
-                "reference": "5b654a9f1ff8a5d2ce6a57568df5ae8801c87f64"
+                "reference": "e211f17928c8b95a51e06040792d57f5462fb271"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ergebnis/agent-detector/zipball/5b654a9f1ff8a5d2ce6a57568df5ae8801c87f64",
-                "reference": "5b654a9f1ff8a5d2ce6a57568df5ae8801c87f64",
+                "url": "https://api.github.com/repos/ergebnis/agent-detector/zipball/e211f17928c8b95a51e06040792d57f5462fb271",
+                "reference": "e211f17928c8b95a51e06040792d57f5462fb271",
                 "shasum": ""
             },
             "require": {
                 "php": "~7.4.0 || ~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0 || ~8.6.0"
             },
             "require-dev": {
-                "ergebnis/composer-normalize": "^2.50.0",
+                "ergebnis/composer-normalize": "^2.51.0",
                 "ergebnis/license": "^2.7.0",
                 "ergebnis/php-cs-fixer-config": "^6.60.2",
                 "ergebnis/phpstan-rules": "^2.13.1",
                 "ergebnis/phpunit-slow-test-detector": "^2.24.0",
-                "ergebnis/rector-rules": "^1.16.0",
+                "ergebnis/rector-rules": "^1.18.1",
                 "fakerphp/faker": "^1.24.1",
                 "infection/infection": "^0.26.6",
                 "phpstan/extension-installer": "^1.4.3",
-                "phpstan/phpstan": "^2.1.46",
+                "phpstan/phpstan": "^2.1.54",
                 "phpstan/phpstan-deprecation-rules": "^2.0.4",
                 "phpstan/phpstan-phpunit": "^2.0.16",
                 "phpstan/phpstan-strict-rules": "^2.0.10",
                 "phpunit/phpunit": "^9.6.34",
-                "rector/rector": "^2.4.1"
+                "rector/rector": "^2.4.2"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "1.0-dev"
+                    "dev-main": "1.2-dev"
                 },
                 "composer-normalize": {
                     "indent-size": 2,
@@ -28107,7 +28182,7 @@
                 "security": "https://github.com/ergebnis/agent-detector/blob/main/.github/SECURITY.md",
                 "source": "https://github.com/ergebnis/agent-detector"
             },
-            "time": "2026-04-10T13:45:13+00:00"
+            "time": "2026-05-07T08:19:07+00:00"
         },
         {
             "name": "evenement/evenement",
@@ -28219,16 +28294,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.95.1",
+            "version": "v3.95.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "a9727678fbd12997f1d9de8f4a37824ed9df1065"
+                "reference": "a28d88a5e172b27e78d0816992b15a9df3da20f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/a9727678fbd12997f1d9de8f4a37824ed9df1065",
-                "reference": "a9727678fbd12997f1d9de8f4a37824ed9df1065",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/a28d88a5e172b27e78d0816992b15a9df3da20f1",
+                "reference": "a28d88a5e172b27e78d0816992b15a9df3da20f1",
                 "shasum": ""
             },
             "require": {
@@ -28260,8 +28335,8 @@
                 "symfony/stopwatch": "^5.4.45 || ^6.4.24 || ^7.0 || ^8.0"
             },
             "require-dev": {
-                "facile-it/paraunit": "^1.3.1 || ^2.8.0",
-                "infection/infection": "^0.32.6",
+                "facile-it/paraunit": "^1.3.1 || ^2.11.0",
+                "infection/infection": "^0.32.7",
                 "justinrainbow/json-schema": "^6.8.0",
                 "keradus/cli-executor": "^2.3",
                 "mikey179/vfsstream": "^1.6.12",
@@ -28312,7 +28387,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.95.1"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.95.2"
             },
             "funding": [
                 {
@@ -28320,7 +28395,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-12T17:00:09+00:00"
+            "time": "2026-05-15T09:20:44+00:00"
         },
         {
             "name": "laminas/laminas-diactoros",
@@ -28411,18 +28486,12 @@
             "time": "2025-10-12T15:31:36+00:00"
         },
         {
-            "name": "magento/magento-allure-phpunit",
-            "version": "3.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/magento/magento-allure-phpunit.git",
-                "reference": "5b98b1165f7c8a50e3118a2094ea171ba2039054"
-            },
+            "name": "mage-os/magento-allure-phpunit",
+            "version": "2.3.0",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/magento-allure-phpunit/zipball/5b98b1165f7c8a50e3118a2094ea171ba2039054",
-                "reference": "5b98b1165f7c8a50e3118a2094ea171ba2039054",
-                "shasum": ""
+                "url": "https://repo.mage-os.org/packages/mage-os/magento-allure-phpunit-2.3.0.zip",
+                "shasum": "3f90a1580e6b0acd1cdc13ff622978ff66c998db"
             },
             "require": {
                 "allure-framework/allure-php-commons": "^2",
@@ -28434,7 +28503,7 @@
                 "brianium/paratest": "<7.0.3"
             },
             "replace": {
-                "allure-framework/allure-phpunit": "^3.0"
+                "magento/magento-allure-phpunit": "3.0.2"
             },
             "require-dev": {
                 "brianium/paratest": "^7",
@@ -28448,7 +28517,76 @@
                     "Qameta\\Allure\\PHPUnit\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-0": {
+                    "Yandex": "test/"
+                },
+                "psr-4": {
+                    "Qameta\\Allure\\PHPUnit\\Test\\Unit\\": "test/unit/",
+                    "Qameta\\Allure\\PHPUnit\\Test\\Report\\": "test/report/"
+                }
+            },
+            "scripts": {
+                "test-cs": [
+                    "vendor/bin/phpcs -sp"
+                ],
+                "test-unit": [
+                    "vendor/bin/phpunit --coverage-text"
+                ],
+                "test-unit-lowest": [
+                    "vendor/bin/phpunit --configuration=phpunit.10.0.xml --coverage-text"
+                ],
+                "clear-allure-results": [
+                    "rm -rf ./build/allure-results"
+                ],
+                "test-report": [
+                    "@clear-allure-results",
+                    "vendor/bin/paratest --processes=3 --configuration=phpunit.report.xml --testsuite=positive",
+                    "vendor/bin/paratest --processes=3 --configuration=phpunit.report.xml --testsuite=negative; exit 0"
+                ],
+                "test-report-lowest": [
+                    "@clear-allure-results",
+                    "vendor/bin/paratest --processes=3 --configuration=phpunit.10.0.report.xml --testsuite=positive",
+                    "vendor/bin/paratest --processes=3 --configuration=phpunit.10.0.report.xml --testsuite=negative; exit 0"
+                ],
+                "test-report-windows": [
+                    "@clear-allure-results",
+                    "vendor/bin/paratest --processes=3 --configuration=phpunit.report.xml --testsuite=positive",
+                    "vendor/bin/paratest --processes=3 --configuration=phpunit.report.xml --testsuite=negative & exit 0"
+                ],
+                "test-report-windows-lowest": [
+                    "@clear-allure-results",
+                    "vendor/bin/paratest --processes=3 --configuration=phpunit.10.0.report.xml --testsuite=positive",
+                    "vendor/bin/paratest --processes=3 --configuration=phpunit.10.0.report.xml --testsuite=negative & exit 0"
+                ],
+                "test-psalm": [
+                    "vendor/bin/psalm --shepherd"
+                ],
+                "test": [
+                    "@test-cs",
+                    "@test-unit",
+                    "@test-report",
+                    "@test-psalm"
+                ],
+                "test-lowest": [
+                    "@test-cs",
+                    "@test-unit-lowest",
+                    "@test-report-lowest",
+                    "@test-psalm"
+                ],
+                "test-windows": [
+                    "@test-cs",
+                    "@test-unit",
+                    "@test-report-windows",
+                    "@test-psalm"
+                ],
+                "test-windows-lowest": [
+                    "@test-cs",
+                    "@test-unit-lowest",
+                    "@test-report-windows-lowest",
+                    "@test-psalm"
+                ]
+            },
             "license": [
                 "Apache-2.0"
             ],
@@ -28478,32 +28616,28 @@
             "support": {
                 "email": "allure@qameta.io",
                 "source": "https://github.com/allure-framework/allure-phpunit"
-            },
-            "time": "2025-02-26T05:42:29+00:00"
+            }
         },
         {
-            "name": "magento/magento-coding-standard",
-            "version": "40",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/magento/magento-coding-standard.git",
-                "reference": "808617f36009f0c9d6ca867c3d7322fdd0924186"
-            },
+            "name": "mage-os/magento-coding-standard",
+            "version": "3.0.0",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/magento-coding-standard/zipball/808617f36009f0c9d6ca867c3d7322fdd0924186",
-                "reference": "808617f36009f0c9d6ca867c3d7322fdd0924186",
-                "shasum": ""
+                "url": "https://repo.mage-os.org/packages/mage-os/magento-coding-standard-3.0.0.zip",
+                "shasum": "6456389d671b74460feb54468c1857360e10b56b"
             },
             "require": {
                 "ext-dom": "*",
                 "ext-simplexml": "*",
-                "magento/php-compatibility-fork": "^0.1",
+                "mage-os/php-compatibility-fork": "3.0.0",
                 "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
                 "phpcsstandards/phpcsutils": "^1.2.2",
                 "rector/rector": "^1.2.4 || ^2.0.0",
                 "squizlabs/php_codesniffer": "^3.10.2",
                 "webonyx/graphql-php": "^15.0"
+            },
+            "replace": {
+                "magento/magento-coding-standard": "40"
             },
             "require-dev": {
                 "phpunit/phpunit": "^9.6.20",
@@ -28511,39 +28645,40 @@
             },
             "type": "phpcodesniffer-standard",
             "autoload": {
+                "classmap": [
+                    "PHP_CodeSniffer/Tokenizers/"
+                ],
                 "psr-4": {
                     "Magento2\\": "Magento2/",
                     "Magento2Framework\\": "Magento2Framework/"
-                },
-                "classmap": [
-                    "PHP_CodeSniffer/Tokenizers/"
+                }
+            },
+            "autoload-dev": {
+                "files": [
+                    "PHP_CodeSniffer/Tests/Standards/AbstractSniffUnitTest.php"
                 ]
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "scripts": {
+                "post-install-cmd": [
+                    "vendor/bin/phpcs --config-set installed_paths ../../..,../../magento/php-compatibility-fork/PHPCompatibility"
+                ],
+                "post-update-cmd": [
+                    "vendor/bin/phpcs --config-set installed_paths ../../..,../../magento/php-compatibility-fork/PHPCompatibility"
+                ]
+            },
             "license": [
                 "OSL-3.0",
                 "AFL-3.0"
             ],
-            "description": "A set of Magento specific PHP CodeSniffer rules.",
-            "support": {
-                "issues": "https://github.com/magento/magento-coding-standard/issues",
-                "source": "https://github.com/magento/magento-coding-standard/tree/v40"
-            },
-            "time": "2026-03-06T05:38:38+00:00"
+            "description": "A set of Magento specific PHP CodeSniffer rules."
         },
         {
-            "name": "magento/magento2-functional-testing-framework",
-            "version": "5.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/magento/magento2-functional-testing-framework.git",
-                "reference": "e75f0077ca96ef4ee693ceb39c6e31cb500cf062"
-            },
+            "name": "mage-os/magento2-functional-testing-framework",
+            "version": "3.0.0",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/magento2-functional-testing-framework/zipball/e75f0077ca96ef4ee693ceb39c6e31cb500cf062",
-                "reference": "e75f0077ca96ef4ee693ceb39c6e31cb500cf062",
-                "shasum": ""
+                "url": "https://repo.mage-os.org/packages/mage-os/magento2-functional-testing-framework-3.0.0.zip",
+                "shasum": "39ebaaa3b9d2f6667728307ef5bbe70f82ef17ea"
             },
             "require": {
                 "allure-framework/allure-codeception": "^2.1",
@@ -28577,11 +28712,14 @@
                 "symfony/string": "^6.4||^7.4",
                 "weew/helpers-array": "^1.3"
             },
+            "replace": {
+                "magento/magento2-functional-testing-framework": "6.0.1"
+            },
             "require-dev": {
                 "brainmaestro/composer-git-hooks": "^3.0",
                 "php-coveralls/php-coveralls": "^1.0||^2.2",
                 "phpmd/phpmd": "^2.8.0",
-                "phpunit/phpunit": "^10.0",
+                "phpunit/phpunit": "^12.0",
                 "squizlabs/php_codesniffer": "~3.11.0"
             },
             "suggest": {
@@ -28601,12 +28739,24 @@
                     "src/Magento/FunctionalTestingFramework/_bootstrap.php"
                 ],
                 "psr-4": {
-                    "MFTF\\": "dev/tests/functional/tests/MFTF",
                     "Magento\\FunctionalTestingFramework\\": "src/Magento/FunctionalTestingFramework",
+                    "MFTF\\": "dev/tests/functional/tests/MFTF",
                     "Magento\\FunctionalTestingFramework\\Tests\\Verification\\": "dev/tests/verification/Tests"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "tests\\": "dev/tests"
+                }
+            },
+            "scripts": {
+                "tests": [
+                    "bin/phpunit-checks"
+                ],
+                "static": [
+                    "bin/static-checks"
+                ]
+            },
             "license": [
                 "AGPL-3.0"
             ],
@@ -28616,26 +28766,15 @@
                 "functional",
                 "magento",
                 "testing"
-            ],
-            "support": {
-                "issues": "https://github.com/magento/magento2-functional-testing-framework/issues",
-                "source": "https://github.com/magento/magento2-functional-testing-framework/tree/5.3.0"
-            },
-            "time": "2026-02-02T08:58:16+00:00"
+            ]
         },
         {
-            "name": "magento/php-compatibility-fork",
-            "version": "v0.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/magento/PHPCompatibilityFork.git",
-                "reference": "1cf031c2a68e3e52e460c5690ed8d1d6d45f4653"
-            },
+            "name": "mage-os/php-compatibility-fork",
+            "version": "3.0.0",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magento/PHPCompatibilityFork/zipball/1cf031c2a68e3e52e460c5690ed8d1d6d45f4653",
-                "reference": "1cf031c2a68e3e52e460c5690ed8d1d6d45f4653",
-                "shasum": ""
+                "url": "https://repo.mage-os.org/packages/mage-os/php-compatibility-fork-3.0.0.zip",
+                "shasum": "1e70b5754f1040a22fb2dac254653fdafba41c73"
             },
             "require": {
                 "php": ">=5.4",
@@ -28643,8 +28782,7 @@
                 "squizlabs/php_codesniffer": "^3.7.1"
             },
             "replace": {
-                "phpcompatibility/php-compatibility": "*",
-                "wimg/php-compatibility": "*"
+                "magento/php-compatibility-fork": "v0.1.0"
             },
             "require-dev": {
                 "php-parallel-lint/php-console-highlighter": "^1.0.0",
@@ -28658,20 +28796,54 @@
                 "roave/security-advisories": "dev-master || Helps prevent installing dependencies with known security issues."
             },
             "type": "phpcodesniffer-standard",
-            "notification-url": "https://packagist.org/downloads/",
+            "scripts": {
+                "test": [
+                    "@php ./vendor/phpunit/phpunit/phpunit --no-coverage"
+                ],
+                "test10": [
+                    "@php ./vendor/phpunit/phpunit/phpunit -c phpunit10.xml.dist --no-coverage"
+                ],
+                "coverage": [
+                    "@php ./vendor/phpunit/phpunit/phpunit"
+                ],
+                "coverage10": [
+                    "@php ./vendor/phpunit/phpunit/phpunit -c phpunit10.xml.dist"
+                ],
+                "coverage-local": [
+                    "@php ./vendor/phpunit/phpunit/phpunit --coverage-html ./build/logs"
+                ],
+                "coverage-local10": [
+                    "@php ./vendor/phpunit/phpunit/phpunit -c phpunit10.xml.dist --coverage-html ./build/logs"
+                ],
+                "lint": [
+                    "@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --show-deprecated --exclude vendor --exclude .git"
+                ],
+                "check-complete": [
+                    "@php ./vendor/phpcsstandards/phpcsdevtools/bin/phpcs-check-feature-completeness -q ./PHPCompatibility"
+                ],
+                "check-complete-strict": [
+                    "@php ./vendor/phpcsstandards/phpcsdevtools/bin/phpcs-check-feature-completeness ./PHPCompatibility"
+                ],
+                "checkcs": [
+                    "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs"
+                ],
+                "fixcs": [
+                    "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf"
+                ]
+            },
             "license": [
                 "LGPL-3.0-or-later"
             ],
             "authors": [
                 {
                     "name": "Wim Godden",
-                    "homepage": "https://github.com/wimg",
-                    "role": "lead"
+                    "role": "lead",
+                    "homepage": "https://github.com/wimg"
                 },
                 {
                     "name": "Juliette Reinders Folmer",
-                    "homepage": "https://github.com/jrfnl",
-                    "role": "lead"
+                    "role": "lead",
+                    "homepage": "https://github.com/jrfnl"
                 },
                 {
                     "name": "Contributors",
@@ -28689,21 +28861,20 @@
             "support": {
                 "issues": "https://github.com/PHPCompatibility/PHPCompatibility/issues",
                 "source": "https://github.com/PHPCompatibility/PHPCompatibility"
-            },
-            "time": "2023-11-29T22:34:17+00:00"
+            }
         },
         {
             "name": "mustache/mustache",
-            "version": "v3.0.0",
+            "version": "v3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/mustache.php.git",
-                "reference": "176b6b21d68516dd5107a63ab71b0050e518b7a4"
+                "reference": "bd4fb2e45ac2df0570c0f4da6898054a950d1ed0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/mustache.php/zipball/176b6b21d68516dd5107a63ab71b0050e518b7a4",
-                "reference": "176b6b21d68516dd5107a63ab71b0050e518b7a4",
+                "url": "https://api.github.com/repos/bobthecow/mustache.php/zipball/bd4fb2e45ac2df0570c0f4da6898054a950d1ed0",
+                "reference": "bd4fb2e45ac2df0570c0f4da6898054a950d1ed0",
                 "shasum": ""
             },
             "require": {
@@ -28741,9 +28912,9 @@
             ],
             "support": {
                 "issues": "https://github.com/bobthecow/mustache.php/issues",
-                "source": "https://github.com/bobthecow/mustache.php/tree/v3.0.0"
+                "source": "https://github.com/bobthecow/mustache.php/tree/v3.2.0"
             },
-            "time": "2025-06-28T18:28:20+00:00"
+            "time": "2026-05-10T04:13:08+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -28811,12 +28982,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pdepend/pdepend.git",
-                "reference": "fca1f5fb1953df6713e35e06e10644e3caff7246"
+                "reference": "890e776347668899812d02c0653a2431e4866f15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/fca1f5fb1953df6713e35e06e10644e3caff7246",
-                "reference": "fca1f5fb1953df6713e35e06e10644e3caff7246",
+                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/890e776347668899812d02c0653a2431e4866f15",
+                "reference": "890e776347668899812d02c0653a2431e4866f15",
                 "shasum": ""
             },
             "require": {
@@ -28878,7 +29049,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-02-10T15:29:38+00:00"
+            "time": "2026-05-22T09:29:04+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -29163,12 +29334,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpmd/phpmd.git",
-                "reference": "35140602568b6068884b28e04b3dcf1cde9d5ea1"
+                "reference": "665650da516f2e27f752f832460cfa14231343eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/35140602568b6068884b28e04b3dcf1cde9d5ea1",
-                "reference": "35140602568b6068884b28e04b3dcf1cde9d5ea1",
+                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/665650da516f2e27f752f832460cfa14231343eb",
+                "reference": "665650da516f2e27f752f832460cfa14231343eb",
                 "shasum": ""
             },
             "require": {
@@ -29244,19 +29415,19 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-04-02T14:49:19+00:00"
+            "time": "2026-05-22T09:30:52+00:00"
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.33",
+            "version": "2.1.55",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/37982d6fc7cbb746dda7773530cda557cdf119e1",
-                "reference": "37982d6fc7cbb746dda7773530cda557cdf119e1",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9eaac3826ed5e9b8427350a43cac825eeca3f566",
+                "reference": "9eaac3826ed5e9b8427350a43cac825eeca3f566",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2|^8.0"
+                "php": "^7.4|^8.0"
             },
             "conflict": {
                 "phpstan/phpstan-shim": "*"
@@ -29297,7 +29468,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-28T20:30:03+00:00"
+            "time": "2026-05-18T11:57:34+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -30263,21 +30434,21 @@
         },
         {
             "name": "rector/rector",
-            "version": "1.2.10",
+            "version": "2.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "40f9cf38c05296bd32f444121336a521a293fa61"
+                "reference": "4661c582a20f03df585d2e3fdc4af1b83d67a091"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/40f9cf38c05296bd32f444121336a521a293fa61",
-                "reference": "40f9cf38c05296bd32f444121336a521a293fa61",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/4661c582a20f03df585d2e3fdc4af1b83d67a091",
+                "reference": "4661c582a20f03df585d2e3fdc4af1b83d67a091",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2|^8.0",
-                "phpstan/phpstan": "^1.12.5"
+                "php": "^7.4|^8.0",
+                "phpstan/phpstan": "^2.1.48"
             },
             "conflict": {
                 "rector/rector-doctrine": "*",
@@ -30302,6 +30473,7 @@
                 "MIT"
             ],
             "description": "Instant Upgrade and Automated Refactoring of any PHP code",
+            "homepage": "https://getrector.com/",
             "keywords": [
                 "automation",
                 "dev",
@@ -30310,7 +30482,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/1.2.10"
+                "source": "https://github.com/rectorphp/rector/tree/2.4.4"
             },
             "funding": [
                 {
@@ -30318,7 +30490,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-11-08T13:59:10+00:00"
+            "time": "2026-05-20T19:30:21+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -31454,16 +31626,16 @@
         },
         {
             "name": "symfony/dotenv",
-            "version": "v7.4.8",
+            "version": "v7.4.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dotenv.git",
-                "reference": "5df79f11350166125fe754c85b87f7e13d735314"
+                "reference": "82e9b1355c68ef7b96397dbd34cc75a92eebae7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dotenv/zipball/5df79f11350166125fe754c85b87f7e13d735314",
-                "reference": "5df79f11350166125fe754c85b87f7e13d735314",
+                "url": "https://api.github.com/repos/symfony/dotenv/zipball/82e9b1355c68ef7b96397dbd34cc75a92eebae7c",
+                "reference": "82e9b1355c68ef7b96397dbd34cc75a92eebae7c",
                 "shasum": ""
             },
             "require": {
@@ -31508,7 +31680,7 @@
                 "environment"
             ],
             "support": {
-                "source": "https://github.com/symfony/dotenv/tree/v7.4.8"
+                "source": "https://github.com/symfony/dotenv/tree/v7.4.11"
             },
             "funding": [
                 {
@@ -31528,7 +31700,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-03-30T12:55:43+00:00"
+            "time": "2026-05-11T13:02:51+00:00"
         },
         {
             "name": "symfony/options-resolver",
