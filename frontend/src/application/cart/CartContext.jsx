@@ -272,6 +272,12 @@ export function CartProvider({ children }) {
     }
   }, [auth.token, resolveActiveCartId, syncCart, useCases]);
 
+  const estimateShipping = useCallback(async (address, signal) => {
+    const cartId = await resolveActiveCartId(signal);
+    if (!cartId) throw new Error('Adicione um item ao carrinho antes de calcular o frete.');
+    return useCases.estimateShippingMethods(cartId, address, auth.token, signal);
+  }, [auth.token, resolveActiveCartId, useCases]);
+
   const clearCart = useCallback(() => {
     persistGuestCartId(null);
     dispatch({ type: 'CLEAR_CART' });
@@ -300,6 +306,7 @@ export function CartProvider({ children }) {
     removeFromCart,
     applyCoupon,
     removeCoupon,
+    estimateShipping,
     clearCart,
     setCartSnapshot,
   };

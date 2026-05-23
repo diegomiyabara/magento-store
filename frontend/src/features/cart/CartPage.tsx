@@ -8,6 +8,7 @@ import { formatPrice, normalizeMediaUrl } from '@/lib/utils/formatters';
 import { apiConfig } from '@/lib/api/config';
 import Button from '@/components/ui/Button';
 import { LoadingState, EmptyState } from '@/components/ui/PageState';
+import ShippingEstimator from '@/components/cart/ShippingEstimator';
 import { toast } from 'sonner';
 
 export default function CartPage() {
@@ -134,6 +135,9 @@ export default function CartPage() {
                   </div>
                 );
               })}
+
+              {/* shipping estimator */}
+              <ShippingEstimator />
 
               {/* coupon */}
               <div className="rounded-2xl border border-[var(--color-surface-border)] bg-[var(--color-surface)] p-4">
