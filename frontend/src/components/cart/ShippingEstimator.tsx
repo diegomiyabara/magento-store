@@ -53,7 +53,7 @@ export default function ShippingEstimator() {
       const result = await estimateShipping({
         country_code: 'BR',
         postcode: digits,
-        region: addr.region,
+        region: { region_code: addr.region },
       });
 
       const available = result.filter((m) => m.available);
