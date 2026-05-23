@@ -35,7 +35,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               'transition-colors duration-150',
               error
                 ? 'border-danger focus:ring-danger/30'
-                : 'border-[var(--color-surface-border)] hover:border-[rgba(255,255,255,0.15)]',
+                : 'border-surface-border hover:border-slate-300',
               icon ? 'pl-9' : '',
               iconRight ? 'pr-9' : '',
               className,

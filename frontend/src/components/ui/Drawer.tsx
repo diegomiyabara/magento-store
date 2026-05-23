@@ -52,7 +52,7 @@ export default function Drawer({
         className={[
           'fixed top-0 z-50 flex h-full w-full max-w-sm flex-col',
           'border-[var(--color-surface-border)] bg-[var(--color-surface-strong)]',
-          'shadow-[0_0_80px_rgba(0,0,0,0.6)]',
+          'shadow-xl',
           'transition-transform duration-300 ease-in-out',
           side === 'right'
             ? `right-0 border-l ${open ? 'translate-x-0' : 'translate-x-full'}`
@@ -66,7 +66,7 @@ export default function Drawer({
             <button
               onClick={onClose}
               aria-label="Fechar"
-              className="rounded-lg p-1 text-text-muted transition-colors hover:bg-white/5 hover:text-text"
+              className="rounded-lg p-1 text-text-muted transition-colors hover:bg-black/5 hover:text-text"
             >
               <X size={20} />
             </button>

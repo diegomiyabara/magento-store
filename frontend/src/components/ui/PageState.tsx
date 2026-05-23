@@ -25,7 +25,7 @@ export function ErrorState({
   onRetry?: () => void;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-[rgba(255,107,107,0.2)] bg-[rgba(255,107,107,0.06)] py-16 text-center">
+    <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-red-200 bg-red-50 py-16 text-center">
       <AlertCircle size={32} className="text-danger" />
       <div>
         <p className="font-semibold text-text">{title}</p>
@@ -34,7 +34,7 @@ export function ErrorState({
       {onRetry && (
         <button
           onClick={onRetry}
-          className="rounded-lg border border-[var(--color-surface-border)] px-4 py-2 text-sm transition-colors hover:bg-white/5"
+          className="rounded-lg border border-surface-border px-4 py-2 text-sm transition-colors hover:bg-black/5"
         >
           Tentar novamente
         </button>
