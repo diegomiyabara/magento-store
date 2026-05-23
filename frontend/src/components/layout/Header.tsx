@@ -21,7 +21,7 @@ export default function Header({ categories, isLoading }: HeaderProps) {
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     [
-      'text-sm font-medium transition-colors',
+      'text-xs font-medium transition-colors whitespace-nowrap',
       isActive ? 'text-white font-semibold' : 'text-white/60 hover:text-white',
     ].join(' ');
 
@@ -47,13 +47,13 @@ export default function Header({ categories, isLoading }: HeaderProps) {
           </Link>
 
           {/* desktop nav */}
-          <nav className="mx-4 hidden flex-1 items-center gap-1 lg:flex" aria-label="Categorias">
+          <nav className="mx-2 hidden flex-1 items-center gap-0 lg:flex" aria-label="Categorias">
             {isLoading ? (
               <>{[1, 2, 3].map((i) => <div key={i} className="skeleton h-4 w-20 rounded" />)}</>
             ) : (
               categories.slice(0, 6).map((cat) => (
                 <NavLink key={cat.uid} to={`/categoria/${cat.urlKey}`} className={navLinkClass}>
-                  <span className="px-2 py-1">{cat.name}</span>
+                  <span className="px-1.5 py-1">{cat.name}</span>
                 </NavLink>
               ))
             )}
