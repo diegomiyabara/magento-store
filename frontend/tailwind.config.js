@@ -5,30 +5,30 @@ export default {
     extend: {
       colors: {
         brand: {
-          DEFAULT: '#ff8d3a',
-          soft:    '#ffd4b5',
-          muted:   'rgba(255,141,58,0.12)',
+          DEFAULT: '#1d4ed8',
+          soft:    '#93c5fd',
+          muted:   'rgba(29,78,216,0.10)',
         },
         accent: {
-          DEFAULT: '#4ba7ff',
-          muted:   'rgba(75,167,255,0.12)',
+          DEFAULT: '#f97316',
+          muted:   'rgba(249,115,22,0.10)',
         },
         surface: {
-          DEFAULT: 'rgba(11,21,35,0.82)',
-          strong:  'rgba(18,32,52,0.96)',
-          border:  'rgba(255,255,255,0.08)',
+          DEFAULT: '#ffffff',
+          strong:  '#f8fafc',
+          border:  '#e2e8f0',
         },
         text: {
-          DEFAULT: '#f3efe8',
-          muted:   '#98a8ba',
-          soft:    '#c8d4e2',
+          DEFAULT: '#1e293b',
+          muted:   '#64748b',
+          soft:    '#94a3b8',
         },
-        danger:  '#ff6b6b',
-        success: '#4ade80',
+        danger:  '#dc2626',
+        success: '#16a34a',
         bg: {
-          base: '#050913',
-          deep: '#09192c',
-          dark: '#090d16',
+          base: '#f1f5f9',
+          deep: '#f8fafc',
+          dark: '#0f172a',
         },
       },
       fontFamily: {
@@ -39,8 +39,8 @@ export default {
         pill: '999px',
       },
       boxShadow: {
-        card: '0 20px 60px rgba(0,0,0,0.3)',
-        soft: '0 8px 24px rgba(0,0,0,0.2)',
+        card: '0 4px 24px rgba(0,0,0,0.08)',
+        soft: '0 2px 12px rgba(0,0,0,0.06)',
       },
     },
   },
