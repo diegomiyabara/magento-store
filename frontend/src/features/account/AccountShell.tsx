@@ -45,7 +45,7 @@ export default function AccountShell() {
                       'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
                       isActive
                         ? 'bg-brand/10 text-brand'
-                        : 'text-text-soft hover:bg-white/5 hover:text-text',
+                        : 'text-text-soft hover:bg-black/5 hover:text-text',
                     ].join(' ')
                   }
                 >

@@ -59,9 +59,9 @@ export default function ProductCard({ product }: ProductCardProps) {
   }
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-[var(--color-surface-border)] bg-[var(--color-surface)] transition-all duration-200 hover:border-[rgba(255,141,58,0.25)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+    <article className="group flex flex-col overflow-hidden rounded-2xl border border-surface-border bg-surface transition-all duration-200 hover:border-brand/20 hover:shadow-card">
       {/* image */}
-      <Link to={`/produto/${product.urlKey}`} className="relative block overflow-hidden bg-[rgba(255,255,255,0.03)]" tabIndex={-1}>
+      <Link to={`/produto/${product.urlKey}`} className="relative block overflow-hidden bg-slate-50" tabIndex={-1}>
         <div className="aspect-square w-full">
           {imageUrl ? (
             <img
@@ -131,7 +131,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               ? 'border-success/30 bg-[rgba(74,222,128,0.1)] text-success'
               : !product.isAvailableForSale
                 ? 'border-[var(--color-surface-border)] bg-transparent text-text-muted'
-                : 'border-brand/30 bg-brand/10 text-brand hover:bg-brand hover:text-[#08111c]',
+                : 'border-brand/30 bg-brand/10 text-brand hover:bg-brand hover:text-white',
           ].join(' ')}
         >
           {added ? (

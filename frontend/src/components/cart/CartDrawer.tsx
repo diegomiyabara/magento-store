@@ -87,7 +87,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                   onClick={onClose}
                   className="shrink-0"
                 >
-                  <div className="h-16 w-16 overflow-hidden rounded-xl bg-[rgba(255,255,255,0.04)]">
+                  <div className="h-16 w-16 overflow-hidden rounded-xl bg-slate-100">
                     {imageUrl ? (
                       <img
                         src={imageUrl}

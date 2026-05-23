@@ -28,14 +28,14 @@ export default function HomePage() {
 
       <div className="mx-auto max-w-[1200px] space-y-12 px-4">
         {/* ── Hero ─────────────────────────────────────────────── */}
-        <section className="relative overflow-hidden rounded-3xl border border-[var(--color-surface-border)] bg-gradient-to-br from-[rgba(10,23,39,0.95)] to-[rgba(18,34,56,0.88)] p-8 sm:p-12">
-          {/* glow orbs */}
-          <div className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-accent/10 blur-3xl" />
-          <div className="pointer-events-none absolute -right-10 -bottom-10 h-64 w-64 rounded-full bg-brand/10 blur-3xl" />
+        <section className="relative overflow-hidden rounded-3xl border border-surface-border bg-gradient-to-br from-white to-slate-50 p-8 sm:p-12">
+          {/* subtle glow orbs */}
+          <div className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-brand/5 blur-3xl" />
+          <div className="pointer-events-none absolute -right-10 -bottom-10 h-64 w-64 rounded-full bg-accent/5 blur-3xl" />
 
           <div className="relative grid items-center gap-8 lg:grid-cols-2">
             <div className="flex flex-col gap-5">
-              <span className="inline-flex w-fit rounded-full border border-brand/30 bg-brand/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-brand">
+              <span className="inline-flex w-fit rounded-full border border-brand/20 bg-brand/5 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-brand">
                 Loja Online
               </span>
               <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight text-text sm:text-5xl lg:text-6xl">
@@ -63,10 +63,15 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* orb decoration */}
+            {/* hero logo */}
             <div className="hidden items-center justify-center lg:flex">
-              <div className="relative flex h-56 w-56 items-center justify-center rounded-full border border-white/10 bg-gradient-radial from-accent/40 via-brand/30 to-transparent shadow-[0_0_80px_rgba(75,167,255,0.2),0_0_120px_rgba(255,141,58,0.15)]">
-                <span className="text-4xl font-extrabold tracking-widest text-text">DM3D</span>
+              <div className="relative flex h-72 w-72 items-center justify-center rounded-full border border-slate-200 bg-gradient-to-br from-brand/10 via-accent/5 to-transparent shadow-[0_0_80px_rgba(29,78,216,0.12)]">
+                <img
+                  src="/logo.png"
+                  alt="DM3D Art logo"
+                  className="h-64 w-64 rounded-full object-cover drop-shadow-xl"
+                  loading="eager"
+                />
               </div>
             </div>
           </div>
@@ -77,7 +82,7 @@ export default function HomePage() {
           {highlights.map(({ icon: Icon, label, text }) => (
             <div
               key={label}
-              className="flex items-center gap-4 rounded-2xl border border-[var(--color-surface-border)] bg-[var(--color-surface)] p-4"
+              className="flex items-center gap-4 rounded-2xl border border-surface-border bg-surface p-4"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10">
                 <Icon size={20} className="text-brand" />
@@ -101,7 +106,7 @@ export default function HomePage() {
                 <Link
                   key={cat.uid}
                   to={`/categoria/${cat.urlKey}`}
-                  className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-[var(--color-surface-border)] bg-[var(--color-surface)] p-6 text-center transition-all hover:border-brand/30 hover:bg-[rgba(255,141,58,0.05)]"
+                  className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-surface-border bg-surface p-6 text-center transition-all hover:border-brand/30 hover:bg-brand/5"
                 >
                   <span className="text-2xl font-bold text-brand">
                     {cat.name.charAt(0).toUpperCase()}

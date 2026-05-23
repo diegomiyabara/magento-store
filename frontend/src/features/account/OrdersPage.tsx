@@ -29,7 +29,7 @@ export default function OrdersPage() {
           <Link
             key={order.number}
             to={`/minha-conta/pedidos/${order.number}`}
-            className="flex items-center justify-between px-5 py-4 transition-colors hover:bg-white/3"
+            className="flex items-center justify-between px-5 py-4 transition-colors hover:bg-black/3"
           >
             <div className="flex flex-col gap-0.5">
               <span className="text-sm font-semibold text-text">#{order.number}</span>

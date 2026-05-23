@@ -7,11 +7,11 @@ interface BadgeProps {
 }
 
 const variantClasses: Record<BadgeVariant, string> = {
-  brand:   'bg-[rgba(255,141,58,0.15)] text-brand border-[rgba(255,141,58,0.3)]',
-  accent:  'bg-[rgba(75,167,255,0.15)] text-accent border-[rgba(75,167,255,0.3)]',
-  muted:   'bg-[rgba(255,255,255,0.06)] text-text-muted border-[var(--color-surface-border)]',
-  danger:  'bg-[rgba(255,107,107,0.12)] text-danger border-[rgba(255,107,107,0.3)]',
-  success: 'bg-[rgba(74,222,128,0.12)] text-success border-[rgba(74,222,128,0.3)]',
+  brand:   'bg-blue-50 text-brand border-blue-200',
+  accent:  'bg-orange-50 text-accent border-orange-200',
+  muted:   'bg-slate-100 text-text-muted border-slate-200',
+  danger:  'bg-red-50 text-danger border-red-200',
+  success: 'bg-green-50 text-success border-green-200',
 };
 
 export default function Badge({ variant = 'muted', children, className = '' }: BadgeProps) {

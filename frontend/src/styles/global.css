@@ -9,9 +9,9 @@
 
 /* ─── CSS Custom Properties ────────────────────────────── */
 :root {
-  --color-surface-border: rgba(255, 255, 255, 0.08);
-  --color-surface:        rgba(11, 21, 35, 0.82);
-  --color-surface-strong: rgba(18, 32, 52, 0.96);
+  --color-surface-border: #e2e8f0;
+  --color-surface:        #ffffff;
+  --color-surface-strong: #f8fafc;
 }
 
 /* ─── Base ──────────────────────────────────────────────── */
@@ -20,13 +20,10 @@
 
   body {
     @apply font-sans text-text bg-bg-base;
-    background-image:
-      radial-gradient(circle at 15% 8%, rgba(75, 167, 255, 0.18) 0%, transparent 28%),
-      radial-gradient(circle at 85% 6%, rgba(255, 141, 58, 0.15) 0%, transparent 24%),
-      linear-gradient(180deg, #050913 0%, #09192c 50%, #090d16 100%);
-    background-attachment: fixed;
+    background-image: none;
+    background-attachment: unset;
     -webkit-font-smoothing: antialiased;
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   a { @apply text-inherit no-underline; }
@@ -34,7 +31,7 @@
   button, input, select, textarea { font: inherit; }
 
   :focus-visible {
-    @apply outline-2 outline-accent outline-offset-1 rounded;
+    @apply outline-2 outline-brand outline-offset-1 rounded;
   }
 }
 
@@ -42,17 +39,17 @@
 @layer components {
   .swiper-button-next,
   .swiper-button-prev {
-    color: #ff8d3a !important;
-    background: rgba(11, 21, 35, 0.82);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #1d4ed8 !important;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 50%;
     width: 2.5rem !important;
     height: 2.5rem !important;
   }
   .swiper-button-next::after,
   .swiper-button-prev::after { font-size: 0.85rem !important; font-weight: 700; }
-  .swiper-pagination-bullet        { background: #98a8ba !important; }
-  .swiper-pagination-bullet-active { background: #ff8d3a !important; }
+  .swiper-pagination-bullet        { background: #94a3b8 !important; }
+  .swiper-pagination-bullet-active { background: #1d4ed8 !important; }
 }
 
 /* ─── Prose / CMS content ───────────────────────────────── */
@@ -73,9 +70,9 @@
   .skeleton {
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.04) 25%,
-      rgba(255, 255, 255, 0.09) 50%,
-      rgba(255, 255, 255, 0.04) 75%
+      #e2e8f0 25%,
+      #f1f5f9 50%,
+      #e2e8f0 75%
     );
     background-size: 200% 100%;
     animation: skeleton-shimmer 1.6s infinite;
