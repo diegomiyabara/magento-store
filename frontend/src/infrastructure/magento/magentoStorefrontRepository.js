@@ -80,7 +80,9 @@ export function createMagentoStorefrontRepository() {
       };
     },
 
-    async getCategoryByUrlKey(urlKey, signal) {
+    async getCategoryByUrlKey(urlKey, pagination = {}, signal) {
+      const { currentPage = 1, sort = { name: 'ASC' } } = pagination;
+
       const categoryData = await executeMagentoQuery(
         CATEGORY_BY_URL_KEY_QUERY,
         { urlKey },
@@ -89,23 +91,22 @@ export function createMagentoStorefrontRepository() {
       const category = createCategoryModel(categoryData.categoryList?.[0] ?? null);
 
       if (!category?.id) {
-        return {
-          category: null,
-          products: [],
-          totalCount: 0,
-        };
+        return { category: null, products: [], totalCount: 0, totalPages: 0 };
       }
 
       const productsData = await executeMagentoQuery(
         CATEGORY_PRODUCTS_QUERY,
-        { categoryId: String(category.id) },
+        { categoryId: String(category.id), currentPage, sort, pageSize: 24 },
         { signal },
       );
+
+      const pageInfo = productsData.products?.page_info ?? {};
 
       return {
         category,
         products: (productsData.products?.items ?? []).map(createProductModel),
         totalCount: productsData.products?.total_count ?? 0,
+        totalPages: pageInfo.total_pages ?? 1,
       };
     },
 

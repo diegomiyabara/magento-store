@@ -9,28 +9,40 @@ export const CATEGORY_BY_URL_KEY_QUERY = `
       product_count
       meta_title
       meta_description
+      breadcrumbs {
+        category_id
+        category_name
+        category_url_key
+      }
     }
   }
 `;
 
 export const CATEGORY_PRODUCTS_QUERY = `
-  query CategoryProductsQuery($categoryId: String!) {
+  query CategoryProductsQuery(
+    $categoryId: String!
+    $pageSize: Int = 24
+    $currentPage: Int = 1
+    $sort: ProductAttributeSortInput = { name: ASC }
+  ) {
     products(
       filter: { category_id: { eq: $categoryId } }
-      pageSize: 24
-      sort: { name: ASC }
+      pageSize: $pageSize
+      currentPage: $currentPage
+      sort: $sort
     ) {
       total_count
+      page_info {
+        current_page
+        page_size
+        total_pages
+      }
       items {
         uid
         sku
         name
         url_key
-        url_suffix
         stock_status
-        short_description {
-          html
-        }
         small_image {
           url
           label
@@ -74,6 +86,20 @@ export const PRODUCT_BY_URL_KEY_QUERY = `
         small_image {
           url
           label
+        }
+        media_gallery {
+          url
+          label
+          disabled
+        }
+        categories {
+          id
+          name
+          url_key
+          breadcrumbs {
+            category_name
+            category_url_key
+          }
         }
         price_range {
           minimum_price {

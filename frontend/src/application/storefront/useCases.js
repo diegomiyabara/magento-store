@@ -8,8 +8,8 @@ export function createStorefrontUseCases(repository) {
       return repository.getHomePage('home', signal);
     },
 
-    getCategoryPage(urlKey, signal) {
-      return repository.getCategoryByUrlKey(urlKey, signal);
+    getCategoryPage(urlKey, pagination, signal) {
+      return repository.getCategoryByUrlKey(urlKey, pagination, signal);
     },
 
     getProductPage(urlKey, signal) {
