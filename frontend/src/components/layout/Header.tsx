@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Menu, ShoppingCart, User, X, Search } from 'lucide-react';
+import { Menu, ShoppingCart, User } from 'lucide-react';
 import { useAuthController } from '@/presentation/controllers/useAuthController';
 import { useCartController } from '@/presentation/controllers/useCartController';
 import CartDrawer from '@/components/cart/CartDrawer';
 import Drawer from '@/components/ui/Drawer';
+import Logo from '@/components/ui/Logo';
 
 interface HeaderProps {
   categories: { uid: string; name: string; urlKey: string }[];
@@ -12,7 +13,7 @@ interface HeaderProps {
   isLoading: boolean;
 }
 
-export default function Header({ categories, storeConfig, isLoading }: HeaderProps) {
+export default function Header({ categories, isLoading }: HeaderProps) {
   const auth = useAuthController();
   const { totalQuantity } = useCartController();
   const [cartOpen, setCartOpen] = useState(false);
@@ -21,17 +22,17 @@ export default function Header({ categories, storeConfig, isLoading }: HeaderPro
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     [
       'text-sm font-medium transition-colors',
-      isActive ? 'text-brand' : 'text-text-muted hover:text-text',
+      isActive ? 'text-white font-semibold' : 'text-white/60 hover:text-white',
     ].join(' ');
 
   return (
     <>
-      <header className="sticky top-0 z-30 border-b border-[var(--color-surface-border)] bg-[rgba(5,9,19,0.75)] backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-white/10 bg-bg-dark">
         {/* promo strip */}
-        <div className="hidden border-b border-[rgba(255,255,255,0.05)] bg-gradient-to-r from-[rgba(255,141,58,0.1)] to-[rgba(75,167,255,0.1)] sm:block">
+        <div className="hidden border-b border-white/10 bg-bg-dark/90 sm:block">
           <div className="mx-auto flex max-w-[1200px] items-center justify-between px-4 py-1.5">
             {['5% OFF no PIX', 'Envio para todo o Brasil', 'Compra segura e rápida'].map((t) => (
-              <span key={t} className="text-[0.72rem] font-medium uppercase tracking-widest text-brand-soft">
+              <span key={t} className="text-[0.72rem] font-medium uppercase tracking-widest text-white/70">
                 {t}
               </span>
             ))}
@@ -41,18 +42,8 @@ export default function Header({ categories, storeConfig, isLoading }: HeaderPro
         {/* main bar */}
         <div className="mx-auto flex max-w-[1200px] items-center gap-4 px-4 py-3">
           {/* logo */}
-          <Link to="/" className="flex shrink-0 items-center gap-2.5">
-            <span className="flex h-9 items-center rounded-full bg-gradient-to-br from-brand to-brand-soft px-3 text-sm font-bold tracking-widest text-[#08111c]">
-              DM3D
-            </span>
-            <span className="hidden flex-col sm:flex">
-              <span className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-accent">
-                Loja Online
-              </span>
-              <span className="text-sm font-semibold leading-tight">
-                {storeConfig?.storeName ?? 'DM3D Tech'}
-              </span>
-            </span>
+          <Link to="/" className="shrink-0">
+            <Logo variant="light" size="md" />
           </Link>
 
           {/* desktop nav */}
@@ -74,12 +65,12 @@ export default function Header({ categories, storeConfig, isLoading }: HeaderPro
             <button
               onClick={() => setCartOpen(true)}
               aria-label={`Carrinho, ${totalQuantity} itens`}
-              className="relative flex h-9 items-center gap-1.5 rounded-xl border border-[var(--color-surface-border)] bg-[var(--color-surface)] px-3 text-sm font-medium text-text-muted transition-colors hover:bg-[rgba(255,255,255,0.07)] hover:text-text"
+              className="relative flex h-9 items-center gap-1.5 rounded-xl border border-white/15 bg-white/10 px-3 text-sm font-medium text-white/70 transition-colors hover:bg-white/15 hover:text-white"
             >
               <ShoppingCart size={16} />
               <span className="hidden sm:inline">Carrinho</span>
               {totalQuantity > 0 && (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-[#08111c]">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white">
                   {totalQuantity > 99 ? '99+' : totalQuantity}
                 </span>
               )}
@@ -91,7 +82,7 @@ export default function Header({ categories, storeConfig, isLoading }: HeaderPro
             ) : auth.isAuthenticated ? (
               <NavLink
                 to="/minha-conta"
-                className="flex h-9 items-center gap-1.5 rounded-xl border border-[rgba(255,141,58,0.25)] bg-[rgba(255,141,58,0.08)] px-3 text-sm font-medium text-brand-soft transition-colors hover:bg-[rgba(255,141,58,0.14)]"
+                className="flex h-9 items-center gap-1.5 rounded-xl border border-accent/30 bg-accent/10 px-3 text-sm font-medium text-accent transition-colors hover:bg-accent/20"
               >
                 <User size={15} />
                 <span className="hidden max-w-[80px] truncate sm:inline">
@@ -105,8 +96,8 @@ export default function Header({ categories, storeConfig, isLoading }: HeaderPro
                   [
                     'flex h-9 items-center gap-1.5 rounded-xl border px-3 text-sm font-medium transition-colors',
                     isActive
-                      ? 'border-brand/40 bg-brand/10 text-brand'
-                      : 'border-[var(--color-surface-border)] bg-[var(--color-surface)] text-text-muted hover:text-text hover:bg-white/5',
+                      ? 'border-brand/40 bg-brand/10 text-white'
+                      : 'border-white/15 bg-white/10 text-white/70 hover:bg-white/15 hover:text-white',
                   ].join(' ')
                 }
               >
@@ -119,7 +110,7 @@ export default function Header({ categories, storeConfig, isLoading }: HeaderPro
             <button
               onClick={() => setMobileOpen(true)}
               aria-label="Menu"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--color-surface-border)] text-text-muted lg:hidden"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/15 text-white/70 lg:hidden"
             >
               <Menu size={18} />
             </button>
@@ -153,7 +144,7 @@ export default function Header({ categories, storeConfig, isLoading }: HeaderPro
                     'flex items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
                     isActive
                       ? 'bg-brand/10 text-brand'
-                      : 'text-text-soft hover:bg-white/5 hover:text-text',
+                      : 'text-text hover:bg-black/5 hover:text-text',
                   ].join(' ')
                 }
               >
@@ -162,7 +153,7 @@ export default function Header({ categories, storeConfig, isLoading }: HeaderPro
             ))
           )}
 
-          <hr className="my-4 border-[var(--color-surface-border)]" />
+          <hr className="my-4 border-surface-border" />
 
           <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-widest text-text-muted">
             Conta
@@ -172,14 +163,14 @@ export default function Header({ categories, storeConfig, isLoading }: HeaderPro
               <NavLink
                 to="/minha-conta"
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center rounded-xl px-3 py-2.5 text-sm font-medium text-text-soft transition-colors hover:bg-white/5"
+                className="flex items-center rounded-xl px-3 py-2.5 text-sm font-medium text-text transition-colors hover:bg-black/5"
               >
                 Minha conta
               </NavLink>
               <NavLink
                 to="/minha-conta/pedidos"
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center rounded-xl px-3 py-2.5 text-sm font-medium text-text-soft transition-colors hover:bg-white/5"
+                className="flex items-center rounded-xl px-3 py-2.5 text-sm font-medium text-text transition-colors hover:bg-black/5"
               >
                 Meus pedidos
               </NavLink>
@@ -189,14 +180,14 @@ export default function Header({ categories, storeConfig, isLoading }: HeaderPro
               <NavLink
                 to="/login"
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center rounded-xl px-3 py-2.5 text-sm font-medium text-text-soft transition-colors hover:bg-white/5"
+                className="flex items-center rounded-xl px-3 py-2.5 text-sm font-medium text-text transition-colors hover:bg-black/5"
               >
                 Entrar
               </NavLink>
               <NavLink
                 to="/cadastro"
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center rounded-xl px-3 py-2.5 text-sm font-medium text-text-soft transition-colors hover:bg-white/5"
+                className="flex items-center rounded-xl px-3 py-2.5 text-sm font-medium text-text transition-colors hover:bg-black/5"
               >
                 Criar conta
               </NavLink>
