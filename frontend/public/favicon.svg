@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- isometric cube: top=blue, right=orange, left=dark-blue -->
+  <polygon points="16,2 30,9 16,16 2,9" fill="#1d4ed8"/>
+  <polygon points="30,9 30,23 16,30 16,16" fill="#f97316"/>
+  <polygon points="2,9 16,16 16,30 2,23" fill="#1e40af"/>
+</svg>
