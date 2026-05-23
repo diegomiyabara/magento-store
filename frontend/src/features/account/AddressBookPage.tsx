@@ -183,10 +183,10 @@ export default function AddressBookPage() {
                 )}
               </address>
               <div className="flex shrink-0 gap-1 ml-3">
-                <button onClick={() => startEdit(addr)} className="rounded-lg p-2 text-text-muted transition-colors hover:bg-white/5 hover:text-text">
+                <button onClick={() => startEdit(addr)} className="rounded-lg p-2 text-text-muted transition-colors hover:bg-black/5 hover:text-text">
                   <Edit2 size={14} />
                 </button>
-                <button onClick={() => handleDelete(addr.id)} className="rounded-lg p-2 text-text-muted transition-colors hover:bg-white/5 hover:text-danger">
+                <button onClick={() => handleDelete(addr.id)} className="rounded-lg p-2 text-text-muted transition-colors hover:bg-black/5 hover:text-danger">
                   <Trash2 size={14} />
                 </button>
               </div>

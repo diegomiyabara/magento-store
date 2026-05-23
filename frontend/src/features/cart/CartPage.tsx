@@ -79,7 +79,7 @@ export default function CartPage() {
                     className="flex gap-4 rounded-2xl border border-[var(--color-surface-border)] bg-[var(--color-surface)] p-4"
                   >
                     <Link to={`/produto/${item.product?.urlKey}`} className="shrink-0">
-                      <div className="h-20 w-20 overflow-hidden rounded-xl bg-[rgba(255,255,255,0.04)]">
+                      <div className="h-20 w-20 overflow-hidden rounded-xl bg-slate-100">
                         {imageUrl ? (
                           <img src={imageUrl} alt={item.product?.name} className="h-full w-full object-cover" loading="lazy" />
                         ) : (

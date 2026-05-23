@@ -114,13 +114,13 @@ export default function ProductPage() {
             >
               {images.length ? images.map((url, i) => (
                 <SwiperSlide key={i}>
-                  <div className="aspect-square bg-[rgba(255,255,255,0.03)]">
+                  <div className="aspect-square bg-slate-50">
                     <img src={url} alt={`${product.name} — imagem ${i + 1}`} className="h-full w-full object-cover" fetchPriority={i === 0 ? 'high' : 'auto'} />
                   </div>
                 </SwiperSlide>
               )) : (
                 <SwiperSlide>
-                  <div className="aspect-square flex items-center justify-center bg-[rgba(255,255,255,0.03)] text-text-muted/30">
+                  <div className="aspect-square flex items-center justify-center bg-slate-50 text-text-muted/30">
                     <ShoppingCart size={64} />
                   </div>
                 </SwiperSlide>
@@ -184,7 +184,7 @@ export default function ProductPage() {
                 <div className="flex items-center overflow-hidden rounded-xl border border-[var(--color-surface-border)]">
                   <button
                     onClick={() => setQty((q) => Math.max(1, q - 1))}
-                    className="flex h-11 w-11 items-center justify-center text-text-muted transition-colors hover:bg-white/5 hover:text-text"
+                    className="flex h-11 w-11 items-center justify-center text-text-muted transition-colors hover:bg-black/5 hover:text-text"
                     aria-label="Diminuir"
                   >
                     <Minus size={16} />
@@ -192,7 +192,7 @@ export default function ProductPage() {
                   <span className="w-10 text-center text-sm font-semibold">{qty}</span>
                   <button
                     onClick={() => setQty((q) => q + 1)}
-                    className="flex h-11 w-11 items-center justify-center text-text-muted transition-colors hover:bg-white/5 hover:text-text"
+                    className="flex h-11 w-11 items-center justify-center text-text-muted transition-colors hover:bg-black/5 hover:text-text"
                     aria-label="Aumentar"
                   >
                     <Plus size={16} />
