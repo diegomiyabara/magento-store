@@ -23,6 +23,7 @@ n98-magerun2.phar.sha256
 vendor/
 dev/
 generated/
+generated.old/
 var/
 pub/static/
 pub/media/
