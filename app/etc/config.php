@@ -324,6 +324,16 @@ return [
         'Creatuity_Interception' => 1,
         'Element119_CustomAdminLogo' => 1,
         'Elgentos_VarnishExtended' => 1,
+        'Hyva_Theme' => 1,
+        'Hyva_CompatModuleFallback' => 1,
+        'Hyva_Email' => 1,
+        'Hyva_GraphqlTokens' => 1,
+        'Hyva_GraphqlViewModel' => 1,
+        'Hyva_ThemeFallback' => 1,
+        'Hyva_MollieThemeBundle' => 1,
+        'Hyva_OrderCancellationWebapi' => 1,
+        'Hyva_BaseLayoutReset' => 1,
+        'Hyva_LumaCheckout' => 1,
         'ImaginationMedia_Correios' => 1,
         'MageOS_AdminActivityLog' => 1,
         'MageOS_AutomaticTranslation' => 1,
@@ -334,6 +344,8 @@ return [
         'MageOS_RMA' => 1,
         'MageOS_ThemeAdminhtmlSwitcher' => 1,
         'MageOS_ThemeOptimization' => 1,
+        'Mollie_Payment' => 1,
+        'Mollie_HyvaCompatibility' => 1,
         'Swissup_Ignition' => 1
     ]
 ];
