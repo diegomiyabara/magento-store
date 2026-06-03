@@ -345,6 +345,7 @@ return [
         'MageOS_RMA' => 1,
         'MageOS_ThemeAdminhtmlSwitcher' => 1,
         'MageOS_ThemeOptimization' => 1,
+        'Miyabara_Buffer' => 1,
         'Mollie_Payment' => 1,
         'Mollie_HyvaCompatibility' => 1,
         'Swissup_Ignition' => 1,
