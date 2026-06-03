@@ -1,0 +1,172 @@
+// Dm3d_CheckoutCustom — brand overrides for Luma checkout
+
+// ── Page background ────────────────────────────────────────────────────────────
+body.checkout-index-index,
+body.checkout-onepage-success {
+    background: #f1f5f9;
+}
+
+// ── Checkout header ────────────────────────────────────────────────────────────
+.checkout-index-index,
+.checkout-onepage-success {
+    .page-header {
+        background: #0f172a;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    }
+    .header.content {
+        padding: 0.875rem 0;
+    }
+}
+
+// ── Primary buttons ────────────────────────────────────────────────────────────
+.action.primary,
+.action-primary {
+    background: #1d4ed8;
+    border: 1px solid #1d4ed8;
+    color: #ffffff;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    &:hover,
+    &:focus,
+    &:active {
+        background: #1e40af;
+        border-color: #1e40af;
+        color: #ffffff;
+    }
+}
+
+// ── Links ──────────────────────────────────────────────────────────────────────
+a {
+    color: #1d4ed8;
+    &:hover {
+        color: #1e40af;
+    }
+}
+.action.action-select-shipping-item,
+.action.action-edit-address {
+    color: #1d4ed8;
+    &:hover { color: #1e40af; }
+}
+
+// ── Form field focus states ────────────────────────────────────────────────────
+.field {
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"],
+    input[type="number"],
+    select,
+    textarea {
+        &:focus {
+            border-color: #1d4ed8;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
+        }
+    }
+}
+
+// ── Progress bar layout — centered ────────────────────────────────────────────
+.opc-progress-bar {
+    text-align: center;
+    width: 100%;
+}
+
+// ── Progress bar steps ─────────────────────────────────────────────────────────
+.opc-progress-bar-item {
+    &._active {
+        > span {
+            &::before {
+                background: #1d4ed8;
+            }
+            &::after {
+                color: #1d4ed8;
+                font-weight: 600;
+            }
+        }
+    }
+    &._complete {
+        > span::before {
+            background: #1d4ed8;
+        }
+        > span::after {
+            color: #1d4ed8;
+        }
+    }
+}
+
+// ── Step titles ────────────────────────────────────────────────────────────────
+.opc-wrapper .step-title {
+    border-bottom: 1px solid #e2e8f0;
+    color: #1e293b;
+    font-size: 1.125rem;
+}
+
+// ── Order summary sidebar ──────────────────────────────────────────────────────
+.opc-block-summary {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    > .title {
+        color: #1e293b;
+        font-weight: 700;
+        border-bottom: 1px solid #e2e8f0;
+    }
+}
+
+.table-totals {
+    .grand {
+        .mark,
+        .amount {
+            color: #1d4ed8;
+            font-weight: 700;
+        }
+    }
+}
+
+// ── Shipping information block ─────────────────────────────────────────────────
+.opc-block-shipping-information {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    .ship-to,
+    .ship-via {
+        .shipping-information-title {
+            color: #1e293b;
+            border-bottom: 1px solid #e2e8f0;
+        }
+    }
+}
+
+// ── Payment method selected state ──────────────────────────────────────────────
+.payment-method._active {
+    .payment-method-title {
+        border-color: rgba(29, 78, 216, 0.4);
+        background: rgba(29, 78, 216, 0.04);
+    }
+}
+input[type="radio"]:checked {
+    accent-color: #1d4ed8;
+}
+
+// ── Loading spinner override ────────────────────────────────────────────────────
+.loading-mask {
+    .loader {
+        > img {
+            display: none;
+        }
+        &::after {
+            content: '';
+            display: block;
+            width: 2.25rem;
+            height: 2.25rem;
+            border: 3px solid #e2e8f0;
+            border-top-color: #1d4ed8;
+            border-radius: 50%;
+            animation: dm3d-spin 0.7s linear infinite;
+            margin: 0 auto;
+        }
+    }
+}
+
+@keyframes dm3d-spin {
+    to { transform: rotate(360deg); }
+}
