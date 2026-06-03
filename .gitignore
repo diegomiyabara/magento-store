@@ -6,6 +6,7 @@
 .user.ini
 auth.json.sample
 CHANGELOG.md
+CLAUDE.md
 COPYING.txt
 grunt-config.json.sample
 Gruntfile.js.sample
@@ -64,3 +65,4 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+.claude/*

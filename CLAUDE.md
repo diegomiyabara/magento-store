@@ -722,3 +722,12 @@ Before updating Mage-OS version on staging:
 - Do not place business logic in `Block` classes — use ViewModels
 - Do not create hard dependencies on third-party modules in `module.xml` unless required; use `sequence` for soft ordering
 - Do not store sensitive data in Magento config — use environment variables and `env.php`
+
+---
+
+## Detailed Configuration
+
+Project configuration files are in `.claude/`:
+- `architecture.md` - Technical patterns and directory structure
+- `testing.md` - Test configuration and commands
+- `code-standards.md` - Coding conventions and linting
