@@ -1,0 +1,391 @@
+<?php
+/**
+ * @var \Magento\Backend\Block\Template $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+$formKey   = $block->getFormKey();
+$saveUrl   = $block->getUrl('buffer/post/save');
+$syncUrl   = $block->getUrl('buffer/channel/sync');
+$searchUrl = $block->getUrl('buffer/product/search');
+?>
+<div class="buffer-create-post" id="buffer-create-post">
+
+    <div class="buffer-header">
+        <div class="buffer-header__logo">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="22" height="22" rx="5" fill="#168EEA"/>
+                <rect x="5" y="6" width="12" height="2.5" rx="1.25" fill="white"/>
+                <rect x="5" y="9.75" width="12" height="2.5" rx="1.25" fill="white"/>
+                <rect x="5" y="13.5" width="8" height="2.5" rx="1.25" fill="white"/>
+            </svg>
+            <span><?= $escaper->escapeHtml(__('Buffer — Create Social Post')) ?></span>
+        </div>
+        <a href="https://publish.buffer.com/settings/api" target="_blank" rel="noopener" class="buffer-api-link">
+            <?= $escaper->escapeHtml(__('Buffer Settings')) ?> ↗
+        </a>
+    </div>
+
+    <div class="buffer-layout">
+
+        <!-- Left column: compose -->
+        <div class="buffer-panel buffer-panel--compose">
+
+            <!-- Product search -->
+            <div class="buffer-field">
+                <label class="buffer-label" for="buffer-product-search">
+                    <?= $escaper->escapeHtml(__('Search Product (optional)')) ?>
+                </label>
+                <div class="buffer-search-wrap">
+                    <input type="text"
+                           id="buffer-product-search"
+                           class="buffer-input"
+                           placeholder="<?= $escaper->escapeHtmlAttr(__('Start typing a product name…')) ?>"
+                           autocomplete="off"/>
+                    <ul id="buffer-product-results" class="buffer-autocomplete" style="display:none;"></ul>
+                </div>
+                <div id="buffer-product-preview" class="buffer-product-preview" style="display:none;">
+                    <img id="buffer-product-thumb" src="" alt="" class="buffer-product-thumb"/>
+                    <div class="buffer-product-info">
+                        <strong id="buffer-product-name"></strong>
+                        <span id="buffer-product-sku" class="buffer-product-sku"></span>
+                    </div>
+                    <button type="button" id="buffer-product-clear" class="buffer-btn-ghost buffer-btn-sm">✕</button>
+                </div>
+            </div>
+
+            <!-- Post text -->
+            <div class="buffer-field">
+                <label class="buffer-label" for="buffer-post-text">
+                    <?= $escaper->escapeHtml(__('Post Text')) ?>
+                    <span class="buffer-required">*</span>
+                </label>
+                <textarea id="buffer-post-text"
+                          name="post_text"
+                          class="buffer-textarea"
+                          rows="5"
+                          maxlength="2200"
+                          placeholder="<?= $escaper->escapeHtmlAttr(__('Write your post…')) ?>"></textarea>
+                <div class="buffer-char-count"><span id="buffer-char-remaining">2200</span> <?= $escaper->escapeHtml(__('characters remaining')) ?></div>
+            </div>
+
+            <!-- Image URL -->
+            <div class="buffer-field">
+                <label class="buffer-label" for="buffer-image-url">
+                    <?= $escaper->escapeHtml(__('Image URL')) ?>
+                    <span class="buffer-hint"><?= $escaper->escapeHtml(__('(must be publicly accessible)')) ?></span>
+                </label>
+                <input type="url"
+                       id="buffer-image-url"
+                       name="image_url"
+                       class="buffer-input"
+                       placeholder="https://…"/>
+                <div id="buffer-image-preview-wrap" style="display:none;margin-top:8px;">
+                    <img id="buffer-image-preview" src="" alt="" class="buffer-image-preview"/>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right column: channels + scheduling -->
+        <div class="buffer-panel buffer-panel--settings">
+
+            <!-- Channels -->
+            <div class="buffer-field">
+                <div class="buffer-field-header">
+                    <label class="buffer-label"><?= $escaper->escapeHtml(__('Channels')) ?> <span class="buffer-required">*</span></label>
+                    <button type="button" id="buffer-sync-btn" class="buffer-btn-ghost buffer-btn-sm">
+                        ↻ <?= $escaper->escapeHtml(__('Sync')) ?>
+                    </button>
+                </div>
+                <div id="buffer-channels-wrap" class="buffer-channels-wrap">
+                    <p class="buffer-hint-text" id="buffer-channels-hint">
+                        <?= $escaper->escapeHtml(__('Click "Sync" to load your Buffer channels.')) ?>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Scheduling -->
+            <div class="buffer-field">
+                <label class="buffer-label"><?= $escaper->escapeHtml(__('Scheduling')) ?></label>
+                <div class="buffer-radio-group">
+                    <label class="buffer-radio-label">
+                        <input type="radio" name="scheduling_mode" value="addToQueue" checked/>
+                        <?= $escaper->escapeHtml(__('Add to Queue')) ?>
+                    </label>
+                    <label class="buffer-radio-label">
+                        <input type="radio" name="scheduling_mode" value="customScheduled"/>
+                        <?= $escaper->escapeHtml(__('Schedule for Specific Time')) ?>
+                    </label>
+                </div>
+                <div id="buffer-datetime-wrap" style="display:none;margin-top:10px;">
+                    <input type="datetime-local"
+                           id="buffer-due-at"
+                           name="due_at"
+                           class="buffer-input"/>
+                    <p class="buffer-hint-text"><?= $escaper->escapeHtml(__('Time is interpreted as UTC.')) ?></p>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="buffer-actions">
+                <form id="buffer-post-form" method="post" action="<?= $escaper->escapeUrl($saveUrl) ?>">
+                    <input type="hidden" name="form_key" value="<?= $escaper->escapeHtmlAttr($formKey) ?>"/>
+                    <input type="hidden" name="post_text" id="buffer-post-text-hidden"/>
+                    <input type="hidden" name="image_url" id="buffer-image-url-hidden"/>
+                    <input type="hidden" name="scheduling_mode" id="buffer-scheduling-mode-hidden" value="addToQueue"/>
+                    <input type="hidden" name="due_at" id="buffer-due-at-hidden"/>
+                    <div id="buffer-channel-ids-container"></div>
+                    <button type="submit" id="buffer-submit-btn" class="buffer-btn-primary">
+                        <?= $escaper->escapeHtml(__('Publish to Buffer')) ?>
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+.buffer-create-post { max-width: 1000px; margin: 24px auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.buffer-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.buffer-header__logo { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: 700; color: #1e293b; }
+.buffer-api-link { font-size: 0.8rem; color: #168EEA; text-decoration: none; }
+.buffer-api-link:hover { text-decoration: underline; }
+.buffer-layout { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+.buffer-panel { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; }
+.buffer-field { margin-bottom: 20px; }
+.buffer-field:last-child { margin-bottom: 0; }
+.buffer-field-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.buffer-label { display: block; font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 6px; }
+.buffer-required { color: #ef4444; margin-left: 2px; }
+.buffer-hint { font-weight: 400; color: #94a3b8; font-size: 0.78rem; margin-left: 4px; }
+.buffer-hint-text { font-size: 0.78rem; color: #94a3b8; margin: 4px 0 0; }
+.buffer-input { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.875rem; color: #1e293b; box-sizing: border-box; }
+.buffer-input:focus { outline: none; border-color: #168EEA; box-shadow: 0 0 0 3px rgba(22,142,234,0.15); }
+.buffer-textarea { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.875rem; color: #1e293b; resize: vertical; box-sizing: border-box; line-height: 1.5; }
+.buffer-textarea:focus { outline: none; border-color: #168EEA; box-shadow: 0 0 0 3px rgba(22,142,234,0.15); }
+.buffer-char-count { font-size: 0.75rem; color: #94a3b8; margin-top: 4px; text-align: right; }
+.buffer-search-wrap { position: relative; }
+.buffer-autocomplete { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 100; margin: 4px 0 0; padding: 4px 0; list-style: none; max-height: 240px; overflow-y: auto; }
+.buffer-autocomplete li { display: flex; align-items: center; gap: 10px; padding: 8px 12px; cursor: pointer; font-size: 0.85rem; }
+.buffer-autocomplete li:hover { background: #f1f5f9; }
+.buffer-autocomplete li img { width: 36px; height: 36px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+.buffer-autocomplete li .ac-name { font-weight: 600; color: #1e293b; }
+.buffer-autocomplete li .ac-sku { color: #94a3b8; font-size: 0.75rem; }
+.buffer-product-preview { display: flex; align-items: center; gap: 12px; margin-top: 10px; padding: 10px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; }
+.buffer-product-thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
+.buffer-product-info { flex: 1; min-width: 0; }
+.buffer-product-info strong { display: block; font-size: 0.875rem; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.buffer-product-sku { font-size: 0.75rem; color: #94a3b8; }
+.buffer-image-preview { max-width: 100%; max-height: 180px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0; }
+.buffer-channels-wrap { display: flex; flex-direction: column; gap: 8px; }
+.buffer-channel-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.buffer-channel-item:hover { border-color: #168EEA; background: #f0f9ff; }
+.buffer-channel-item input[type="checkbox"] { accent-color: #168EEA; width: 16px; height: 16px; flex-shrink: 0; }
+.buffer-channel-item .ch-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.buffer-channel-item .ch-avatar-placeholder { width: 32px; height: 32px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #64748b; font-weight: 700; flex-shrink: 0; }
+.buffer-channel-item .ch-info { flex: 1; min-width: 0; }
+.buffer-channel-item .ch-name { font-size: 0.85rem; font-weight: 600; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.buffer-channel-item .ch-service { font-size: 0.72rem; color: #94a3b8; text-transform: capitalize; }
+.buffer-radio-group { display: flex; flex-direction: column; gap: 8px; }
+.buffer-radio-label { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #374151; cursor: pointer; }
+.buffer-radio-label input[type="radio"] { accent-color: #168EEA; }
+.buffer-actions { margin-top: 4px; }
+.buffer-btn-primary { width: 100%; padding: 11px 20px; background: #168EEA; color: #fff; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+.buffer-btn-primary:hover { background: #0e72c7; }
+.buffer-btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
+.buffer-btn-ghost { padding: 5px 10px; background: transparent; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.78rem; color: #64748b; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
+.buffer-btn-ghost:hover { border-color: #168EEA; color: #168EEA; }
+.buffer-btn-sm { font-size: 0.75rem; padding: 4px 8px; }
+.buffer-spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #e2e8f0; border-top-color: #168EEA; border-radius: 50%; animation: buffer-spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+@keyframes buffer-spin { to { transform: rotate(360deg); } }
+@media (max-width: 768px) {
+    .buffer-layout { grid-template-columns: 1fr; }
+}
+</style>
+
+<script>
+require(['jquery'], function ($) {
+    'use strict';
+
+    var syncUrl    = <?= /* @noEscape */ json_encode($syncUrl) ?>;
+    var searchUrl  = <?= /* @noEscape */ json_encode($searchUrl) ?>;
+    var formKey    = <?= /* @noEscape */ json_encode($formKey) ?>;
+
+    /* ── Character counter ─────────────────────────────────── */
+    $('#buffer-post-text').on('input', function () {
+        var remaining = 2200 - this.value.length;
+        $('#buffer-char-remaining').text(remaining);
+        if (remaining < 50) {
+            $('#buffer-char-remaining').css('color', '#ef4444');
+        } else {
+            $('#buffer-char-remaining').css('color', '#94a3b8');
+        }
+    });
+
+    /* ── Image URL preview ─────────────────────────────────── */
+    var imagePreviewTimer;
+    $('#buffer-image-url').on('input', function () {
+        clearTimeout(imagePreviewTimer);
+        var url = this.value.trim();
+        if (!url) {
+            $('#buffer-image-preview-wrap').hide();
+            return;
+        }
+        imagePreviewTimer = setTimeout(function () {
+            $('#buffer-image-preview').attr('src', url);
+            $('#buffer-image-preview-wrap').show();
+        }, 500);
+    });
+
+    /* ── Scheduling mode toggle ────────────────────────────── */
+    $('input[name="scheduling_mode"]').on('change', function () {
+        if (this.value === 'customScheduled') {
+            $('#buffer-datetime-wrap').show();
+        } else {
+            $('#buffer-datetime-wrap').hide();
+        }
+    });
+
+    /* ── Product search autocomplete ───────────────────────── */
+    var searchTimer;
+    $('#buffer-product-search').on('input', function () {
+        clearTimeout(searchTimer);
+        var q = this.value.trim();
+        if (q.length < 2) {
+            $('#buffer-product-results').hide();
+            return;
+        }
+        searchTimer = setTimeout(function () {
+            $.ajax({
+                url: searchUrl,
+                data: { q: q, form_key: formKey },
+                success: function (products) {
+                    var $ul = $('#buffer-product-results').empty();
+                    if (!products.length) {
+                        $ul.append('<li style="padding:10px 12px;color:#94a3b8;font-size:0.85rem;"><?= $escaper->escapeJs(__('No products found.')) ?></li>');
+                    } else {
+                        $.each(products, function (i, p) {
+                            var $li = $('<li>');
+                            $li.append('<img src="' + $('<div>').text(p.imageUrl).html() + '" alt="">');
+                            $li.append('<div><div class="ac-name">' + $('<div>').text(p.name).html() + '</div><div class="ac-sku">SKU: ' + $('<div>').text(p.sku).html() + '</div></div>');
+                            $li.on('click', function () {
+                                selectProduct(p);
+                            });
+                            $ul.append($li);
+                        });
+                    }
+                    $ul.show();
+                }
+            });
+        }, 300);
+    });
+
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('.buffer-search-wrap').length) {
+            $('#buffer-product-results').hide();
+        }
+    });
+
+    function selectProduct(p) {
+        $('#buffer-product-results').hide();
+        $('#buffer-product-search').val('');
+
+        $('#buffer-product-thumb').attr('src', p.imageUrl);
+        $('#buffer-product-name').text(p.name);
+        $('#buffer-product-sku').text('SKU: ' + p.sku);
+        $('#buffer-product-preview').show();
+
+        /* Pre-fill text */
+        var text = p.name;
+        if (p.description) {
+            text += '\n\n' + p.description;
+        }
+        $('#buffer-post-text').val(text).trigger('input');
+
+        /* Pre-fill image */
+        $('#buffer-image-url').val(p.imageUrl).trigger('input');
+    }
+
+    $('#buffer-product-clear').on('click', function () {
+        $('#buffer-product-preview').hide();
+    });
+
+    /* ── Channel sync ──────────────────────────────────────── */
+    function renderChannels(channels) {
+        var $wrap = $('#buffer-channels-wrap').empty();
+        if (!channels.length) {
+            $wrap.append('<p class="buffer-hint-text"><?= $escaper->escapeJs(__('No channels found in your Buffer account.')) ?></p>');
+            return;
+        }
+        $.each(channels, function (i, ch) {
+            var name        = ch.displayName || ch.name || 'Channel';
+            var service     = ch.service || '';
+            var avatarHtml  = ch.avatar
+                ? '<img class="ch-avatar" src="' + $('<div>').text(ch.avatar).html() + '" alt="">'
+                : '<div class="ch-avatar-placeholder">' + $('<div>').text(name.charAt(0).toUpperCase()).html() + '</div>';
+
+            var $item = $('<label class="buffer-channel-item">');
+            $item.append('<input type="checkbox" name="channel_ids[]" value="' + $('<div>').text(ch.id).html() + '">');
+            $item.append(avatarHtml);
+            $item.append('<div class="ch-info"><div class="ch-name">' + $('<div>').text(name).html() + '</div><div class="ch-service">' + $('<div>').text(service).html() + '</div></div>');
+            $wrap.append($item);
+        });
+    }
+
+    $('#buffer-sync-btn').on('click', function () {
+        var $btn = $(this);
+        $btn.html('<span class="buffer-spinner"></span><?= $escaper->escapeJs(__('Syncing…')) ?>').prop('disabled', true);
+
+        $.ajax({
+            url: syncUrl,
+            method: 'POST',
+            data: { form_key: formKey },
+            success: function (resp) {
+                if (resp.success) {
+                    renderChannels(resp.channels);
+                    $('#buffer-channels-hint').remove();
+                } else {
+                    alert('<?= $escaper->escapeJs(__('Sync failed: ')) ?>' + resp.error);
+                }
+            },
+            error: function () {
+                alert('<?= $escaper->escapeJs(__('Network error while syncing channels.')) ?>');
+            },
+            complete: function () {
+                $btn.html('↻ <?= $escaper->escapeJs(__('Sync')) ?>').prop('disabled', false);
+            }
+        });
+    });
+
+    /* ── Form submit: copy values to hidden inputs ─────────── */
+    $('#buffer-post-form').on('submit', function (e) {
+        var text = $('#buffer-post-text').val().trim();
+        if (!text) {
+            e.preventDefault();
+            alert('<?= $escaper->escapeJs(__('Post text cannot be empty.')) ?>');
+            return;
+        }
+
+        var checked = $('input[name="channel_ids[]"]:checked');
+        if (!checked.length) {
+            e.preventDefault();
+            alert('<?= $escaper->escapeJs(__('Please select at least one channel.')) ?>');
+            return;
+        }
+
+        $('#buffer-post-text-hidden').val(text);
+        $('#buffer-image-url-hidden').val($('#buffer-image-url').val().trim());
+        $('#buffer-scheduling-mode-hidden').val($('input[name="scheduling_mode"]:checked').val());
+        $('#buffer-due-at-hidden').val($('#buffer-due-at').val());
+
+        /* Copy channel checkboxes into the hidden container */
+        var $container = $('#buffer-channel-ids-container').empty();
+        checked.each(function () {
+            $container.append(
+                $('<input type="hidden" name="channel_ids[]">').val($(this).val())
+            );
+        });
+    });
+});
+</script>

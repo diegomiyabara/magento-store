@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Miyabara_Buffer::post_index"
+             title="Buffer Posts"
+             module="Miyabara_Buffer"
+             sortOrder="999"
+             parent="Magento_Backend::marketing"
+             action="buffer/post/index"
+             resource="Miyabara_Buffer::post_index"/>
+    </menu>
+</config>
