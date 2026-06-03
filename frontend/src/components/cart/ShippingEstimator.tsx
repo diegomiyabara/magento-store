@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Truck, MapPin } from 'lucide-react';
 import { useCart } from '@/application/cart/CartContext';
-import { fetchAddressByCep } from '@/lib/api/cep';
-import { formatPrice } from '@/lib/utils/formatters';
+import { fetchAddressByCep } from '@/infrastructure/external/viaCepClient';
+import { formatPrice } from '@/domain/shared/formatters';
 import Button from '@/components/ui/Button';
 
 interface ShippingMethod {

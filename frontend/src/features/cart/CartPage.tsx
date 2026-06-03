@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Trash2, Plus, Minus, Tag, ShoppingBag, ArrowRight } from 'lucide-react';
 import { useCart } from '@/application/cart/CartContext';
-import { useStorefrontShellController } from '@/presentation/controllers/useStorefrontShellController';
-import { formatPrice, normalizeMediaUrl } from '@/lib/utils/formatters';
-import { apiConfig } from '@/lib/api/config';
+import { useStorefrontShell } from '@/application/storefront/useStorefrontShell';
+import { formatPrice, normalizeMediaUrl } from '@/domain/shared/formatters';
+import { apiConfig } from '@/infrastructure/magento/config';
 import Button from '@/components/ui/Button';
 import { LoadingState, EmptyState } from '@/components/ui/PageState';
 import ShippingEstimator from '@/components/cart/ShippingEstimator';
@@ -17,7 +17,7 @@ export default function CartPage() {
     updateItemQuantity, removeFromCart,
     applyCoupon, removeCoupon,
   } = useCart();
-  const { storeConfig } = useStorefrontShellController();
+  const { storeConfig } = useStorefrontShell();
   const [couponInput, setCouponInput] = useState('');
   const [couponLoading, setCouponLoading] = useState(false);
 

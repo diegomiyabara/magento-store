@@ -3,12 +3,13 @@ import { Helmet } from 'react-helmet-async';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import { ArrowRight, Package, Zap, Truck } from 'lucide-react';
-import { useHomeController } from '@/presentation/controllers/useHomeController';
-import { useStorefrontShellController } from '@/presentation/controllers/useStorefrontShellController';
+import { useHomePage } from '@/application/home/useHomePage';
+import { useStorefrontShell } from '@/application/storefront/useStorefrontShell';
 import ProductCard from '@/components/catalog/ProductCard';
 import { ProductCardSkeleton } from '@/components/ui/Skeleton';
 import { ErrorState } from '@/components/ui/PageState';
 import Button from '@/components/ui/Button';
+import type { CategoryModel, ProductModel } from '@/domain/storefront/models';
 
 const highlights = [
   { icon: Package,  label: 'Impressão 3D',   text: 'Filamentos e peças premium' },
@@ -17,8 +18,8 @@ const highlights = [
 ];
 
 export default function HomePage() {
-  const { featuredProducts, isLoading, error } = useHomeController();
-  const { categories, storeConfig } = useStorefrontShellController();
+  const { featuredProducts, isLoading, error } = useHomePage();
+  const { categories, storeConfig } = useStorefrontShell();
 
   return (
     <>
@@ -102,7 +103,7 @@ export default function HomePage() {
               <h2 className="text-xl font-bold text-text">Categorias</h2>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {categories.slice(0, 4).map((cat) => (
+              {(categories as CategoryModel[]).slice(0, 4).map((cat) => (
                 <Link
                   key={cat.uid}
                   to={`/categoria/${cat.urlKey}`}
@@ -150,7 +151,7 @@ export default function HomePage() {
                 1024: { slidesPerView: 4 },
               }}
             >
-              {featuredProducts.map((product) => (
+              {(featuredProducts as ProductModel[]).map((product) => (
                 <SwiperSlide key={product.uid}>
                   <ProductCard product={product} />
                 </SwiperSlide>
