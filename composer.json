@@ -21,6 +21,9 @@
     },
     "version": "2.4.8-p4",
     "require": {
+        "hyva-themes/magento2-default-theme": "^1.4",
+        "hyva-themes/magento2-luma-checkout": "^1.1",
+        "hyva-themes/magento2-theme-module": "^1.4",
         "imaginationmedia/correios": "^1.2",
         "mage-os/product-community-edition": "^3.0"
     },
@@ -76,6 +79,10 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "repositories": {
+        "private-packagist": {
+            "type": "composer",
+            "url": "https://hyva-themes.repo.packagist.com/dev-dm3dtech-c-b4ajl/"
+        },
         "mage-os": {
             "type": "composer",
             "url": "https://repo.mage-os.org/"
