@@ -6,10 +6,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { MapPin, Truck, CreditCard, ChevronRight, Check } from 'lucide-react';
 import { useCart } from '@/application/cart/CartContext';
-import { useAuth } from '@/app/authContext';
-import { useStorefrontServices } from '@/app/storefrontContext';
-import { formatPrice } from '@/lib/utils/formatters';
-import { fetchAddressByCep } from '@/lib/api/cep';
+import { useAuth } from '@/application/auth/AuthContext';
+import { useStorefrontServices } from '@/application/storefront/StorefrontContext';
+import { formatPrice } from '@/domain/shared/formatters';
+import { fetchAddressByCep } from '@/infrastructure/external/viaCepClient';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { toast } from 'sonner';
@@ -83,9 +83,9 @@ export default function CheckoutPage() {
     try {
       const addr = await fetchAddressByCep(clean);
       if (addr) {
-        setValue('city', addr.localidade ?? '');
-        setValue('region', addr.uf ?? '');
-        setValue('street', addr.logradouro ?? '');
+        setValue('city', addr.city ?? '');
+        setValue('region', addr.region ?? '');
+        setValue('street', addr.street ?? '');
       }
     } finally {
       setCepLoading(false);

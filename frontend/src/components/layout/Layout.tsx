@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
-import { useStorefrontShellController } from '@/presentation/controllers/useStorefrontShellController';
+import { useStorefrontShell } from '@/application/storefront/useStorefrontShell';
 
 export default function Layout() {
-  const shell = useStorefrontShellController();
+  const shell = useStorefrontShell();
 
   return (
     <div className="flex min-h-screen flex-col">

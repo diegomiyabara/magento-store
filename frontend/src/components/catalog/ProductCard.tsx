@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Check } from 'lucide-react';
-import { formatPrice, normalizeMediaUrl } from '@/lib/utils/formatters';
-import { apiConfig } from '@/lib/api/config';
+import { formatPrice, normalizeMediaUrl } from '@/domain/shared/formatters';
+import { apiConfig } from '@/infrastructure/magento/config';
 import { useCart } from '@/application/cart/CartContext';
-import { useStorefrontShellController } from '@/presentation/controllers/useStorefrontShellController';
+import { useStorefrontShell } from '@/application/storefront/useStorefrontShell';
 import Badge from '@/components/ui/Badge';
 import { toast } from 'sonner';
 
@@ -27,7 +27,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart, isLoading: cartLoading } = useCart();
-  const { storeConfig } = useStorefrontShellController();
+  const { storeConfig } = useStorefrontShell();
   const [adding, setAdding] = useState(false);
   const [added, setAdded] = useState(false);
 

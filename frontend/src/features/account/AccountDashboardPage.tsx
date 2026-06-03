@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import { MapPin, Package, User, ChevronRight } from 'lucide-react';
-import { useAccountController } from '@/presentation/controllers/useAccountController';
-import { formatPrice, formatDate } from '@/lib/utils/formatters';
+import { useAccountPage } from '@/application/account/useAccountPage';
+import { formatPrice, formatDate } from '@/domain/shared/formatters';
 import { LoadingState } from '@/components/ui/PageState';
+import type { CustomerOrderModel } from '@/domain/storefront/models';
 import Badge from '@/components/ui/Badge';
 
 export default function AccountDashboardPage() {
-  const { customer, defaultShippingAddress, orders, isInitialLoading } = useAccountController();
+  const { customer, defaultShippingAddress, orders, isInitialLoading, isSubscribed } = useAccountPage();
 
   if (isInitialLoading) return <LoadingState title="Carregando painel..." />;
 
@@ -25,7 +26,7 @@ export default function AccountDashboardPage() {
         </div>
         <p className="text-sm font-medium text-text">{customer?.firstName} {customer?.lastName}</p>
         <p className="text-sm text-text-muted">{customer?.email}</p>
-        {customer?.isSubscribed && (
+        {isSubscribed && (
           <Badge variant="accent" className="mt-2">Newsletter ativa</Badge>
         )}
       </div>
@@ -67,7 +68,7 @@ export default function AccountDashboardPage() {
           <p className="text-sm text-text-muted">Nenhum pedido realizado ainda.</p>
         ) : (
           <div className="flex flex-col divide-y divide-[var(--color-surface-border)]">
-            {orders.slice(0, 5).map((order) => (
+            {(orders as Array<CustomerOrderModel | null>).slice(0, 5).filter((o): o is CustomerOrderModel => o !== null).map((order) => (
               <Link
                 key={order.number}
                 to={`/minha-conta/pedidos/${order.number}`}
@@ -75,11 +76,11 @@ export default function AccountDashboardPage() {
               >
                 <div>
                   <span className="font-medium">#{order.number}</span>
-                  <span className="ml-2 text-text-muted">{formatDate(order.createdAt)}</span>
+                  <span className="ml-2 text-text-muted">{formatDate(order.date)}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="font-semibold text-brand">
-                    {formatPrice(order.grandTotal?.value ?? 0, order.grandTotal?.currency ?? 'BRL')}
+                    {formatPrice(order.grandTotalValue ?? 0, order.grandTotalCurrency ?? 'BRL')}
                   </span>
                   <ChevronRight size={14} className="text-text-muted" />
                 </div>

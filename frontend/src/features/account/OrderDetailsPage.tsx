@@ -1,18 +1,19 @@
 import { useParams, Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
-import { useAccountController } from '@/presentation/controllers/useAccountController';
-import { useAsyncData } from '@/lib/api/useAsyncData';
-import { formatPrice, formatDate } from '@/lib/utils/formatters';
+import { useAccountPage } from '@/application/account/useAccountPage';
+import { useAsyncData } from '@/application/shared/useAsyncData';
+import { formatPrice, formatDate } from '@/domain/shared/formatters';
 import { LoadingState, ErrorState } from '@/components/ui/PageState';
+import type { CustomerOrderModel } from '@/domain/storefront/models';
 
 export default function OrderDetailsPage() {
   const { orderNumber = '' } = useParams<{ orderNumber: string }>();
-  const { token, useCases } = useAccountController();
+  const { token, useCases } = useAccountPage();
 
-  const { data: order, isLoading, error } = useAsyncData(
+  const { data: order, isLoading, error } = useAsyncData<CustomerOrderModel>(
     (signal) => {
       if (!token) return Promise.resolve(null);
-      return useCases.getCustomerOrderByNumber(token, orderNumber, signal);
+      return useCases.getCustomerOrderByNumber(token, orderNumber, signal) as Promise<CustomerOrderModel | null>;
     },
     [token, orderNumber],
   );
@@ -33,7 +34,7 @@ export default function OrderDetailsPage() {
         <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
           <div>
             <h2 className="text-lg font-bold text-text">Pedido #{order.number}</h2>
-            <p className="text-sm text-text-muted">{formatDate(order.createdAt)}</p>
+            <p className="text-sm text-text-muted">{formatDate(order.date)}</p>
           </div>
           <span className="rounded-full border border-brand/30 bg-brand/10 px-3 py-1 text-xs font-semibold text-brand">
             {order.status}
@@ -42,14 +43,14 @@ export default function OrderDetailsPage() {
 
         {/* items */}
         <div className="flex flex-col divide-y divide-[var(--color-surface-border)]">
-          {order.items?.map((item: { product_name: string; product_sku: string; quantity_ordered: number; row_total?: { value: number; currency: string } }, i: number) => (
+          {order.items?.filter(Boolean).map((item, i) => (
             <div key={i} className="flex items-center justify-between py-3">
               <div>
-                <p className="text-sm font-medium text-text">{item.product_name}</p>
-                <p className="text-xs text-text-muted">SKU: {item.product_sku} · Qtd: {item.quantity_ordered}</p>
+                <p className="text-sm font-medium text-text">{item!.productName}</p>
+                <p className="text-xs text-text-muted">SKU: {item!.productSku} · Qtd: {item!.quantityOrdered}</p>
               </div>
               <span className="text-sm font-semibold text-brand">
-                {formatPrice(item.row_total?.value ?? 0, item.row_total?.currency ?? 'BRL')}
+                {formatPrice(item!.rowTotalValue ?? 0, item!.rowTotalCurrency ?? 'BRL')}
               </span>
             </div>
           ))}
@@ -59,7 +60,7 @@ export default function OrderDetailsPage() {
           <div className="flex justify-between font-bold text-base">
             <span>Total</span>
             <span className="text-brand">
-              {formatPrice(order.grandTotal?.value ?? 0, order.grandTotal?.currency ?? 'BRL')}
+              {formatPrice(order.grandTotalValue ?? 0, order.grandTotalCurrency ?? 'BRL')}
             </span>
           </div>
         </div>

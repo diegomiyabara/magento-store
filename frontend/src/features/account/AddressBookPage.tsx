@@ -3,8 +3,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Plus, Trash2, Edit2 } from 'lucide-react';
-import { useAccountController } from '@/presentation/controllers/useAccountController';
-import { fetchAddressByCep } from '@/lib/api/cep';
+import { useAccountPage } from '@/application/account/useAccountPage';
+import { fetchAddressByCep } from '@/infrastructure/external/viaCepClient';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { LoadingState, EmptyState } from '@/components/ui/PageState';
@@ -38,7 +38,7 @@ interface Address {
 }
 
 export default function AddressBookPage() {
-  const { addresses, token, useCases, reload, isInitialLoading } = useAccountController();
+  const { addresses, token, useCases, reload, isInitialLoading } = useAccountPage();
   const [editing, setEditing] = useState<Address | null>(null);
   const [showForm, setShowForm] = useState(false);
 
@@ -53,9 +53,9 @@ export default function AddressBookPage() {
     if (clean.length !== 8) return;
     const addr = await fetchAddressByCep(clean).catch(() => null);
     if (addr) {
-      setValue('city', addr.localidade ?? '');
-      setValue('region', addr.uf ?? '');
-      setValue('street', addr.logradouro ?? '');
+      setValue('city', addr.city ?? '');
+      setValue('region', addr.region ?? '');
+      setValue('street', addr.street ?? '');
     }
   }
 
@@ -169,7 +169,7 @@ export default function AddressBookPage() {
         <EmptyState title="Nenhum endereço cadastrado" detail="Adicione um endereço para agilizar seus pedidos." />
       ) : (
         <div className="flex flex-col gap-3">
-          {addresses.map((addr: Address) => (
+          {(addresses.filter((a) => a !== null) as Address[]).map((addr) => (
             <div key={addr.id} className="flex items-start justify-between rounded-2xl border border-[var(--color-surface-border)] bg-[var(--color-surface)] p-4">
               <address className="not-italic text-sm text-text-soft leading-relaxed">
                 <span className="font-medium text-text">{addr.firstName} {addr.lastName}</span><br />

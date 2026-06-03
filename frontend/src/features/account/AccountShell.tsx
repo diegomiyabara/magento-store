@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { User, MapPin, Package, Info, LogOut } from 'lucide-react';
-import { useAuth } from '@/app/authContext';
+import { useAuth } from '@/application/auth/AuthContext';
 
 const NAV = [
   { to: '/minha-conta',              label: 'Painel',       icon: User,    end: true  },

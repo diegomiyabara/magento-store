@@ -5,22 +5,22 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Thumbs } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
 import { ShoppingCart, Truck, Minus, Plus } from 'lucide-react';
-import { useProductController } from '@/presentation/controllers/useProductController';
+import { useProductPage } from '@/application/product/useProductPage';
 import { useCart } from '@/application/cart/CartContext';
-import { useStorefrontShellController } from '@/presentation/controllers/useStorefrontShellController';
+import { useStorefrontShell } from '@/application/storefront/useStorefrontShell';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import { ErrorState, LoadingState } from '@/components/ui/PageState';
-import { formatPrice, normalizeMediaUrl } from '@/lib/utils/formatters';
-import { apiConfig } from '@/lib/api/config';
-import { fetchAddressByCep } from '@/lib/api/cep';
+import { formatPrice, normalizeMediaUrl } from '@/domain/shared/formatters';
+import { apiConfig } from '@/infrastructure/magento/config';
+import { fetchAddressByCep } from '@/infrastructure/external/viaCepClient';
 import { toast } from 'sonner';
 
 export default function ProductPage() {
   const { urlKey = '' } = useParams<{ urlKey: string }>();
-  const { product, isLoading, error } = useProductController(urlKey);
-  const { storeConfig } = useStorefrontShellController();
+  const { product, isLoading, error } = useProductPage(urlKey);
+  const { storeConfig } = useStorefrontShell();
   const { addToCart, isLoading: cartLoading } = useCart();
 
   const [qty, setQty] = useState(1);
@@ -49,7 +49,7 @@ export default function ProductPage() {
     setCepLoading(true);
     try {
       const addr = await fetchAddressByCep(clean);
-      if (addr) setShippingResult(`Entrega disponível para ${addr.localidade} – ${addr.uf}`);
+      if (addr) setShippingResult(`Entrega disponível para ${addr.city} – ${addr.region}`);
       else setShippingResult('CEP não encontrado.');
     } catch {
       setShippingResult('Não foi possível verificar o frete.');
@@ -61,9 +61,14 @@ export default function ProductPage() {
   if (isLoading) return <LoadingState title="Carregando produto..." />;
   if (error || !product) return <ErrorState detail="Produto não encontrado." />;
 
-  const images: string[] = product.raw?.media_gallery
-    ?.filter((m: { disabled?: boolean }) => !m.disabled)
-    ?.map((m: { url: string }) => normalizeMediaUrl(m.url, storeConfig, apiConfig.mediaBaseUrl)) ?? [];
+  type MediaGalleryItem = { disabled?: boolean; url: string };
+  type CategoryRef = { name: string; url_key: string };
+  const rawMediaGallery = product.raw['media_gallery'] as MediaGalleryItem[] | null | undefined;
+  const rawCategories = product.raw['categories'] as CategoryRef[] | null | undefined;
+
+  const images: string[] = rawMediaGallery
+    ?.filter((m) => !m.disabled)
+    ?.map((m) => normalizeMediaUrl(m.url, storeConfig, apiConfig.mediaBaseUrl)) ?? [];
 
   if (!images.length && product.imageUrl) {
     images.push(normalizeMediaUrl(product.imageUrl, storeConfig, apiConfig.mediaBaseUrl));
@@ -71,8 +76,8 @@ export default function ProductPage() {
 
   const breadcrumbs = [
     { label: 'Início', href: '/' },
-    ...(product.raw?.categories?.[0]
-      ? [{ label: product.raw.categories[0].name, href: `/categoria/${product.raw.categories[0].url_key}` }]
+    ...(rawCategories?.[0]
+      ? [{ label: rawCategories[0].name, href: `/categoria/${rawCategories[0].url_key}` }]
       : []),
     { label: product.name },
   ];

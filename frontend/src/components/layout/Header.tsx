@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Menu, ShoppingCart, User } from 'lucide-react';
-import { useAuthController } from '@/presentation/controllers/useAuthController';
-import { useCartController } from '@/presentation/controllers/useCartController';
+import { useAuth } from '@/application/auth/AuthContext';
+import { useCart } from '@/application/cart/CartContext';
 import CartDrawer from '@/components/cart/CartDrawer';
 import Drawer from '@/components/ui/Drawer';
 import Logo from '@/components/ui/Logo';
@@ -14,8 +14,8 @@ interface HeaderProps {
 }
 
 export default function Header({ categories, isLoading }: HeaderProps) {
-  const auth = useAuthController();
-  const { totalQuantity } = useCartController();
+  const auth = useAuth();
+  const { itemCount: totalQuantity } = useCart();
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 

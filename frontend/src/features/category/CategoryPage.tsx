@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { SlidersHorizontal, X } from 'lucide-react';
-import { useCategoryController } from '@/presentation/controllers/useCategoryController';
+import { useCategoryPage } from '@/application/category/useCategoryPage';
 import ProductGrid from '@/components/catalog/ProductGrid';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 import Pagination from '@/components/ui/Pagination';
@@ -21,9 +21,9 @@ export default function CategoryPage() {
   const [sortValue, setSortValue] = useState('name_asc');
   const [showInStock, setShowInStock] = useState(false);
 
-  const currentSort = SORT_OPTIONS.find((o) => o.value === sortValue)?.sort ?? { name: 'ASC' };
+  const currentSort = (SORT_OPTIONS.find((o) => o.value === sortValue)?.sort ?? { name: 'ASC' }) as unknown as { name: string };
 
-  const { category, products, totalPages, isLoading, error } = useCategoryController(
+  const { category, products, totalPages, isLoading, error } = useCategoryPage(
     urlKey,
     currentPage,
     currentSort,
@@ -39,7 +39,10 @@ export default function CategoryPage() {
     setCurrentPage(1);
   }, []);
 
-  const displayed = showInStock ? products.filter((p) => p.isAvailableForSale) : products;
+  const nonNullProducts = products.filter((p): p is NonNullable<typeof p> => p !== null);
+  const displayed = showInStock
+    ? nonNullProducts.filter((p) => p.isAvailableForSale)
+    : nonNullProducts;
 
   const breadcrumbs = [
     { label: 'Início', href: '/' },

@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useAccountController } from '@/presentation/controllers/useAccountController';
+import { useAccountPage } from '@/application/account/useAccountPage';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { LoadingState } from '@/components/ui/PageState';
@@ -26,11 +26,11 @@ type ProfileForm = z.infer<typeof profileSchema>;
 type PasswordForm = z.infer<typeof passwordSchema>;
 
 export default function AccountInformationPage() {
-  const { customer, token, useCases, reload, isInitialLoading } = useAccountController();
+  const { customer, token, useCases, reload, isInitialLoading, isSubscribed } = useAccountPage();
 
   const profileForm = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
-    values: { firstName: customer?.firstName ?? '', lastName: customer?.lastName ?? '', isSubscribed: customer?.isSubscribed ?? false },
+    values: { firstName: customer?.firstName ?? '', lastName: customer?.lastName ?? '', isSubscribed: isSubscribed },
   });
 
   const passForm = useForm<PasswordForm>({ resolver: zodResolver(passwordSchema) });

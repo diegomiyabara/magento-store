@@ -3,10 +3,9 @@ import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
 import Drawer from '@/components/ui/Drawer';
 import Button from '@/components/ui/Button';
 import { useCart } from '@/application/cart/CartContext';
-import { normalizeMediaUrl } from '@/lib/utils/formatters';
-import { apiConfig } from '@/lib/api/config';
-import { useStorefrontShellController } from '@/presentation/controllers/useStorefrontShellController';
-import { formatPrice } from '@/lib/utils/formatters';
+import { normalizeMediaUrl, formatPrice } from '@/domain/shared/formatters';
+import { apiConfig } from '@/infrastructure/magento/config';
+import { useStorefrontShell } from '@/application/storefront/useStorefrontShell';
 
 interface CartDrawerProps {
   open: boolean;
@@ -15,7 +14,7 @@ interface CartDrawerProps {
 
 export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const { items, itemCount, subtotal, isLoading, updateItemQuantity, removeFromCart } = useCart();
-  const { storeConfig } = useStorefrontShellController();
+  const { storeConfig } = useStorefrontShell();
 
   return (
     <Drawer

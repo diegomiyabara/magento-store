@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { UserPlus, Sparkles } from 'lucide-react';
-import { useAuth } from '@/app/authContext';
+import { useAuth } from '@/application/auth/AuthContext';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import { toast } from 'sonner';
