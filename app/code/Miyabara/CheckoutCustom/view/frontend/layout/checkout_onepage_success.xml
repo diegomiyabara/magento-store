@@ -4,14 +4,14 @@
     <body>
         <referenceBlock name="checkout.success">
             <action method="setTemplate">
-                <argument name="template" xsi:type="string">Dm3d_CheckoutCustom::success.phtml</argument>
+                <argument name="template" xsi:type="string">Miyabara_CheckoutCustom::success.phtml</argument>
             </action>
         </referenceBlock>
         <referenceBlock name="logo" remove="true"/>
         <referenceContainer name="checkout.header.wrapper">
             <block class="Magento\Framework\View\Element\Template"
-                   name="dm3d.checkout.header.success"
-                   template="Dm3d_CheckoutCustom::header.phtml"
+                   name="miyabara.checkout.header.success"
+                   template="Miyabara_CheckoutCustom::header.phtml"
                    before="-"/>
         </referenceContainer>
     </body>
