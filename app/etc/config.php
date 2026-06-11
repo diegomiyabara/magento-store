@@ -346,6 +346,7 @@ return [
         'MageOS_ThemeOptimization' => 1,
         'Miyabara_Buffer' => 1,
         'Miyabara_CheckoutCustom' => 1,
+        'Miyabara_MagentoAI' => 1,
         'Mollie_Payment' => 1,
         'Mollie_HyvaCompatibility' => 1,
         'Swissup_Ignition' => 1,

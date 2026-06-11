@@ -38,7 +38,7 @@
                 <openai_model>gpt-image-1</openai_model>
                 <openai_size>1024x1024</openai_size>
                 <openai_quality>medium</openai_quality>
-                <gemini_model>gemini-2.0-flash-exp-image-generation</gemini_model>
+                <gemini_model>gemini-2.5-flash-image</gemini_model>
                 <prompt>Professional product photo of {{ product.name }} on a clean white background, studio lighting, high resolution, e-commerce style.</prompt>
                 <modify_prompt>Edit this product image as follows: {{ instructions }}. Maintain professional e-commerce quality, white background, studio lighting.</modify_prompt>
             </image>

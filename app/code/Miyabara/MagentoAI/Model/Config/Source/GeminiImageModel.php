@@ -25,9 +25,11 @@ class GeminiImageModel implements OptionSourceInterface
     public function toOptionArray(): array
     {
         return [
-            ['value' => 'gemini-2.0-flash-exp-image-generation', 'label' => 'gemini-2.0-flash-exp-image-generation'],
-            ['value' => 'gemini-2.5-flash-preview-05-20',        'label' => 'gemini-2.5-flash-preview-05-20'],
-            ['value' => 'gemini-2.5-pro-preview-06-05',          'label' => 'gemini-2.5-pro-preview-06-05'],
+            ['value' => 'gemini-2.5-flash-image',         'label' => 'Gemini 2.5 Flash Image'],
+            ['value' => 'gemini-3.1-flash-image',         'label' => 'Gemini 3.1 Flash Image'],
+            ['value' => 'gemini-3.1-flash-image-preview', 'label' => 'Gemini 3.1 Flash Image Preview'],
+            ['value' => 'gemini-3-pro-image',             'label' => 'Gemini 3 Pro Image'],
+            ['value' => 'gemini-3-pro-image-preview',     'label' => 'Gemini 3 Pro Image Preview'],
         ];
     }
 }
