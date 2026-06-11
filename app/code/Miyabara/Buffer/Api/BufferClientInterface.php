@@ -17,6 +17,8 @@ interface BufferClientInterface
 {
     /**
      * Returns the first organization ID associated with the account.
+     *
+     * @return string
      */
     public function getOrganizationId(): string;
 
@@ -24,6 +26,7 @@ interface BufferClientInterface
      * Returns channels for the given organization.
      * Each item: ['id' => string, 'name' => string, 'displayName' => string, 'service' => string]
      *
+     * @param string $organizationId
      * @return array<int, array<string, string>>
      */
     public function getChannels(string $organizationId): array;

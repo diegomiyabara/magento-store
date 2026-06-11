@@ -24,8 +24,19 @@ use Magento\Store\Model\StoreManagerInterface;
 
 class Search extends Action
 {
+    /**
+     * @param string
+     */
     public const ADMIN_RESOURCE = 'Miyabara_Buffer::post_index';
 
+    /**
+     * @param Context               $context
+     * @param CollectionFactory     $collectionFactory
+     * @param ImageHelper           $imageHelper
+     * @param JsonFactory           $jsonFactory
+     * @param Emulation             $emulation
+     * @param StoreManagerInterface $storeManager
+     */
     public function __construct(
         Context $context,
         private readonly CollectionFactory $collectionFactory,
@@ -37,6 +48,11 @@ class Search extends Action
         parent::__construct($context);
     }
 
+    /**
+     * Search products by name and return id, name, sku, description and thumbnail URL.
+     *
+     * @return Json
+     */
     public function execute(): Json
     {
         $result = $this->jsonFactory->create();

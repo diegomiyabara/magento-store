@@ -20,14 +20,27 @@ use Magento\Framework\Serialize\Serializer\Json;
 
 class BufferClient implements BufferClientInterface
 {
+    /**
+     * @param string
+     */
     private const ENDPOINT = 'https://api.buffer.com';
 
+    /**
+     * @param Config $config
+     * @param Curl   $curl
+     * @param Json   $json
+     */
     public function __construct(
         private readonly Config $config,
         private readonly Curl $curl,
         private readonly Json $json
     ) {}
 
+    /**
+     * Returns the first organization ID associated with the Buffer account.
+     *
+     * @return string
+     */
     public function getOrganizationId(): string
     {
         $gql = 'query { account { organizations { id name } } }';
@@ -41,6 +54,12 @@ class BufferClient implements BufferClientInterface
         return (string) $orgs[0]['id'];
     }
 
+    /**
+     * Returns all channels for the given organization.
+     *
+     * @param string $organizationId
+     * @return array<int, array<string, string>>
+     */
     public function getChannels(string $organizationId): array
     {
         $gql = <<<'GQL'
@@ -59,6 +78,16 @@ GQL;
         return $data['data']['channels'] ?? [];
     }
 
+    /**
+     * Creates a post in Buffer for the given channel.
+     *
+     * @param string      $channelId
+     * @param string      $text
+     * @param string|null $imageUrl
+     * @param string      $mode
+     * @param string|null $dueAt
+     * @return array{id: string, text: string, dueAt: string|null, status: string}
+     */
     public function createPost(
         string $channelId,
         string $text,
@@ -105,6 +134,9 @@ GQL;
     }
 
     /**
+     * Execute a GraphQL request against the Buffer API and return the decoded response.
+     *
+     * @param string               $gql
      * @param array<string, mixed> $variables
      * @return array<string, mixed>
      */

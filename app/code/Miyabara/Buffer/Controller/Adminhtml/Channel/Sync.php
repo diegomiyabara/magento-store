@@ -25,8 +25,19 @@ use Magento\Framework\Serialize\Serializer\Json as JsonSerializer;
 
 class Sync extends Action
 {
+    /**
+     * @param string
+     */
     public const ADMIN_RESOURCE = 'Miyabara_Buffer::post_index';
 
+    /**
+     * @param Context $context
+     * @param BufferClientInterface $bufferClient
+     * @param Config $config
+     * @param JsonFactory $jsonFactory
+     * @param JsonSerializer $jsonSerializer
+     * @param WriterInterface $configWriter
+     */
     public function __construct(
         Context $context,
         private readonly BufferClientInterface $bufferClient,
@@ -38,6 +49,11 @@ class Sync extends Action
         parent::__construct($context);
     }
 
+    /**
+     * Synchronize Buffer channels by fetching them from the Buffer API and saving to Magento configuration.
+     * 
+     * @return Json
+     */
     public function execute(): Json
     {
         $result = $this->jsonFactory->create();
