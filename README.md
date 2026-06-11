@@ -1,23 +1,22 @@
 # DM3D Tech Store
 
-Projeto baseado em Magento 2 com uma camada frontend headless em React + Vite para a vitrine.
+Magento 2 project with a headless React + Vite frontend layer for the storefront.
 
-## Visao Geral
+## Overview
 
-Este repositorio contem:
+This repository contains:
 
-- Magento 2.4.8-p4 como backend de e-commerce
-- OpenSearch para indexacao de catalogo
-- Frontend headless em `frontend/` consumindo GraphQL do Magento
-- Configuracao de Nginx para publicar o frontend em `headless.dev.dm3dtech.com`
+- Magento 2.4.8-p4 as the e-commerce backend
+- OpenSearch for catalog indexing
+- Headless frontend in `frontend/` consuming Magento's GraphQL API
+- Nginx configuration to serve the frontend at `headless.dev.dm3dtech.com`
 
-## Estrutura
+## Structure
 
-- `app/`, `bin/`, `lib/`, `pub/`, `setup/`, `vendor/`: estrutura principal do Magento
-- `app/etc/env.php`: configuracao local da aplicacao Magento
-- `frontend/`: storefront headless em React + Vite
-- `devops/nginx/headless.dev.dm3dtech.com.conf`: virtual host do frontend headless
-- `docker-compose.opensearch.yml`: container OpenSearch para desenvolvimento
+- `app/`, `bin/`, `lib/`, `pub/`, `setup/`, `vendor/`: Magento core structure
+- `app/etc/env.php`: local Magento application configuration
+- `frontend/`: headless storefront built with React + Vite
+- `docker-compose.opensearch.yml`: OpenSearch container for local development
 
 ## Stack
 
@@ -28,117 +27,111 @@ Este repositorio contem:
 - Vite
 - React Router
 
-## Ambiente Atual
+## Current Environment
 
 - Magento mode: `default`
-- Banco configurado: `magento`
-- Host do banco: `localhost`
+- Database name: `magento`
+- Database host: `localhost`
 - OpenSearch: `127.0.0.1:9200`
 
 ## Magento
 
-O Magento atende a loja principal e expoe GraphQL em:
+Magento serves the main store and exposes GraphQL at:
 
 ```text
 http://dev.dm3dtech.com/graphql
 ```
 
-O frontend headless usa esse endpoint para carregar:
+The headless frontend uses this endpoint to load:
 
 - `storeConfig`
-- CMS da home
-- categorias
-- produtos
+- Home CMS page
+- Categories
+- Products
 
-## Frontend Headless
+## Headless Frontend
 
-O app React fica em `frontend/` e foi estruturado em camadas:
+The React app lives in `frontend/` and is structured in layers:
 
-- `src/domain`: modelos de dominio
-- `src/application`: casos de uso
-- `src/infrastructure`: acesso ao Magento
-- `src/presentation`: controllers da interface
-- `src/components` e `src/features`: views e composicao das telas
+- `src/domain`: domain models
+- `src/application`: use cases
+- `src/infrastructure`: Magento access layer
+- `src/presentation`: interface controllers
+- `src/components` and `src/features`: views and screen composition
 
-### Variaveis de ambiente
+### Environment variables
 
-Arquivo base:
+Base file:
 
 ```text
 frontend/.env
 ```
 
-Variaveis suportadas:
+Supported variables:
 
 - `VITE_MAGENTO_GRAPHQL_URL`
 - `VITE_MAGENTO_MEDIA_BASE_URL`
 - `VITE_STORE_CODE`
 
-### Rodando o frontend
+### Running the frontend
 
-Instale as dependencias:
+Install dependencies:
 
 ```bash
-cd /var/www/html/dm3dtech/frontend
-/home/diego/snap/code/235/.local/share/pnpm/pnpm install
+cd frontend
+pnpm install
 ```
 
-Suba em modo desenvolvimento:
+Start development server:
 
 ```bash
-/home/diego/snap/code/235/.local/share/pnpm/pnpm dev --host
+pnpm dev --host
 ```
 
-Gere o build:
+Generate production build:
 
 ```bash
-/home/diego/snap/code/235/.local/share/pnpm/pnpm build
+pnpm build
 ```
 
 ## OpenSearch
 
-Para subir o OpenSearch com Docker Compose:
+Start OpenSearch with Docker Compose:
 
 ```bash
 docker compose -f docker-compose.opensearch.yml up -d
 ```
 
-Portas expostas:
+Exposed ports:
 
 - `9200`
 - `9600`
 
-## Publicacao do Frontend
+## Frontend Deployment
 
-O build do Vite e gerado em:
+The Vite build output is generated at:
 
 ```text
 frontend/dist
 ```
 
-O server block previsto para o frontend esta em:
+Expected deployment flow:
 
-```text
-devops/nginx/headless.dev.dm3dtech.com.conf
-```
-
-Fluxo esperado:
-
-1. Gerar o build do frontend
-2. Publicar o arquivo de Nginx em `/etc/nginx/conf.d/`
-3. Validar com `nginx -t`
-4. Recarregar o Nginx
+1. Generate the frontend build
+2. Place the Nginx config in `/etc/nginx/conf.d/`
+3. Validate with `nginx -t`
+4. Reload Nginx
 
 ## Git
 
-Remote configurado:
+Configured remote:
 
 ```text
 https://github.com/diegomiyabara/magento-store.git
 ```
 
-## Observacoes
+## Notes
 
-- Este repositorio usa `.gitignore` para evitar versionar dependencias, builds e artefatos locais.
-- O frontend foi pensado para carregar a interface base imediatamente e usar loader apenas nas secoes dependentes do Magento.
-- Se o catalogo ainda nao estiver populado, a home e as categorias exibem estados vazios amigaveis.
+- This repository uses `.gitignore` to avoid versioning dependencies, builds, and local artifacts.
+- The frontend is designed to render the base UI immediately, using loaders only for sections that depend on Magento data.
+- If the catalog is not yet populated, the home page and category pages display friendly empty states.
