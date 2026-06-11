@@ -24,8 +24,17 @@ use Magento\Framework\Exception\LocalizedException;
 
 class Save extends Action
 {
+    /**
+     * @param string
+     */
     public const ADMIN_RESOURCE = 'Miyabara_Buffer::post_index';
 
+    /**
+     * @param Context               $context
+     * @param BufferClientInterface $bufferClient
+     * @param Config                $config
+     * @param RedirectFactory       $redirectFactory
+     */
     public function __construct(
         Context $context,
         private readonly BufferClientInterface $bufferClient,
@@ -35,6 +44,11 @@ class Save extends Action
         parent::__construct($context);
     }
 
+    /**
+     * Validate the post form, send to Buffer on each selected channel, and redirect with feedback messages.
+     *
+     * @return Redirect
+     */
     public function execute(): Redirect
     {
         $redirect = $this->redirectFactory->create();

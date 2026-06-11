@@ -19,8 +19,15 @@ use Magento\Framework\View\Result\PageFactory;
 
 abstract class AbstractAction extends Action
 {
+    /**
+     * @param string
+     */
     public const ADMIN_RESOURCE = 'Miyabara_Buffer::post_index';
 
+    /**
+     * @param Context     $context
+     * @param PageFactory $resultPageFactory
+     */
     public function __construct(
         Context $context,
         protected readonly PageFactory $resultPageFactory

@@ -18,6 +18,11 @@ use Magento\Framework\Controller\ResultInterface;
 
 class Index extends AbstractAction
 {
+    /**
+     * Render the Buffer — Create Social Post admin page.
+     *
+     * @return ResultInterface
+     */
     public function execute(): ResultInterface
     {
         $resultPage = $this->resultPageFactory->create();
