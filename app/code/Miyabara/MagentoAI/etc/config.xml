@@ -1,4 +1,15 @@
 <?xml version="1.0"?>
+<!--
+/**
+ * Miyabara_MagentoAI
+ *
+ * @vendor    Miyabara
+ * @package   MagentoAI
+ *
+ * @copyright © 2026 Diego M. Miyabara. All rights reserved.
+ * @author    Diego M. Miyabara <diego.miyabara@hotmail.com>
+ */
+-->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
