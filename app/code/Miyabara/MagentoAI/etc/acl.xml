@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Miyabara_MagentoAI
+ *
+ * @vendor    Miyabara
+ * @package   MagentoAI
+ *
+ * @copyright © 2026 Diego M. Miyabara. All rights reserved.
+ * @author    Diego M. Miyabara <diego.miyabara@hotmail.com>
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Backend::system">
+                    <resource id="Miyabara_MagentoAI::mageai"
+                              title="Miyabara MagentoAI"
+                              sortOrder="100">
+                        <resource id="Miyabara_MagentoAI::generate"
+                                  title="Generate text and images"
+                                  sortOrder="10"/>
+                    </resource>
+                </resource>
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Miyabara_MagentoAI::config"
+                                      title="Miyabara MagentoAI Settings"
+                                      sortOrder="100"/>
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

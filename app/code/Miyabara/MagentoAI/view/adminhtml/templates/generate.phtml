@@ -1,0 +1,142 @@
+<?php
+/**
+ * Miyabara_MagentoAI
+ *
+ * @vendor    Miyabara
+ * @package   MagentoAI
+ *
+ * @copyright © 2026 Diego M. Miyabara. All rights reserved.
+ * @author    Diego M. Miyabara <diego.miyabara@hotmail.com>
+ *
+ * @var \Magento\Framework\View\Element\Template $block
+ * @var \Miyabara\MagentoAI\ViewModel\GenerateModal $viewModel
+ * @var \Magento\Framework\Escaper $escaper
+ */
+
+// phpcs:disable Generic.Files.LineLength
+
+$viewModel = $block->getData('viewModel');
+
+if (!$viewModel->isEnabled()) {
+    return;
+}
+?>
+
+<!-- ── Global JS variables ─────────────────────────────────────────────── -->
+<script>
+    window.mageAIAjaxUrl          = '<?= $escaper->escapeJs($viewModel->getGenerateUrl()) ?>';
+    window.mageAIGenerateImageUrl = '<?= $escaper->escapeJs($viewModel->getGenerateImageUrl()) ?>';
+    window.mageAIModifyImageUrl   = '<?= $escaper->escapeJs($viewModel->getModifyImageUrl()) ?>';
+    window.mpMageAIAttributes     = <?= /* @noEscape */ $viewModel->getProductAttributesJson() ?>;
+    window.mpMageAIImageAttributes = <?= /* @noEscape */ $viewModel->getImageAttributesJson() ?>;
+    window.isMpMageAIEnabled      = true;
+</script>
+
+<!-- ── 1. Advanced Text Generation Modal ──────────────────────────────── -->
+<div id="advanced-generate-modal" style="display:none;">
+    <fieldset class="fieldset">
+        <div class="field">
+            <label class="label" for="mp-custom-prompt">
+                <span><?= $escaper->escapeHtml(__('Custom Prompt')) ?></span>
+            </label>
+            <div class="control">
+                <textarea id="mp-custom-prompt"
+                          class="input-text admin__control-textarea mp-prompt-textarea"
+                          placeholder="<?= $escaper->escapeHtmlAttr(__('Describe what content you want to generate…')) ?>"></textarea>
+            </div>
+        </div>
+    </fieldset>
+</div>
+
+<!-- ── 2. Image Generation Modal ──────────────────────────────────────── -->
+<div id="mp-image-generate-modal" style="display:none;">
+    <fieldset class="fieldset">
+        <div class="field">
+            <label class="label" for="mp-image-prompt">
+                <span><?= $escaper->escapeHtml(__('Image Prompt')) ?></span>
+            </label>
+            <div class="control">
+                <textarea id="mp-image-prompt"
+                          class="input-text admin__control-textarea mp-prompt-textarea"
+                          placeholder="<?= $escaper->escapeHtmlAttr(__('Describe the product image you want to generate (leave blank to use the default from Stores → Configuration).')) ?>"></textarea>
+            </div>
+        </div>
+    </fieldset>
+</div>
+
+<!-- ── 3. Image Modification Modal ────────────────────────────────────── -->
+<div id="mp-image-modify-modal" style="display:none;">
+
+    <!-- View: image list -->
+    <div class="mp-modify-view mp-modify-view-list">
+        <p class="mp-modify-intro"><?= $escaper->escapeHtml(__('Select a product image to edit with MagentoAI.')) ?></p>
+        <div data-role="modify-empty" class="mp-modify-empty" style="display:none;">
+            <?= $escaper->escapeHtml(__('No images found. Add images to the product gallery first.')) ?>
+        </div>
+        <div data-role="modify-grid" class="mp-modify-grid"></div>
+    </div>
+
+    <!-- View: prompt input -->
+    <div class="mp-modify-view mp-modify-view-prompt" style="display:none;">
+        <div class="mp-modify-selected-preview">
+            <img data-role="modify-selected-img" src="" alt="" class="mp-modify-preview-img"/>
+        </div>
+        <fieldset class="fieldset">
+            <div class="field">
+                <label class="label" for="mp-modify-prompt">
+                    <span><?= $escaper->escapeHtml(__('Modification Instructions')) ?></span>
+                </label>
+                <div class="control">
+                    <textarea id="mp-modify-prompt"
+                              class="input-text admin__control-textarea mp-prompt-textarea"
+                              placeholder="<?= $escaper->escapeHtmlAttr(__('Describe how to edit the image…')) ?>"></textarea>
+                </div>
+            </div>
+        </fieldset>
+        <div class="mp-modify-actions">
+            <button type="button" class="action-secondary" data-role="modify-back-list">
+                <span><?= $escaper->escapeHtml(__('← Back')) ?></span>
+            </button>
+            <button type="button" class="action-primary mp-modify-submit-btn" data-role="modify-submit">
+                <span><?= $escaper->escapeHtml(__('Edit with MagentoAI')) ?></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- View: comparison result -->
+    <div class="mp-modify-view mp-modify-view-result" style="display:none;">
+        <div class="mp-modify-comparison">
+            <div class="mp-modify-comparison-col">
+                <p class="mp-modify-comparison-label"><?= $escaper->escapeHtml(__('Original')) ?></p>
+                <img data-role="modify-original-img" src="" alt="" class="mp-modify-result-img"/>
+            </div>
+            <div class="mp-modify-comparison-col">
+                <p class="mp-modify-comparison-label"><?= $escaper->escapeHtml(__('Modified')) ?></p>
+                <img data-role="modify-result-img" src="" alt="" class="mp-modify-result-img"/>
+            </div>
+        </div>
+        <div class="mp-modify-actions">
+            <button type="button" class="action-secondary" data-role="modify-regenerate">
+                <span><?= $escaper->escapeHtml(__('Try Again')) ?></span>
+            </button>
+            <button type="button" class="action-primary" data-role="modify-confirm">
+                <span><?= $escaper->escapeHtml(__('Use Modified Image')) ?></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Widget initialisation ───────────────────────────────────────────── -->
+<script type="text/x-magento-init">
+{
+    "*": {
+        "mageAiGenerate": {},
+        "mageAiImageGenerate": {
+            "generateImageUrl": "<?= $escaper->escapeJs($viewModel->getGenerateImageUrl()) ?>"
+        },
+        "mageAiImageModify": {
+            "modifyImageUrl": "<?= $escaper->escapeJs($viewModel->getModifyImageUrl()) ?>"
+        }
+    }
+}
+</script>
