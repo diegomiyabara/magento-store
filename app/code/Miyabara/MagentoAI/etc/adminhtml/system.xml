@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="miyabara" translate="label" sortOrder="200">
+            <label>Miyabara</label>
+        </tab>
+
+        <section id="miyabara_mageai" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>MagentoAI</label>
+            <tab>miyabara</tab>
+            <resource>Miyabara_MagentoAI::config</resource>
+
+            <!-- ── General ─────────────────────────────────────────────── -->
+            <group id="general" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable MagentoAI</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="baseline_prompt" translate="label comment" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Baseline Prompt</label>
+                    <comment>Applied to every generation request. Use for brand voice, compliance requirements, SEO standards and content governance.</comment>
+                </field>
+            </group>
+
+            <!-- ── API Configuration ──────────────────────────────────── -->
+            <group id="api" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>API Configuration</label>
+
+                <field id="provider" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>AI Provider</label>
+                    <source_model>Miyabara\MagentoAI\Model\Config\Source\AiProvider</source_model>
+                </field>
+
+                <!-- OpenAI -->
+                <field id="openai_api_key" translate="label" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>OpenAI API Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="openai_base_url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>OpenAI Base URL</label>
+                </field>
+                <field id="openai_model" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>OpenAI Model</label>
+                    <source_model>Miyabara\MagentoAI\Model\Config\Source\AiModel</source_model>
+                </field>
+
+                <!-- Anthropic -->
+                <field id="anthropic_api_key" translate="label" type="obscure" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Anthropic API Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="anthropic_base_url" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Anthropic Base URL</label>
+                </field>
+                <field id="anthropic_model" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Anthropic Model</label>
+                    <source_model>Miyabara\MagentoAI\Model\Config\Source\AnthropicModel</source_model>
+                </field>
+
+                <!-- Gemini -->
+                <field id="gemini_api_key" translate="label" type="obscure" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Gemini API Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="gemini_base_url" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Gemini Base URL</label>
+                </field>
+                <field id="gemini_model" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Gemini Model (Text)</label>
+                    <source_model>Miyabara\MagentoAI\Model\Config\Source\GeminiModel</source_model>
+                </field>
+            </group>
+
+            <!-- ── Product Description ────────────────────────────────── -->
+            <group id="description" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Product Description Generation</label>
+
+                <field id="attributes" translate="label comment" type="multiselect" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product Attributes</label>
+                    <comment>Attributes sent to the AI as context for description generation.</comment>
+                    <source_model>Miyabara\MagentoAI\Model\Config\Source\Attributes</source_model>
+                </field>
+                <field id="temperature" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Temperature</label>
+                    <comment>Controls randomness (0.0 – 2.0). Lower values are more deterministic.</comment>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="full_prompt" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Full Description Prompt</label>
+                    <comment>Use {{ product.name }} and {{ product.attributes }} as template variables.</comment>
+                </field>
+                <field id="full_max_tokens" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Full Description Max Tokens</label>
+                    <validate>validate-digits</validate>
+                </field>
+                <field id="short_prompt" translate="label comment" type="textarea" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Short Description Prompt</label>
+                    <comment>Use {{ product.name }} and {{ product.attributes }} as template variables.</comment>
+                </field>
+                <field id="short_max_tokens" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Short Description Max Tokens</label>
+                    <validate>validate-digits</validate>
+                </field>
+            </group>
+
+            <!-- ── Image Generation ───────────────────────────────────── -->
+            <group id="image" translate="label" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Image Generation</label>
+
+                <field id="attributes" translate="label comment" type="multiselect" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product Attributes</label>
+                    <comment>Attributes injected into the image prompt via {{ product.attributes }}.</comment>
+                    <source_model>Miyabara\MagentoAI\Model\Config\Source\Attributes</source_model>
+                </field>
+                <field id="prompt" translate="label comment" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Default Image Generation Prompt</label>
+                    <comment>Used when the admin leaves the prompt field blank. Supports {{ product.name }} and {{ product.attributes }}.</comment>
+                </field>
+                <field id="modify_prompt" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Default Image Modification Prompt</label>
+                    <comment>Base prompt for image editing. Supports {{ instructions }} (user-entered text).</comment>
+                </field>
+
+                <!-- OpenAI image settings -->
+                <field id="openai_model" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>OpenAI Image Model</label>
+                    <source_model>Miyabara\MagentoAI\Model\Config\Source\OpenAiImageModel</source_model>
+                </field>
+                <field id="openai_size" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>OpenAI Image Size</label>
+                    <source_model>Miyabara\MagentoAI\Model\Config\Source\GptImageSize</source_model>
+                </field>
+                <field id="openai_quality" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>OpenAI Image Quality</label>
+                    <source_model>Miyabara\MagentoAI\Model\Config\Source\ImageQuality</source_model>
+                </field>
+
+                <!-- Gemini image settings -->
+                <field id="gemini_model" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Gemini Image Model</label>
+                    <source_model>Miyabara\MagentoAI\Model\Config\Source\GeminiImageModel</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
