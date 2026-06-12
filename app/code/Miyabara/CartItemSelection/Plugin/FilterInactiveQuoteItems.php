@@ -1,4 +1,13 @@
 <?php
+/**
+ * Miyabara_CartItemSelection
+ *
+ * @vendor    Miyabara
+ * @package   CartItemSelection
+ *
+ * @copyright © 2026 Diego M. Miyabara. All rights reserved.
+ * @author    Diego M. Miyabara <diego.miyabara@gmail.com>
+ */
 
 declare(strict_types=1);
 
@@ -7,6 +16,10 @@ namespace Miyabara\CartItemSelection\Plugin;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Item;
 
+/**
+ * Excludes inactive quote items from Quote::getAllItems and Quote::getAllVisibleItems
+ * so order conversion and the empty-cart guard skip deselected items.
+ */
 class FilterInactiveQuoteItems
 {
     /**

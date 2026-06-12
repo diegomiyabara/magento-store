@@ -1,4 +1,13 @@
 <?php
+/**
+ * Miyabara_CartItemSelection
+ *
+ * @vendor    Miyabara
+ * @package   CartItemSelection
+ *
+ * @copyright © 2026 Diego M. Miyabara. All rights reserved.
+ * @author    Diego M. Miyabara <diego.miyabara@gmail.com>
+ */
 
 declare(strict_types=1);
 
@@ -12,6 +21,9 @@ use Magento\Quote\Api\CartManagementInterface;
 use Magento\Quote\Model\Quote;
 use Psr\Log\LoggerInterface;
 
+/**
+ * After order placement, moves inactive quote items into a new cart for the customer.
+ */
 class CreateRemnantCartAfterOrder implements ObserverInterface
 {
     /**

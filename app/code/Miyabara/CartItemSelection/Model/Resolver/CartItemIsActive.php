@@ -1,4 +1,13 @@
 <?php
+/**
+ * Miyabara_CartItemSelection
+ *
+ * @vendor    Miyabara
+ * @package   CartItemSelection
+ *
+ * @copyright © 2026 Diego M. Miyabara. All rights reserved.
+ * @author    Diego M. Miyabara <diego.miyabara@gmail.com>
+ */
 
 declare(strict_types=1);
 
@@ -9,6 +18,9 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 
+/**
+ * Resolves the is_active field on CartItemInterface from the quote item model.
+ */
 class CartItemIsActive implements ResolverInterface
 {
     /**

@@ -1,4 +1,13 @@
 <?php
+/**
+ * Miyabara_CartItemSelection
+ *
+ * @vendor    Miyabara
+ * @package   CartItemSelection
+ *
+ * @copyright © 2026 Diego M. Miyabara. All rights reserved.
+ * @author    Diego M. Miyabara <diego.miyabara@gmail.com>
+ */
 
 declare(strict_types=1);
 

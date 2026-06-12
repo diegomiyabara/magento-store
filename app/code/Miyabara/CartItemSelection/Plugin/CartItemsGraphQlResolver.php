@@ -1,4 +1,13 @@
 <?php
+/**
+ * Miyabara_CartItemSelection
+ *
+ * @vendor    Miyabara
+ * @package   CartItemSelection
+ *
+ * @copyright © 2026 Diego M. Miyabara. All rights reserved.
+ * @author    Diego M. Miyabara <diego.miyabara@gmail.com>
+ */
 
 declare(strict_types=1);
 
@@ -9,6 +18,13 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\QuoteGraphQl\Model\CartItem\GetItemsData;
 use Magento\QuoteGraphQl\Model\Resolver\CartItems;
 
+/**
+ * Bypasses the core CartItems resolver to serve all items (active and inactive) from the unfiltered collection.
+ *
+ * The core resolver calls getAllVisibleItems() which is filtered by FilterInactiveQuoteItems — inactive
+ * items would be invisible in GraphQL. This plugin reads from getItemsCollection() instead so the
+ * storefront can display deselected items and render their checkboxes.
+ */
 class CartItemsGraphQlResolver
 {
     /**

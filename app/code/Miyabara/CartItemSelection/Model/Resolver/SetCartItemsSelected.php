@@ -1,4 +1,13 @@
 <?php
+/**
+ * Miyabara_CartItemSelection
+ *
+ * @vendor    Miyabara
+ * @package   CartItemSelection
+ *
+ * @copyright © 2026 Diego M. Miyabara. All rights reserved.
+ * @author    Diego M. Miyabara <diego.miyabara@gmail.com>
+ */
 
 declare(strict_types=1);
 
@@ -15,6 +24,9 @@ use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Item;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
 
+/**
+ * Resolver for the setCartItemsSelected bulk mutation — atomically toggles is_active on multiple quote items.
+ */
 class SetCartItemsSelected implements ResolverInterface
 {
     /**
