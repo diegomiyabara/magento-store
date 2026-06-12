@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Trash2, Plus, Minus, Tag, ShoppingBag, ArrowRight } from 'lucide-react';
 import { useCart } from '@/application/cart/CartContext';
@@ -16,10 +16,15 @@ export default function CartPage() {
     items, cart, isLoading,
     updateItemQuantity, removeFromCart,
     applyCoupon, removeCoupon,
+    toggleCartItemSelected, hasPendingToggles,
   } = useCart();
+  const navigate = useNavigate();
   const { storeConfig } = useStorefrontShell();
   const [couponInput, setCouponInput] = useState('');
   const [couponLoading, setCouponLoading] = useState(false);
+
+  const hasActiveItems = items.some((i) => i.isActive);
+  const checkoutDisabled = !hasActiveItems || hasPendingToggles;
 
   async function handleApplyCoupon() {
     if (!couponInput.trim()) return;
@@ -77,8 +82,20 @@ export default function CartPage() {
                 return (
                   <div
                     key={item.uid}
-                    className="flex gap-4 rounded-2xl border border-[var(--color-surface-border)] bg-[var(--color-surface)] p-4"
+                    className={`flex gap-4 rounded-2xl border border-[var(--color-surface-border)] bg-[var(--color-surface)] p-4 transition-opacity${!item.isActive ? ' opacity-40' : ''}`}
                   >
+                    <div className="flex shrink-0 items-start pt-1">
+                      <input
+                        type="checkbox"
+                        id={`item-select-${item.uid}`}
+                        checked={item.isActive}
+                        onChange={(e) => toggleCartItemSelected(item.uid, e.target.checked)}
+                        disabled={isLoading}
+                        className="h-4 w-4 cursor-pointer accent-brand"
+                        aria-label={`Selecionar ${item.product?.name}`}
+                      />
+                    </div>
+
                     <Link to={`/produto/${item.product?.urlKey}`} className="shrink-0">
                       <div className="h-20 w-20 overflow-hidden rounded-xl bg-slate-100">
                         {imageUrl ? (
@@ -99,7 +116,7 @@ export default function CartPage() {
                         {item.product?.name}
                       </Link>
                       <p className="text-xs text-text-muted">{item.product?.sku}</p>
-                      <p className="font-semibold text-brand">
+                      <p className={`font-semibold${item.isActive ? ' text-brand' : ' text-text-muted line-through'}`}>
                         {formatPrice(price * item.quantity, currency)}
                       </p>
 
@@ -166,9 +183,10 @@ export default function CartPage() {
                       value={couponInput}
                       onChange={(e) => setCouponInput(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
-                      className="flex-1 rounded-xl border border-[var(--color-surface-border)] bg-transparent px-3 py-2 text-sm text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-brand/30"
+                      disabled={isLoading || !hasActiveItems}
+                      className={`flex-1 rounded-xl border border-[var(--color-surface-border)] bg-transparent px-3 py-2 text-sm text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-brand/30${!hasActiveItems ? ' opacity-50 cursor-not-allowed' : ''}`}
                     />
-                    <Button variant="secondary" loading={couponLoading} onClick={handleApplyCoupon}>
+                    <Button variant="secondary" loading={couponLoading} disabled={couponLoading || !hasActiveItems} onClick={handleApplyCoupon}>
                       Aplicar
                     </Button>
                   </div>
@@ -180,40 +198,53 @@ export default function CartPage() {
             <div className="h-fit rounded-2xl border border-[var(--color-surface-border)] bg-[var(--color-surface)] p-5 lg:sticky lg:top-24">
               <h2 className="mb-4 text-base font-semibold text-text">Resumo do pedido</h2>
 
-              <div className="flex flex-col gap-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-text-muted">Subtotal</span>
-                  <span>{formatPrice(cart?.subtotal?.value ?? 0, cart?.subtotal?.currency ?? 'BRL')}</span>
+              {hasPendingToggles ? (
+                <div className="animate-pulse space-y-3">
+                  <div className="h-4 bg-[var(--color-surface-border)] rounded w-3/4" />
+                  <div className="h-4 bg-[var(--color-surface-border)] rounded w-1/2" />
+                  <div className="h-6 bg-[var(--color-surface-border)] rounded w-full" />
                 </div>
-
-                {cart?.discounts?.map((d, i) => (
-                  <div key={i} className="flex justify-between text-success">
-                    <span>{d.label}</span>
-                    <span>-{formatPrice(d.value, d.currency)}</span>
+              ) : (
+                <div className="flex flex-col gap-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-text-muted">Subtotal</span>
+                    <span>{formatPrice(cart?.subtotal?.value ?? 0, cart?.subtotal?.currency ?? 'BRL')}</span>
                   </div>
-                ))}
 
-                {cart?.totalTax?.value != null && cart.totalTax.value > 0 && (
-                  <div className="flex justify-between text-text-muted">
-                    <span>Impostos</span>
-                    <span>{formatPrice(cart.totalTax.value, cart.totalTax.currency)}</span>
+                  {cart?.discounts?.map((d, i) => (
+                    <div key={i} className="flex justify-between text-success">
+                      <span>{d.label}</span>
+                      <span>-{formatPrice(d.value, d.currency)}</span>
+                    </div>
+                  ))}
+
+                  {cart?.totalTax?.value != null && cart.totalTax.value > 0 && (
+                    <div className="flex justify-between text-text-muted">
+                      <span>Impostos</span>
+                      <span>{formatPrice(cart.totalTax.value, cart.totalTax.currency)}</span>
+                    </div>
+                  )}
+
+                  <div className="border-t border-[var(--color-surface-border)] pt-3 flex justify-between font-bold text-base">
+                    <span>Total</span>
+                    <span className="text-brand">
+                      {formatPrice(cart?.grandTotal?.value ?? 0, cart?.grandTotal?.currency ?? 'BRL')}
+                    </span>
                   </div>
-                )}
-
-                <div className="border-t border-[var(--color-surface-border)] pt-3 flex justify-between font-bold text-base">
-                  <span>Total</span>
-                  <span className="text-brand">
-                    {formatPrice(cart?.grandTotal?.value ?? 0, cart?.grandTotal?.currency ?? 'BRL')}
-                  </span>
                 </div>
-              </div>
+              )}
 
               <div className="mt-5 flex flex-col gap-2">
-                <Link to="/checkout">
-                  <Button variant="primary" fullWidth size="lg">
-                    Finalizar compra <ArrowRight size={16} />
-                  </Button>
-                </Link>
+                <Button
+                  variant="primary"
+                  fullWidth
+                  size="lg"
+                  disabled={checkoutDisabled}
+                  onClick={() => !checkoutDisabled && navigate('/checkout')}
+                >
+                  {hasPendingToggles ? 'Atualizando...' : 'Finalizar compra'}
+                  <ArrowRight size={16} />
+                </Button>
                 <Link to="/">
                   <Button variant="ghost" fullWidth>
                     Continuar comprando

@@ -1,0 +1,58 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Miyabara\CartItemSelection\Plugin;
+
+use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\QuoteGraphQl\Model\CartItem\GetItemsData;
+use Magento\QuoteGraphQl\Model\Resolver\CartItems;
+
+class CartItemsGraphQlResolver
+{
+    /**
+     * @param GetItemsData $getItemsData
+     */
+    public function __construct(
+        private readonly GetItemsData $getItemsData,
+    ) {
+    }
+
+    /**
+     * @param CartItems $subject
+     * @param callable $proceed
+     * @param Field $field
+     * @param mixed $context
+     * @param ResolveInfo $info
+     * @param array|null $value
+     * @param array|null $args
+     * @return array
+     */
+    public function aroundResolve(
+        CartItems $subject,
+        callable $proceed,
+        Field $field,
+        $context,
+        ResolveInfo $info,
+        ?array $value = null,
+        ?array $args = null,
+    ): array {
+        if (!isset($value['model'])) {
+            return $proceed($field, $context, $info, $value, $args);
+        }
+
+        $cart = $value['model'];
+        $items = [];
+
+        foreach ($cart->getItemsCollection() as $cartItem) {
+            if ($cartItem->isDeleted() || $cartItem->getParentItemId() || $cartItem->getParentItem()) {
+                continue;
+            }
+
+            $items[] = $cartItem;
+        }
+
+        return $this->getItemsData->execute($items);
+    }
+}

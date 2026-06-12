@@ -43,6 +43,7 @@ import {
   REMOVE_CART_ITEM_MUTATION,
   REMOVE_COUPON_FROM_CART_MUTATION,
   PLACE_ORDER_MUTATION,
+  SET_CART_ITEMS_SELECTED_MUTATION,
   SET_GUEST_EMAIL_ON_CART_MUTATION,
   SET_BILLING_ADDRESS_ON_CART_MUTATION,
   SET_PAYMENT_METHOD_ON_CART_MUTATION,
@@ -297,6 +298,23 @@ export function createMagentoStorefrontRepository() {
 
       return createCartModel(
         ((data['removeItemFromCart'] as RawData | null)?.['cart'] as RawData | null) ?? null,
+      );
+    },
+
+    async setCartItemsSelected(
+      cartId: string,
+      items: { cart_item_uid: string; is_active: boolean }[],
+      token?: string,
+      signal?: AbortSignal,
+    ): Promise<CartModel | null> {
+      const data = await executeMagentoQuery<RawData>(
+        SET_CART_ITEMS_SELECTED_MUTATION,
+        { cartId, items },
+        { authToken: token, signal, skipCache: true },
+      );
+
+      return createCartModel(
+        ((data['setCartItemsSelected'] as RawData | null)?.['cart'] as RawData | null) ?? null,
       );
     },
 

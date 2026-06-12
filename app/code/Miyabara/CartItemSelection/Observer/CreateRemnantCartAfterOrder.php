@@ -1,0 +1,97 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Miyabara\CartItemSelection\Observer;
+
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Message\ManagerInterface;
+use Magento\Quote\Api\CartItemRepositoryInterface;
+use Magento\Quote\Api\CartManagementInterface;
+use Magento\Quote\Model\Quote;
+use Psr\Log\LoggerInterface;
+
+class CreateRemnantCartAfterOrder implements ObserverInterface
+{
+    /**
+     * @param CartManagementInterface $cartManagement
+     * @param CartItemRepositoryInterface $cartItemRepository
+     * @param ManagerInterface $messageManager
+     * @param LoggerInterface $logger
+     */
+    public function __construct(
+        private readonly CartManagementInterface $cartManagement,
+        private readonly CartItemRepositoryInterface $cartItemRepository,
+        private readonly ManagerInterface $messageManager,
+        private readonly LoggerInterface $logger,
+    ) {
+    }
+
+    /**
+     * @param Observer $observer
+     * @return void
+     */
+    public function execute(Observer $observer): void
+    {
+        try {
+            $quote = $observer->getData('quote');
+            $customerId = $quote->getData('customer_id');
+
+            if (!$customerId) {
+                return;
+            }
+
+            $inactiveItems = $this->getInactiveParentItems($quote);
+
+            if (empty($inactiveItems)) {
+                return;
+            }
+
+            $newCartId = $this->cartManagement->createEmptyCartForCustomer((int) $customerId);
+
+            foreach ($inactiveItems as $inactiveItem) {
+                try {
+                    $inactiveItem->setData('quote_id', $newCartId);
+                    $this->cartItemRepository->save($inactiveItem);
+                } catch (\Exception $e) {
+                    $productName = $inactiveItem->getName();
+                    $this->logger->warning(
+                        'Could not add item to remnant cart',
+                        ['product' => $productName, 'exception' => $e],
+                    );
+                    $this->messageManager->addWarningMessage(
+                        __(
+                            '"%1" não pôde ser adicionado ao seu carrinho: %2',
+                            $productName,
+                            $e->getMessage(),
+                        ),
+                    );
+                }
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to create remnant cart after order', ['exception' => $e]);
+        }
+    }
+
+    /**
+     * @param Quote $quote
+     * @return array
+     */
+    private function getInactiveParentItems(Quote $quote): array
+    {
+        $inactive = [];
+
+        foreach ($quote->getItemsCollection() as $item) {
+            if ($item->getData('parent_item_id') !== null) {
+                continue;
+            }
+
+            if ((int) ($item->getData('is_active') ?? 1) === 0) {
+                $inactive[] = $item;
+            }
+        }
+
+        return $inactive;
+    }
+}

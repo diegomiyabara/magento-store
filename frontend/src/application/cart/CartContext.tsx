@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useEffect, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useReducer, useEffect, useCallback, useMemo, useRef, useState, ReactNode } from 'react';
 import { useAuth } from '@/application/auth/AuthContext';
 import { useStorefrontServices } from '../storefront/StorefrontContext';
 import type { CartModel, CartItemModel, MoneyModel } from '../../domain/storefront/models';
@@ -9,6 +9,7 @@ interface CartState {
   isLoading: boolean;
   error: string | null;
   isInitialized: boolean;
+  optimisticItems: Map<string, boolean> | null;
 }
 
 type CartAction =
@@ -16,13 +17,15 @@ type CartAction =
   | { type: 'SET_CART'; payload: { cart: CartModel | null } }
   | { type: 'SET_LOADING'; payload: { isLoading: boolean } }
   | { type: 'SET_ERROR'; payload: { error: string } }
-  | { type: 'CLEAR_CART' };
+  | { type: 'CLEAR_CART' }
+  | { type: 'OPTIMISTIC_TOGGLE'; payload: { uid: string; isActive: boolean } }
+  | { type: 'CLEAR_OPTIMISTIC' };
 
 interface SyncCartOptions {
   persistGuest?: boolean;
 }
 
-interface CartContextValue {
+export interface CartContextValue {
   cartId: string | null;
   cart: CartModel | null;
   isLoading: boolean;
@@ -35,6 +38,8 @@ interface CartContextValue {
   totalTax: MoneyModel | null | undefined;
   totalShipping: MoneyModel | null | undefined;
   appliedCoupons: Array<{ code: string }>;
+  toggleCartItemSelected: (uid: string, isActive: boolean) => void;
+  hasPendingToggles: boolean;
   createCart: (signal?: AbortSignal) => Promise<CartModel>;
   addToCart: (product: { sku: string; uid?: string }, quantity?: number, signal?: AbortSignal) => Promise<CartModel | undefined>;
   updateItemQuantity: (cartItemUid: string, quantity: number, signal?: AbortSignal) => Promise<CartModel | undefined>;
@@ -56,6 +61,7 @@ const initialState: CartState = {
   isLoading: false,
   error: null,
   isInitialized: false,
+  optimisticItems: null,
 };
 
 function cartReducer(state: CartState, action: CartAction): CartState {
@@ -91,6 +97,13 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         cart: null,
         error: null,
       };
+    case 'OPTIMISTIC_TOGGLE': {
+      const newMap = new Map(state.optimisticItems ?? []);
+      newMap.set(action.payload.uid, action.payload.isActive);
+      return { ...state, optimisticItems: newMap };
+    }
+    case 'CLEAR_OPTIMISTIC':
+      return { ...state, optimisticItems: null };
     default:
       return state;
   }
@@ -100,6 +113,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialState);
   const auth = useAuth();
   const { useCases } = useStorefrontServices();
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingToggles = useRef<Map<string, boolean>>(new Map());
+  const [hasPendingToggles, setHasPendingToggles] = useState(false);
 
   const persistGuestCartId = useCallback((cartId: string | null) => {
     if (cartId) {
@@ -380,6 +396,61 @@ export function CartProvider({ children }: { children: ReactNode }) {
     [syncCart],
   );
 
+  const flushPendingToggles = useCallback(async () => {
+    const togglesSnapshot = new Map(pendingToggles.current);
+    pendingToggles.current.clear();
+    setHasPendingToggles(false);
+    if (togglesSnapshot.size === 0) return;
+
+    const cartId = await resolveActiveCartId();
+    if (!cartId) return;
+
+    const items = Array.from(togglesSnapshot.entries()).map(([uid, isActive]) => ({
+      cart_item_uid: uid,
+      is_active: isActive,
+    }));
+
+    try {
+      const cart = await useCases.setCartItemsSelected(cartId, items, auth.token ?? undefined);
+      if (cart) {
+        syncCart(cart, { persistGuest: !auth.token });
+      }
+      dispatch({ type: 'CLEAR_OPTIMISTIC' });
+    } catch (error) {
+      dispatch({ type: 'CLEAR_OPTIMISTIC' });
+      dispatch({
+        type: 'SET_ERROR',
+        payload: { error: error instanceof Error ? error.message : String(error) },
+      });
+    }
+  }, [resolveActiveCartId, useCases, auth.token, syncCart]);
+
+  const toggleCartItemSelected = useCallback(
+    (uid: string, isActive: boolean) => {
+      dispatch({ type: 'OPTIMISTIC_TOGGLE', payload: { uid, isActive } });
+      pendingToggles.current.set(uid, isActive);
+      setHasPendingToggles(true);
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+      debounceTimer.current = setTimeout(flushPendingToggles, 400);
+    },
+    [flushPendingToggles],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
+  }, []);
+
+  const mergedItems = useMemo(() => {
+    const rawItems = (state.cart?.items ?? []).filter((item): item is CartItemModel => item !== null);
+    if (!state.optimisticItems) return rawItems;
+    return rawItems.map(item => {
+      const override = state.optimisticItems!.get(item.uid);
+      return override !== undefined ? { ...item, isActive: override } : item;
+    });
+  }, [state.cart?.items, state.optimisticItems]);
+
   const value: CartContextValue = {
     cartId: state.cartId,
     cart: state.cart,
@@ -387,12 +458,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     error: state.error,
     isInitialized: state.isInitialized,
     itemCount: state.cart?.totalQuantity ?? 0,
-    items: (state.cart?.items ?? []).filter((item): item is CartItemModel => item !== null),
+    items: mergedItems,
     subtotal: state.cart?.subtotal,
     grandTotal: state.cart?.grandTotal,
     totalTax: state.cart?.totalTax,
     totalShipping: state.cart?.totalShipping,
     appliedCoupons: state.cart?.appliedCoupons ?? [],
+    toggleCartItemSelected,
+    hasPendingToggles,
     createCart,
     addToCart,
     updateItemQuantity,

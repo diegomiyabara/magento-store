@@ -44,6 +44,10 @@ export function createStorefrontUseCases(repository: StorefrontRepository) {
       return repository.removeCartItem(cartId, cartItemId, token, signal);
     },
 
+    setCartItemsSelected(cartId: string, items: { cart_item_uid: string; is_active: boolean }[], token?: string, signal?: AbortSignal) {
+      return repository.setCartItemsSelected(cartId, items, token, signal);
+    },
+
     applyCouponToCart(cartId: string, couponCode: string, token: string | undefined, signal?: AbortSignal) {
       return repository.applyCouponToCart(cartId, couponCode, token, signal);
     },

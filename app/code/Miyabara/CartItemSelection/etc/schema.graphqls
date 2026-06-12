@@ -1,0 +1,32 @@
+interface CartItemInterface {
+    is_active: Boolean! @resolver(class: "Miyabara\\CartItemSelection\\Model\\Resolver\\CartItemIsActive")
+}
+
+type Mutation {
+    setCartItemSelected(input: SetCartItemSelectedInput!): SetCartItemSelectedOutput
+    setCartItemsSelected(input: SetCartItemsSelectedInput!): SetCartItemsSelectedOutput
+}
+
+input SetCartItemSelectedInput {
+    cart_id: String!
+    cart_item_uid: ID!
+    is_active: Boolean!
+}
+
+input SetCartItemsSelectedInput {
+    cart_id: String!
+    items: [CartItemSelectionInput!]!
+}
+
+input CartItemSelectionInput {
+    cart_item_uid: ID!
+    is_active: Boolean!
+}
+
+type SetCartItemSelectedOutput {
+    cart: Cart!
+}
+
+type SetCartItemsSelectedOutput {
+    cart: Cart!
+}
