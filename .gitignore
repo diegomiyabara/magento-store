@@ -19,6 +19,7 @@ docker-compose.opensearch.yml
 n98-magerun2.phar
 n98-magerun2.phar.sha256
 .gitignore
+.claude-ignore
 
 # Magento dependencies and generated files
 vendor/
