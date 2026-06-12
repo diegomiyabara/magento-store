@@ -41,6 +41,8 @@ class CreateRemnantCartAfterOrder implements ObserverInterface
     }
 
     /**
+     * Creates a new customer cart from the inactive items in the original quote after checkout.
+     *
      * @param Observer $observer
      * @return void
      */
@@ -87,6 +89,8 @@ class CreateRemnantCartAfterOrder implements ObserverInterface
     }
 
     /**
+     * Returns top-level items from the unfiltered collection where is_active = 0.
+     *
      * @param Quote $quote
      * @return array
      */

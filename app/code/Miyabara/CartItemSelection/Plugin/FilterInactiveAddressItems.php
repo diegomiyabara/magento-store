@@ -21,6 +21,8 @@ use Magento\Quote\Model\Quote\Address;
 class FilterInactiveAddressItems
 {
     /**
+     * Filters out items with is_active = 0, treating null as active for backward compatibility.
+     *
      * @param Address $subject
      * @param array $result
      * @return array

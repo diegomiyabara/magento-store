@@ -17,12 +17,13 @@ use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Item;
 
 /**
- * Excludes inactive quote items from Quote::getAllItems and Quote::getAllVisibleItems
- * so order conversion and the empty-cart guard skip deselected items.
+ * Excludes inactive quote items from Quote::getAllItems and Quote::getAllVisibleItems so order conversion and the empty-cart guard skip deselected items.
  */
 class FilterInactiveQuoteItems
 {
     /**
+     * Strips inactive items from the visible items list used for the empty-cart guard.
+     *
      * @param Quote $subject
      * @param array $result
      * @return array
@@ -33,6 +34,8 @@ class FilterInactiveQuoteItems
     }
 
     /**
+     * Strips inactive items from the full items list used for order conversion.
+     *
      * @param Quote $subject
      * @param array $result
      * @return array
@@ -43,6 +46,8 @@ class FilterInactiveQuoteItems
     }
 
     /**
+     * Returns only items where is_active evaluates to true, re-indexing the result array.
+     *
      * @param array $items
      * @return array
      */

@@ -42,6 +42,8 @@ class SetCartItemSelected implements ResolverInterface
     }
 
     /**
+     * Validates the cart item, sets its is_active flag, resets shipping, and returns the updated cart.
+     *
      * @param Field $field
      * @param mixed $context
      * @param ResolveInfo $info
@@ -76,6 +78,8 @@ class SetCartItemSelected implements ResolverInterface
     }
 
     /**
+     * Writes the is_active flag to the quote item data bag without persisting.
+     *
      * @param Item $item
      * @param bool $isActive
      * @return void
@@ -86,6 +90,8 @@ class SetCartItemSelected implements ResolverInterface
     }
 
     /**
+     * Invalidates the address item cache and forces shipping recalculation on all quote addresses.
+     *
      * @param Quote $quote
      * @return void
      */

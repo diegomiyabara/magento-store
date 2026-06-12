@@ -42,6 +42,8 @@ class SetCartItemsSelected implements ResolverInterface
     }
 
     /**
+     * Atomically validates all item UIDs, updates their is_active flags, and returns the updated cart.
+     *
      * @param Field $field
      * @param mixed $context
      * @param ResolveInfo $info
@@ -73,6 +75,8 @@ class SetCartItemsSelected implements ResolverInterface
     }
 
     /**
+     * Resolves every UID to a quote item and validates ownership before any write occurs.
+     *
      * @param Quote $quote
      * @param array $itemInputs
      * @return array
@@ -100,6 +104,8 @@ class SetCartItemsSelected implements ResolverInterface
     }
 
     /**
+     * Writes the is_active flag to the quote item data bag without persisting.
+     *
      * @param Item $item
      * @param bool $isActive
      * @return void
@@ -110,6 +116,8 @@ class SetCartItemsSelected implements ResolverInterface
     }
 
     /**
+     * Invalidates the address item cache and forces shipping recalculation on all quote addresses.
+     *
      * @param Quote $quote
      * @return void
      */

@@ -20,10 +20,6 @@ use Magento\QuoteGraphQl\Model\Resolver\CartItems;
 
 /**
  * Bypasses the core CartItems resolver to serve all items (active and inactive) from the unfiltered collection.
- *
- * The core resolver calls getAllVisibleItems() which is filtered by FilterInactiveQuoteItems — inactive
- * items would be invisible in GraphQL. This plugin reads from getItemsCollection() instead so the
- * storefront can display deselected items and render their checkboxes.
  */
 class CartItemsGraphQlResolver
 {
@@ -36,6 +32,8 @@ class CartItemsGraphQlResolver
     }
 
     /**
+     * Returns all cart items including inactive ones, bypassing the filtered getAllVisibleItems source.
+     *
      * @param CartItems $subject
      * @param callable $proceed
      * @param Field $field

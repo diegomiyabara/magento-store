@@ -24,6 +24,8 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 class CartItemIsActive implements ResolverInterface
 {
     /**
+     * Returns the is_active state of the cart item, defaulting to true for rows created before this feature.
+     *
      * @param Field $field
      * @param mixed $context
      * @param ResolveInfo $info
