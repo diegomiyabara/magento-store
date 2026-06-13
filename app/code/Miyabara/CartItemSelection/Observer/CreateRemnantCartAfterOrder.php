@@ -13,12 +13,15 @@ declare(strict_types=1);
 
 namespace Miyabara\CartItemSelection\Observer;
 
+use Magento\Framework\DataObject;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Message\ManagerInterface;
-use Magento\Quote\Api\CartItemRepositoryInterface;
 use Magento\Quote\Api\CartManagementInterface;
+use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\Quote;
+use Magento\Quote\Model\Quote\Item;
+use Magento\Quote\Model\ResourceModel\Quote as QuoteResource;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -28,13 +31,15 @@ class CreateRemnantCartAfterOrder implements ObserverInterface
 {
     /**
      * @param CartManagementInterface $cartManagement
-     * @param CartItemRepositoryInterface $cartItemRepository
+     * @param CartRepositoryInterface $cartRepository
+     * @param QuoteResource $quoteResource
      * @param ManagerInterface $messageManager
      * @param LoggerInterface $logger
      */
     public function __construct(
         private readonly CartManagementInterface $cartManagement,
-        private readonly CartItemRepositoryInterface $cartItemRepository,
+        private readonly CartRepositoryInterface $cartRepository,
+        private readonly QuoteResource $quoteResource,
         private readonly ManagerInterface $messageManager,
         private readonly LoggerInterface $logger,
     ) {
@@ -49,8 +54,9 @@ class CreateRemnantCartAfterOrder implements ObserverInterface
     public function execute(Observer $observer): void
     {
         try {
+            /** @var Quote $quote */
             $quote = $observer->getData('quote');
-            $customerId = $quote->getData('customer_id');
+            $customerId = (int) $quote->getData('customer_id');
 
             if (!$customerId) {
                 return;
@@ -62,12 +68,12 @@ class CreateRemnantCartAfterOrder implements ObserverInterface
                 return;
             }
 
-            $newCartId = $this->cartManagement->createEmptyCartForCustomer((int) $customerId);
+            $newCartId = $this->cartManagement->createEmptyCartForCustomer($customerId);
+            $newQuote = $this->cartRepository->get($newCartId);
 
             foreach ($inactiveItems as $inactiveItem) {
                 try {
-                    $inactiveItem->setData('quote_id', $newCartId);
-                    $this->cartItemRepository->save($inactiveItem);
+                    $this->addItemToQuote($newQuote, $inactiveItem);
                 } catch (\Exception $e) {
                     $productName = $inactiveItem->getName();
                     $this->logger->warning(
@@ -76,15 +82,41 @@ class CreateRemnantCartAfterOrder implements ObserverInterface
                     );
                     $this->messageManager->addWarningMessage(
                         __(
-                            '"%1" não pôde ser adicionado ao seu carrinho: %2',
+                            '"%1" could not be added to your cart: %2',
                             $productName,
                             $e->getMessage(),
                         ),
                     );
                 }
             }
+
+            $this->quoteResource->save($newQuote->collectTotals());
         } catch (\Exception $e) {
             $this->logger->error('Failed to create remnant cart after order', ['exception' => $e]);
+        }
+    }
+
+    /**
+     * Adds a copy of the given item to the new quote using addProduct to avoid item_id conflicts.
+     *
+     * @param Quote $newQuote
+     * @param Item $sourceItem
+     * @return void
+     */
+    private function addItemToQuote(Quote $newQuote, Item $sourceItem): void
+    {
+        $product = $sourceItem->getProduct();
+        $buyRequest = $sourceItem->getBuyRequest();
+
+        $request = new DataObject(array_merge(
+            (array) $buyRequest->getData(),
+            ['qty' => $sourceItem->getQty()],
+        ));
+
+        $result = $newQuote->addProduct($product, $request);
+
+        if (is_string($result)) {
+            throw new \RuntimeException($result);
         }
     }
 

@@ -13,16 +13,18 @@ declare(strict_types=1);
 
 namespace Miyabara\CartItemSelection\Test\Unit\Model\Resolver;
 
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Uid;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextExtensionInterface;
 use Magento\GraphQl\Model\Query\ContextInterface;
-use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Item;
+use Magento\Quote\Model\ResourceModel\Quote as QuoteResource;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
 use Magento\Store\Api\Data\StoreInterface;
 use Miyabara\CartItemSelection\Model\Resolver\SetCartItemsSelected;
@@ -31,8 +33,10 @@ use PHPUnit\Framework\TestCase;
 class SetCartItemsSelectedTest extends TestCase
 {
     private GetCartForUser $getCartForUserMock;
-    private CartRepositoryInterface $cartRepositoryMock;
+    private QuoteResource $quoteResourceMock;
     private Uid $uidEncoderMock;
+    private ResourceConnection $resourceConnectionMock;
+    private AdapterInterface $connectionMock;
     private SetCartItemsSelected $resolver;
     private Field $fieldMock;
     private ResolveInfo $resolveInfoMock;
@@ -42,13 +46,19 @@ class SetCartItemsSelectedTest extends TestCase
     protected function setUp(): void
     {
         $this->getCartForUserMock = $this->createMock(GetCartForUser::class);
-        $this->cartRepositoryMock = $this->createMock(CartRepositoryInterface::class);
+        $this->quoteResourceMock = $this->createMock(QuoteResource::class);
         $this->uidEncoderMock = $this->createMock(Uid::class);
+
+        $this->connectionMock = $this->createMock(AdapterInterface::class);
+        $this->resourceConnectionMock = $this->createMock(ResourceConnection::class);
+        $this->resourceConnectionMock->method('getConnection')->willReturn($this->connectionMock);
+        $this->resourceConnectionMock->method('getTableName')->with('quote_item')->willReturn('quote_item');
 
         $this->resolver = new SetCartItemsSelected(
             $this->getCartForUserMock,
-            $this->cartRepositoryMock,
+            $this->quoteResourceMock,
             $this->uidEncoderMock,
+            $this->resourceConnectionMock,
         );
 
         $this->fieldMock = $this->createMock(Field::class);
@@ -71,9 +81,10 @@ class SetCartItemsSelectedTest extends TestCase
         $item = $this->getMockBuilder(Item::class)
             ->disableOriginalConstructor()
             ->addMethods(['getParentItemId'])
-            ->onlyMethods(['getItemId', 'setData'])
+            ->onlyMethods(['getItemId', 'getId', 'setData'])
             ->getMock();
         $item->method('getItemId')->willReturn($itemId);
+        $item->method('getId')->willReturn($itemId);
         $item->method('getParentItemId')->willReturn($parentItemId);
 
         return $item;
@@ -110,8 +121,8 @@ class SetCartItemsSelectedTest extends TestCase
                 default => null,
             });
         $this->quoteMock->method('getAllAddresses')->willReturn([]);
-        $this->quoteMock->method('collectTotals');
-        $this->cartRepositoryMock->method('save');
+        $this->quoteMock->method('collectTotals')->willReturnSelf();
+        $this->quoteResourceMock->method('save');
 
         $result = $this->resolver->resolve(
             $this->fieldMock,
@@ -135,11 +146,7 @@ class SetCartItemsSelectedTest extends TestCase
     public function testItCallsCollectTotalsExactlyOnceForBulkUpdateRegardlessOfItemCount(): void
     {
         $uids = [base64_encode('1'), base64_encode('2'), base64_encode('3')];
-        $items = [
-            $this->makeItem(1),
-            $this->makeItem(2),
-            $this->makeItem(3),
-        ];
+        $items = [$this->makeItem(1), $this->makeItem(2), $this->makeItem(3)];
 
         $this->uidEncoderMock->method('decode')
             ->willReturnCallback(fn(string $uid) => base64_decode($uid));
@@ -153,8 +160,8 @@ class SetCartItemsSelectedTest extends TestCase
                 default => null,
             });
         $this->quoteMock->method('getAllAddresses')->willReturn([]);
-        $this->quoteMock->expects($this->once())->method('collectTotals');
-        $this->cartRepositoryMock->method('save');
+        $this->quoteMock->expects($this->once())->method('collectTotals')->willReturnSelf();
+        $this->quoteResourceMock->method('save');
 
         $this->resolver->resolve(
             $this->fieldMock,
@@ -168,6 +175,48 @@ class SetCartItemsSelectedTest extends TestCase
                         ['cart_item_uid' => $uids[0], 'is_active' => true],
                         ['cart_item_uid' => $uids[1], 'is_active' => false],
                         ['cart_item_uid' => $uids[2], 'is_active' => true],
+                    ],
+                ],
+            ],
+        );
+    }
+
+    public function testItPersistsEachIsActiveViaDirectDbUpdateBeforeCollectingTotals(): void
+    {
+        $uid1 = base64_encode('10');
+        $uid2 = base64_encode('20');
+        $item1 = $this->makeItem(10);
+        $item2 = $this->makeItem(20);
+
+        $this->connectionMock->expects($this->exactly(2))
+            ->method('update')
+            ->with('quote_item', $this->anything(), $this->anything());
+
+        $this->uidEncoderMock->method('decode')
+            ->willReturnCallback(fn(string $uid) => base64_decode($uid));
+
+        $this->getCartForUserMock->method('execute')->willReturn($this->quoteMock);
+        $this->quoteMock->method('getItemById')
+            ->willReturnCallback(fn(int $id) => match ($id) {
+                10 => $item1,
+                20 => $item2,
+                default => null,
+            });
+        $this->quoteMock->method('getAllAddresses')->willReturn([]);
+        $this->quoteMock->method('collectTotals')->willReturnSelf();
+        $this->quoteResourceMock->method('save');
+
+        $this->resolver->resolve(
+            $this->fieldMock,
+            $this->contextMock,
+            $this->resolveInfoMock,
+            null,
+            [
+                'input' => [
+                    'cart_id' => 'abc',
+                    'items' => [
+                        ['cart_item_uid' => $uid1, 'is_active' => false],
+                        ['cart_item_uid' => $uid2, 'is_active' => true],
                     ],
                 ],
             ],
@@ -188,8 +237,8 @@ class SetCartItemsSelectedTest extends TestCase
         $this->getCartForUserMock->method('execute')->willReturn($this->quoteMock);
         $this->quoteMock->method('getItemById')->willReturn($item);
         $this->quoteMock->method('getAllAddresses')->willReturn([$address]);
-        $this->quoteMock->method('collectTotals');
-        $this->cartRepositoryMock->method('save');
+        $this->quoteMock->method('collectTotals')->willReturnSelf();
+        $this->quoteResourceMock->method('save');
 
         $this->resolver->resolve(
             $this->fieldMock,
@@ -199,9 +248,7 @@ class SetCartItemsSelectedTest extends TestCase
             [
                 'input' => [
                     'cart_id' => 'abc',
-                    'items' => [
-                        ['cart_item_uid' => $uid, 'is_active' => false],
-                    ],
+                    'items' => [['cart_item_uid' => $uid, 'is_active' => false]],
                 ],
             ],
         );
@@ -213,7 +260,6 @@ class SetCartItemsSelectedTest extends TestCase
         $invalidUid = base64_encode('999');
 
         $validItem = $this->makeItem(10);
-
         $validItem->expects($this->never())->method('setData');
 
         $this->uidEncoderMock->method('decode')
@@ -223,12 +269,13 @@ class SetCartItemsSelectedTest extends TestCase
         $this->quoteMock->method('getItemById')
             ->willReturnCallback(fn(int $id) => match ($id) {
                 10 => $validItem,
-                999 => null,
-                default => null,
+                999 => false,
+                default => false,
             });
 
         $this->quoteMock->expects($this->never())->method('collectTotals');
-        $this->cartRepositoryMock->expects($this->never())->method('save');
+        $this->quoteResourceMock->expects($this->never())->method('save');
+        $this->connectionMock->expects($this->never())->method('update');
 
         $this->expectException(GraphQlInputException::class);
 
