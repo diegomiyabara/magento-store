@@ -16,15 +16,17 @@
     <type name="Miyabara\CartItemSelection\Model\Resolver\SetCartItemSelected">
         <arguments>
             <argument name="getCartForUser" xsi:type="object">Magento\QuoteGraphQl\Model\Cart\GetCartForUser</argument>
-            <argument name="cartRepository" xsi:type="object">Magento\Quote\Api\CartRepositoryInterface</argument>
+            <argument name="quoteResource" xsi:type="object">Magento\Quote\Model\ResourceModel\Quote</argument>
             <argument name="uidEncoder" xsi:type="object">Magento\Framework\GraphQl\Query\Uid</argument>
+            <argument name="resourceConnection" xsi:type="object">Magento\Framework\App\ResourceConnection</argument>
         </arguments>
     </type>
     <type name="Miyabara\CartItemSelection\Model\Resolver\SetCartItemsSelected">
         <arguments>
             <argument name="getCartForUser" xsi:type="object">Magento\QuoteGraphQl\Model\Cart\GetCartForUser</argument>
-            <argument name="cartRepository" xsi:type="object">Magento\Quote\Api\CartRepositoryInterface</argument>
+            <argument name="quoteResource" xsi:type="object">Magento\Quote\Model\ResourceModel\Quote</argument>
             <argument name="uidEncoder" xsi:type="object">Magento\Framework\GraphQl\Query\Uid</argument>
+            <argument name="resourceConnection" xsi:type="object">Magento\Framework\App\ResourceConnection</argument>
         </arguments>
     </type>
 </config>

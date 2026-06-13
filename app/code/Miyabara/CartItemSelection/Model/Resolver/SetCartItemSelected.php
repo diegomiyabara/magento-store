@@ -13,15 +13,16 @@ declare(strict_types=1);
 
 namespace Miyabara\CartItemSelection\Model\Resolver;
 
+use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Query\Uid;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote\Item;
+use Magento\Quote\Model\ResourceModel\Quote as QuoteResource;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
 
 /**
@@ -31,18 +32,20 @@ class SetCartItemSelected implements ResolverInterface
 {
     /**
      * @param GetCartForUser $getCartForUser
-     * @param CartRepositoryInterface $cartRepository
+     * @param QuoteResource $quoteResource
      * @param Uid $uidEncoder
+     * @param ResourceConnection $resourceConnection
      */
     public function __construct(
         private readonly GetCartForUser $getCartForUser,
-        private readonly CartRepositoryInterface $cartRepository,
+        private readonly QuoteResource $quoteResource,
         private readonly Uid $uidEncoder,
+        private readonly ResourceConnection $resourceConnection,
     ) {
     }
 
     /**
-     * Validates the cart item, sets its is_active flag, resets shipping, and returns the updated cart.
+     * Validates the cart item, persists is_active via direct DB write, recalculates totals, and returns the updated cart.
      *
      * @param Field $field
      * @param mixed $context
@@ -64,29 +67,32 @@ class SetCartItemSelected implements ResolverInterface
         $itemId = (int) $this->uidEncoder->decode($cartItemUid);
         $item = $quote->getItemById($itemId);
 
-        if ($item === null || $item->getParentItemId()) {
+        if (!$item || $item->getParentItemId()) {
             throw new GraphQlInputException(__('The cart item with uid "%1" was not found.', $cartItemUid));
         }
 
-        $this->updateItemActive($item, $isActive);
+        $this->persistIsActive($itemId, $isActive);
+        $item->setData('is_active', $isActive);
         $this->resetShippingAndCache($quote);
 
-        $quote->collectTotals();
-        $this->cartRepository->save($quote);
+        $this->quoteResource->save($quote->collectTotals());
 
         return ['cart' => ['model' => $quote]];
     }
 
     /**
-     * Writes the is_active flag to the quote item data bag without persisting.
+     * Writes is_active directly to quote_item via a single UPDATE, bypassing CartItemPersister validation.
      *
-     * @param Item $item
+     * @param int $itemId
      * @param bool $isActive
      * @return void
      */
-    private function updateItemActive(Item $item, bool $isActive): void
+    private function persistIsActive(int $itemId, bool $isActive): void
     {
-        $item->setData('is_active', $isActive);
+        $connection = $this->resourceConnection->getConnection();
+        $table = $this->resourceConnection->getTableName('quote_item');
+
+        $connection->update($table, ['is_active' => (int) $isActive], ['item_id = ?' => $itemId]);
     }
 
     /**
