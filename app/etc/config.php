@@ -345,6 +345,7 @@ return [
         'MageOS_ThemeAdminhtmlSwitcher' => 1,
         'MageOS_ThemeOptimization' => 1,
         'Miyabara_Buffer' => 1,
+        'Miyabara_CartItemSelection' => 1,
         'Miyabara_CheckoutCustom' => 1,
         'Miyabara_MagentoAI' => 1,
         'Mollie_Payment' => 1,
