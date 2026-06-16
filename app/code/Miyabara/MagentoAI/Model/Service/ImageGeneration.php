@@ -6,7 +6,7 @@
  * @package   MagentoAI
  *
  * @copyright © 2026 Diego M. Miyabara. All rights reserved.
- * @author    Diego M. Miyabara <diego.miyabara@hotmail.com>
+ * @author    Diego M. Miyabara <diego.miyabara@gmail.com>
  */
 
 // phpcs:disable Generic.Files.LineLength
@@ -15,11 +15,12 @@ declare(strict_types=1);
 
 namespace Miyabara\MagentoAI\Model\Service;
 
-use Magento\Framework\HTTP\Client\Curl;
 use Magento\Framework\Serialize\Serializer\Json;
 use Miyabara\MagentoAI\Api\ConfigInterface;
+use Miyabara\MagentoAI\Api\Http\HttpClientInterface;
 use Miyabara\MagentoAI\Api\ImageGenerationServiceInterface;
 use Miyabara\MagentoAI\Model\Service\Exception\AiServiceException;
+use Psr\Log\LoggerInterface;
 
 class ImageGeneration implements ImageGenerationServiceInterface
 {
@@ -29,16 +30,18 @@ class ImageGeneration implements ImageGenerationServiceInterface
     private const OPENAI_JPEG_QUALITY = 80;
 
     /**
-     * @param Curl            $curl
-     * @param Json            $json
-     * @param ConfigInterface $config
-     * @param ImageStorage    $imageStorage
+     * @param HttpClientInterface $httpClient
+     * @param Json                $json
+     * @param ConfigInterface     $config
+     * @param ImageStorage        $imageStorage
+     * @param LoggerInterface     $logger
      */
     public function __construct(
-        private readonly Curl $curl,
+        private readonly HttpClientInterface $httpClient,
         private readonly Json $json,
         private readonly ConfigInterface $config,
-        private readonly ImageStorage $imageStorage
+        private readonly ImageStorage $imageStorage,
+        private readonly LoggerInterface $logger,
     ) {}
 
     /**
@@ -73,11 +76,6 @@ class ImageGeneration implements ImageGenerationServiceInterface
             throw new AiServiceException(__('OpenAI API Key not found. Please check configuration.'));
         }
 
-        $this->curl->setHeaders([
-            'Content-Type'  => 'application/json',
-            'Authorization' => 'Bearer ' . $apiKey,
-        ]);
-
         $payload = $this->json->serialize([
             'model'              => $this->config->getImageModel(),
             'prompt'             => $prompt,
@@ -88,19 +86,24 @@ class ImageGeneration implements ImageGenerationServiceInterface
             'output_compression' => self::OPENAI_JPEG_QUALITY,
         ]);
 
-        $this->curl->post($this->config->getApiBaseUrl() . '/v1/images/generations', $payload);
+        $result = $this->httpClient->postJson(
+            $this->config->getApiBaseUrl() . '/v1/images/generations',
+            $payload,
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer ' . $apiKey]
+        );
 
-        $status = $this->curl->getStatus();
-        if ($status === 401) {
+        if ($result['status'] === 401) {
             throw new AiServiceException(__('Unauthorized response. Please check OpenAI API key.'));
         }
-        if ($status >= 500) {
+        if ($result['status'] >= 500) {
             throw new AiServiceException(__('OpenAI server error.'));
         }
 
-        $response = $this->json->unserialize($this->curl->getBody());
+        $response = $this->json->unserialize($result['body']);
         if (isset($response['error'])) {
-            throw new AiServiceException(__($response['error']['message'] ?? 'Unknown OpenAI API error.'));
+            $message = $response['error']['message'] ?? 'Unknown OpenAI API error.';
+            $this->logger->error('MagentoAI OpenAI image error', ['message' => $message]);
+            throw new AiServiceException(__($message));
         }
         if (empty($response['data'][0])) {
             throw new AiServiceException(__('No image data returned from OpenAI API.'));
@@ -142,11 +145,6 @@ class ImageGeneration implements ImageGenerationServiceInterface
             throw new AiServiceException(__('Gemini API Key not found. Please check configuration.'));
         }
 
-        $this->curl->setHeaders([
-            'Content-Type'   => 'application/json',
-            'x-goog-api-key' => $apiKey,
-        ]);
-
         $payload = $this->json->serialize([
             'contents' => [
                 ['parts' => [['text' => $prompt]]],
@@ -156,23 +154,25 @@ class ImageGeneration implements ImageGenerationServiceInterface
             ],
         ]);
 
-        $model = $this->config->getGeminiImageModel();
-        $this->curl->post(
+        $model  = $this->config->getGeminiImageModel();
+        $result = $this->httpClient->postJson(
             $this->config->getGeminiBaseUrl() . '/v1beta/models/' . $model . ':generateContent',
-            $payload
+            $payload,
+            ['Content-Type' => 'application/json', 'x-goog-api-key' => $apiKey]
         );
 
-        $status = $this->curl->getStatus();
-        if ($status === 401 || $status === 403) {
+        if ($result['status'] === 401 || $result['status'] === 403) {
             throw new AiServiceException(__('Unauthorized response. Please check Gemini API key.'));
         }
-        if ($status >= 500) {
+        if ($result['status'] >= 500) {
             throw new AiServiceException(__('Gemini server error.'));
         }
 
-        $response = $this->json->unserialize($this->curl->getBody());
+        $response = $this->json->unserialize($result['body']);
         if (isset($response['error'])) {
-            throw new AiServiceException(__($response['error']['message'] ?? 'Unknown Gemini API error.'));
+            $message = $response['error']['message'] ?? 'Unknown Gemini API error.';
+            $this->logger->error('MagentoAI Gemini image error', ['message' => $message]);
+            throw new AiServiceException(__($message));
         }
 
         $finishReason = $response['candidates'][0]['finishReason'] ?? '';

@@ -6,7 +6,7 @@
  * @package   MagentoAI
  *
  * @copyright © 2026 Diego M. Miyabara. All rights reserved.
- * @author    Diego M. Miyabara <diego.miyabara@hotmail.com>
+ * @author    Diego M. Miyabara <diego.miyabara@gmail.com>
  */
 
 declare(strict_types=1);
@@ -22,6 +22,7 @@ use Miyabara\MagentoAI\Api\ConfigInterface;
 use Miyabara\MagentoAI\Api\ImageModificationServiceInterface;
 use Miyabara\MagentoAI\Model\AttributeData\Formatter as AttributeFormatter;
 use Miyabara\MagentoAI\Model\Service\Exception\AiServiceException;
+use Psr\Log\LoggerInterface;
 
 class ModifyImage extends Action implements HttpPostActionInterface
 {
@@ -36,19 +37,24 @@ class ModifyImage extends Action implements HttpPostActionInterface
      * @param ConfigInterface                    $config
      * @param ImageModificationServiceInterface  $modifyService
      * @param AttributeFormatter                 $attributeFormatter
+     * @param LoggerInterface                    $logger
      */
     public function __construct(
         Context $context,
         private readonly JsonFactory $jsonFactory,
         private readonly ConfigInterface $config,
         private readonly ImageModificationServiceInterface $modifyService,
-        private readonly AttributeFormatter $attributeFormatter
+        private readonly AttributeFormatter $attributeFormatter,
+        private readonly LoggerInterface $logger,
     ) {
         parent::__construct($context);
     }
 
     /**
      * Modify an existing product image via the configured AI provider and return gallery-compatible file data.
+     *
+     * The modify_prompt config template supports {{ product.name }}, {{ product.attributes }},
+     * and {{ instructions }} (the user's typed instructions from the modal prompt field).
      *
      * @return Json
      */
@@ -58,17 +64,14 @@ class ModifyImage extends Action implements HttpPostActionInterface
 
         if ($this->config->isEnabled()) {
             try {
-                $customPrompt = trim((string) $this->getRequest()->getParam('custom_prompt'));
-                $imageFile    = trim((string) $this->getRequest()->getParam('image_file'));
-                $productName  = trim((string) $this->getRequest()->getParam('product_name'));
-                $attrData     = (array) $this->getRequest()->getParam('attribute_data', []);
+                $userInstructions = trim((string) $this->getRequest()->getParam('custom_prompt'));
+                $imageFile        = trim((string) $this->getRequest()->getParam('image_file'));
+                $productName      = trim((string) $this->getRequest()->getParam('product_name'));
+                $attrData         = (array) $this->getRequest()->getParam('attribute_data', []);
 
-                if ($customPrompt === '') {
-                    $customPrompt = $this->config->getModifyImagePrompt();
-                }
-
-                $prompt = str_replace('{{ product.name }}', $productName, $customPrompt);
-                $prompt = str_replace('{{ instructions }}', $customPrompt, $prompt);
+                $prompt = $this->config->getModifyImagePrompt();
+                $prompt = str_replace('{{ product.name }}', $productName, $prompt);
+                $prompt = str_replace('{{ instructions }}', $userInstructions, $prompt);
                 $prompt = str_replace(
                     '{{ product.attributes }}',
                     $this->attributeFormatter->buildLabelValueText($attrData),
@@ -77,8 +80,10 @@ class ModifyImage extends Action implements HttpPostActionInterface
 
                 $response = $this->modifyService->modify($prompt, $imageFile);
             } catch (AiServiceException $e) {
+                $this->logger->error('MagentoAI modify image failed', ['exception' => $e]);
                 $response = ['error' => true, 'data' => $e->getMessage()];
             } catch (\Exception $e) {
+                $this->logger->error('MagentoAI modify image unexpected error', ['exception' => $e]);
                 $response = ['error' => true, 'data' => $e->getMessage()];
             }
         }

@@ -6,49 +6,41 @@
  * @package   MagentoAI
  *
  * @copyright © 2026 Diego M. Miyabara. All rights reserved.
- * @author    Diego M. Miyabara <diego.miyabara@hotmail.com>
+ * @author    Diego M. Miyabara <diego.miyabara@gmail.com>
  */
 
 declare(strict_types=1);
 
 namespace Miyabara\MagentoAI\Api;
 
-interface ConfigInterface
+use Miyabara\MagentoAI\Model\Service\Exception\AiServiceException;
+
+/**
+ * Full configuration contract consumed by service classes that dispatch across all three AI providers.
+ * Presenters and plugins should inject the narrower GeneralConfigInterface, TextConfigInterface,
+ * or ImageConfigInterface to keep their dependency surface small.
+ */
+interface ConfigInterface extends TextConfigInterface, ImageConfigInterface
 {
-    /**
-     * Returns true when the module is enabled in configuration.
-     *
-     * @return bool
-     */
-    public function isEnabled(): bool;
-
-    /**
-     * Returns the configured AI provider key ('openai', 'anthropic', 'gemini').
-     *
-     * @return string
-     */
-    public function getProvider(): string;
-
-    /**
-     * Returns the merchant-configured baseline/system prompt applied to every request.
-     *
-     * @return string
-     */
-    public function getBaselinePrompt(): string;
-
     // ── OpenAI ──────────────────────────────────────────────────────────────
 
     /**
+     * Returns the decrypted OpenAI API key.
+     *
      * @return string
      */
     public function getApiSecret(): string;
 
     /**
+     * Returns the OpenAI API base URL.
+     *
      * @return string
      */
     public function getApiBaseUrl(): string;
 
     /**
+     * Returns the configured OpenAI text model identifier.
+     *
      * @return string
      */
     public function getModel(): string;
@@ -56,16 +48,22 @@ interface ConfigInterface
     // ── Anthropic ───────────────────────────────────────────────────────────
 
     /**
+     * Returns the decrypted Anthropic API key.
+     *
      * @return string
      */
     public function getAnthropicApiSecret(): string;
 
     /**
+     * Returns the Anthropic API base URL.
+     *
      * @return string
      */
     public function getAnthropicBaseUrl(): string;
 
     /**
+     * Returns the configured Anthropic model identifier.
+     *
      * @return string
      */
     public function getAnthropicModel(): string;
@@ -73,86 +71,23 @@ interface ConfigInterface
     // ── Gemini ───────────────────────────────────────────────────────────────
 
     /**
+     * Returns the decrypted Gemini API key.
+     *
      * @return string
      */
     public function getGeminiApiSecret(): string;
 
     /**
+     * Returns the Gemini API base URL.
+     *
      * @return string
      */
     public function getGeminiBaseUrl(): string;
 
     /**
+     * Returns the configured Gemini text model identifier.
+     *
      * @return string
      */
     public function getGeminiModel(): string;
-
-    // ── Text generation ──────────────────────────────────────────────────────
-
-    /**
-     * @return float
-     */
-    public function getTemperature(): float;
-
-    /**
-     * @param string $type 'full' or 'short'
-     * @return int
-     */
-    public function getMaxTokens(string $type): int;
-
-    /**
-     * @return string
-     */
-    public function getDescriptionPrompt(): string;
-
-    /**
-     * @return string
-     */
-    public function getShortDescriptionPrompt(): string;
-
-    /**
-     * Returns configured product attribute codes for text generation as an array.
-     *
-     * @return string[]
-     */
-    public function getProductAttributes(): array;
-
-    // ── Image generation ─────────────────────────────────────────────────────
-
-    /**
-     * @return string
-     */
-    public function getImageModel(): string;
-
-    /**
-     * @return string
-     */
-    public function getImageSize(): string;
-
-    /**
-     * @return string
-     */
-    public function getImageQuality(): string;
-
-    /**
-     * @return string
-     */
-    public function getGeminiImageModel(): string;
-
-    /**
-     * @return string
-     */
-    public function getImagePrompt(): string;
-
-    /**
-     * @return string
-     */
-    public function getModifyImagePrompt(): string;
-
-    /**
-     * Returns configured product attribute codes for image generation as an array.
-     *
-     * @return string[]
-     */
-    public function getImageAttributes(): array;
 }

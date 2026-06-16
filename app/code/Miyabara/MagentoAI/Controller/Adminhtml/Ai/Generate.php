@@ -6,7 +6,7 @@
  * @package   MagentoAI
  *
  * @copyright © 2026 Diego M. Miyabara. All rights reserved.
- * @author    Diego M. Miyabara <diego.miyabara@hotmail.com>
+ * @author    Diego M. Miyabara <diego.miyabara@gmail.com>
  */
 
 declare(strict_types=1);
@@ -21,6 +21,7 @@ use Magento\Framework\Controller\Result\JsonFactory;
 use Miyabara\MagentoAI\Api\ConfigInterface;
 use Miyabara\MagentoAI\Api\TextGenerationServiceInterface;
 use Miyabara\MagentoAI\Model\Service\Exception\AiServiceException;
+use Psr\Log\LoggerInterface;
 
 class Generate extends Action implements HttpPostActionInterface
 {
@@ -34,12 +35,14 @@ class Generate extends Action implements HttpPostActionInterface
      * @param JsonFactory                    $jsonFactory
      * @param ConfigInterface                $config
      * @param TextGenerationServiceInterface $textService
+     * @param LoggerInterface                $logger
      */
     public function __construct(
         Context $context,
         private readonly JsonFactory $jsonFactory,
         private readonly ConfigInterface $config,
-        private readonly TextGenerationServiceInterface $textService
+        private readonly TextGenerationServiceInterface $textService,
+        private readonly LoggerInterface $logger,
     ) {
         parent::__construct($context);
     }
@@ -82,8 +85,10 @@ class Generate extends Action implements HttpPostActionInterface
                     ];
                 }
             } catch (AiServiceException $e) {
+                $this->logger->error('MagentoAI text generation failed', ['exception' => $e]);
                 $response = ['error' => true, 'data' => $e->getMessage()];
             } catch (\Exception $e) {
+                $this->logger->error('MagentoAI text generation unexpected error', ['exception' => $e]);
                 $response = ['error' => true, 'data' => $e->getMessage()];
             }
         }
