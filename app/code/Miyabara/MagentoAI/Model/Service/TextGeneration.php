@@ -6,7 +6,7 @@
  * @package   MagentoAI
  *
  * @copyright © 2026 Diego M. Miyabara. All rights reserved.
- * @author    Diego M. Miyabara <diego.miyabara@hotmail.com>
+ * @author    Diego M. Miyabara <diego.miyabara@gmail.com>
  */
 
 // phpcs:disable Generic.Files.LineLength
@@ -15,12 +15,13 @@ declare(strict_types=1);
 
 namespace Miyabara\MagentoAI\Model\Service;
 
-use Magento\Framework\HTTP\Client\Curl;
 use Magento\Framework\Serialize\Serializer\Json;
 use Miyabara\MagentoAI\Api\ConfigInterface;
+use Miyabara\MagentoAI\Api\Http\HttpClientInterface;
 use Miyabara\MagentoAI\Api\TextGenerationServiceInterface;
 use Miyabara\MagentoAI\Model\AttributeData\Formatter as AttributeFormatter;
 use Miyabara\MagentoAI\Model\Service\Exception\AiServiceException;
+use Psr\Log\LoggerInterface;
 
 class TextGeneration implements TextGenerationServiceInterface
 {
@@ -42,16 +43,18 @@ class TextGeneration implements TextGenerationServiceInterface
     private const SYSTEM_PROMPT = 'You are a helpful assistant. Provide only the main generated content without any greetings, introductions, or explanations. Never wrap output in markdown code blocks or backticks.';
 
     /**
-     * @param Curl               $curl
-     * @param Json               $json
-     * @param ConfigInterface    $config
-     * @param AttributeFormatter $attributeFormatter
+     * @param HttpClientInterface $httpClient
+     * @param Json                $json
+     * @param ConfigInterface     $config
+     * @param AttributeFormatter  $attributeFormatter
+     * @param LoggerInterface     $logger
      */
     public function __construct(
-        private readonly Curl $curl,
+        private readonly HttpClientInterface $httpClient,
         private readonly Json $json,
         private readonly ConfigInterface $config,
-        private readonly AttributeFormatter $attributeFormatter
+        private readonly AttributeFormatter $attributeFormatter,
+        private readonly LoggerInterface $logger,
     ) {}
 
     /**
@@ -151,7 +154,7 @@ class TextGeneration implements TextGenerationServiceInterface
             'presence_penalty'  => 0,
         ];
 
-        if ($maxTokens) {
+        if ($maxTokens !== null) {
             $payload['max_tokens'] = $maxTokens;
         }
 
@@ -178,25 +181,28 @@ class TextGeneration implements TextGenerationServiceInterface
         if (!$token) {
             throw new AiServiceException(__('OpenAI API Key not found. Please check configuration.'));
         }
-        $this->curl->setHeaders([
-            'Content-Type'  => 'application/json',
-            'Authorization' => 'Bearer ' . $token,
-        ]);
+
         $model    = $this->config->getModel();
         $endpoint = str_contains($model, 'gpt') ? '/v1/chat/completions' : '/v1/completions';
-        $this->curl->post($this->config->getApiBaseUrl() . $endpoint, $payload);
 
-        $status = $this->curl->getStatus();
-        if ($status === 401) {
+        $result = $this->httpClient->postJson(
+            $this->config->getApiBaseUrl() . $endpoint,
+            $payload,
+            ['Content-Type' => 'application/json', 'Authorization' => 'Bearer ' . $token]
+        );
+
+        if ($result['status'] === 401) {
             throw new AiServiceException(__('Unauthorized response. Please check OpenAI API key.'));
         }
-        if ($status >= 500) {
+        if ($result['status'] >= 500) {
             throw new AiServiceException(__('OpenAI server error.'));
         }
 
-        $response = $this->json->unserialize($this->curl->getBody());
+        $response = $this->json->unserialize($result['body']);
         if (isset($response['error'])) {
-            throw new AiServiceException(__($response['error']['message'] ?? 'Unknown OpenAI API error.'));
+            $message = $response['error']['message'] ?? 'Unknown OpenAI API error.';
+            $this->logger->error('MagentoAI OpenAI error', ['message' => $message]);
+            throw new AiServiceException(__($message));
         }
         if (!isset($response['choices'])) {
             throw new AiServiceException(__('No results found from OpenAI API response.'));
@@ -215,11 +221,11 @@ class TextGeneration implements TextGenerationServiceInterface
     private function buildAnthropicPayload(string $prompt, ?int $maxTokens = null): string
     {
         return $this->json->serialize([
-            'model'      => $this->config->getAnthropicModel(),
-            'max_tokens' => $maxTokens ?: self::ANTHROPIC_DEFAULT_TOKENS,
+            'model'       => $this->config->getAnthropicModel(),
+            'max_tokens'  => $maxTokens ?: self::ANTHROPIC_DEFAULT_TOKENS,
             'temperature' => min(1.0, $this->config->getTemperature()),
-            'system'     => $this->buildSystemPrompt(),
-            'messages'   => [['role' => 'user', 'content' => $prompt]],
+            'system'      => $this->buildSystemPrompt(),
+            'messages'    => [['role' => 'user', 'content' => $prompt]],
         ]);
     }
 
@@ -234,24 +240,29 @@ class TextGeneration implements TextGenerationServiceInterface
         if (!$token) {
             throw new AiServiceException(__('Anthropic API Key not found. Please check configuration.'));
         }
-        $this->curl->setHeaders([
-            'Content-Type'      => 'application/json',
-            'x-api-key'         => $token,
-            'anthropic-version' => self::ANTHROPIC_VERSION,
-        ]);
-        $this->curl->post($this->config->getAnthropicBaseUrl() . '/v1/messages', $payload);
 
-        $status = $this->curl->getStatus();
-        if ($status === 401) {
+        $result = $this->httpClient->postJson(
+            $this->config->getAnthropicBaseUrl() . '/v1/messages',
+            $payload,
+            [
+                'Content-Type'      => 'application/json',
+                'x-api-key'         => $token,
+                'anthropic-version' => self::ANTHROPIC_VERSION,
+            ]
+        );
+
+        if ($result['status'] === 401) {
             throw new AiServiceException(__('Unauthorized response. Please check Anthropic API key.'));
         }
-        if ($status >= 500) {
+        if ($result['status'] >= 500) {
             throw new AiServiceException(__('Anthropic server error.'));
         }
 
-        $response = $this->json->unserialize($this->curl->getBody());
+        $response = $this->json->unserialize($result['body']);
         if (isset($response['error'])) {
-            throw new AiServiceException(__($response['error']['message'] ?? 'Unknown Anthropic API error.'));
+            $message = $response['error']['message'] ?? 'Unknown Anthropic API error.';
+            $this->logger->error('MagentoAI Anthropic error', ['message' => $message]);
+            throw new AiServiceException(__($message));
         }
         if (empty($response['content'][0]['text'])) {
             throw new AiServiceException(__('No results found from Anthropic API response.'));
@@ -294,27 +305,26 @@ class TextGeneration implements TextGenerationServiceInterface
         if (!$token) {
             throw new AiServiceException(__('Gemini API Key not found. Please check configuration.'));
         }
-        $this->curl->setHeaders([
-            'Content-Type'   => 'application/json',
-            'x-goog-api-key' => $token,
-        ]);
-        $model = $this->config->getGeminiModel();
-        $this->curl->post(
+
+        $model  = $this->config->getGeminiModel();
+        $result = $this->httpClient->postJson(
             $this->config->getGeminiBaseUrl() . '/v1beta/models/' . $model . ':generateContent',
-            $payload
+            $payload,
+            ['Content-Type' => 'application/json', 'x-goog-api-key' => $token]
         );
 
-        $status = $this->curl->getStatus();
-        if ($status === 401 || $status === 403) {
+        if ($result['status'] === 401 || $result['status'] === 403) {
             throw new AiServiceException(__('Unauthorized response. Please check Gemini API key.'));
         }
-        if ($status >= 500) {
+        if ($result['status'] >= 500) {
             throw new AiServiceException(__('Gemini server error.'));
         }
 
-        $response = $this->json->unserialize($this->curl->getBody());
+        $response = $this->json->unserialize($result['body']);
         if (isset($response['error'])) {
-            throw new AiServiceException(__($response['error']['message'] ?? 'Unknown Gemini API error.'));
+            $message = $response['error']['message'] ?? 'Unknown Gemini API error.';
+            $this->logger->error('MagentoAI Gemini error', ['message' => $message]);
+            throw new AiServiceException(__($message));
         }
         if (($response['candidates'][0]['finishReason'] ?? '') === 'SAFETY') {
             throw new AiServiceException(__('Gemini blocked the response due to safety filters. Try adjusting the prompt.'));

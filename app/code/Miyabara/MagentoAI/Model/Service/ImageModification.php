@@ -6,7 +6,7 @@
  * @package   MagentoAI
  *
  * @copyright © 2026 Diego M. Miyabara. All rights reserved.
- * @author    Diego M. Miyabara <diego.miyabara@hotmail.com>
+ * @author    Diego M. Miyabara <diego.miyabara@gmail.com>
  */
 
 // phpcs:disable Generic.Files.LineLength
@@ -15,11 +15,12 @@ declare(strict_types=1);
 
 namespace Miyabara\MagentoAI\Model\Service;
 
-use Magento\Framework\HTTP\Client\CurlFactory;
 use Magento\Framework\Serialize\Serializer\Json;
 use Miyabara\MagentoAI\Api\ConfigInterface;
+use Miyabara\MagentoAI\Api\Http\HttpClientInterface;
 use Miyabara\MagentoAI\Api\ImageModificationServiceInterface;
 use Miyabara\MagentoAI\Model\Service\Exception\AiServiceException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Modifies an existing product image from a text prompt using the configured AI provider.
@@ -36,16 +37,18 @@ class ImageModification implements ImageModificationServiceInterface
     private const OPENAI_JPEG_QUALITY = 80;
 
     /**
-     * @param Json            $json
-     * @param ConfigInterface $config
-     * @param ImageStorage    $imageStorage
-     * @param CurlFactory     $curlFactory
+     * @param Json                $json
+     * @param ConfigInterface     $config
+     * @param ImageStorage        $imageStorage
+     * @param HttpClientInterface $httpClient
+     * @param LoggerInterface     $logger
      */
     public function __construct(
         private readonly Json $json,
         private readonly ConfigInterface $config,
         private readonly ImageStorage $imageStorage,
-        private readonly CurlFactory $curlFactory
+        private readonly HttpClientInterface $httpClient,
+        private readonly LoggerInterface $logger,
     ) {}
 
     /**
@@ -72,7 +75,7 @@ class ImageModification implements ImageModificationServiceInterface
     /**
      * Modify via OpenAI image edits endpoint (multipart/form-data upload).
      *
-     * @param string                                        $prompt
+     * @param string                                             $prompt
      * @param array{data: string, mimeType: string, ext: string} $original
      * @return array
      * @throws AiServiceException
@@ -99,27 +102,27 @@ class ImageModification implements ImageModificationServiceInterface
                 'image'              => new \CURLFile($temp['absolutePath'], $original['mimeType'], 'image.' . $original['ext']),
             ];
 
-            $curl = $this->curlFactory->create();
-            $curl->setTimeout(180);
-            $curl->setHeaders(['Authorization' => 'Bearer ' . $apiKey]);
-            $curl->setOption(CURLOPT_POSTFIELDS, $fields);
-            $curl->post($this->config->getApiBaseUrl() . '/v1/images/edits', '');
-
-            $status = $curl->getStatus();
-            if ($status === 401) {
-                throw new AiServiceException(__('Unauthorized response. Please check OpenAI API key.'));
-            }
-            if ($status >= 500) {
-                throw new AiServiceException(__('OpenAI server error.'));
-            }
-
-            $response = $this->json->unserialize($curl->getBody());
+            $result = $this->httpClient->postMultipart(
+                $this->config->getApiBaseUrl() . '/v1/images/edits',
+                $fields,
+                ['Authorization' => 'Bearer ' . $apiKey]
+            );
         } finally {
             $this->imageStorage->removeTempFile($temp['path']);
         }
 
+        if ($result['status'] === 401) {
+            throw new AiServiceException(__('Unauthorized response. Please check OpenAI API key.'));
+        }
+        if ($result['status'] >= 500) {
+            throw new AiServiceException(__('OpenAI server error.'));
+        }
+
+        $response = $this->json->unserialize($result['body']);
         if (isset($response['error'])) {
-            throw new AiServiceException(__($response['error']['message'] ?? 'Unknown OpenAI API error.'));
+            $message = $response['error']['message'] ?? 'Unknown OpenAI API error.';
+            $this->logger->error('MagentoAI OpenAI modify error', ['message' => $message]);
+            throw new AiServiceException(__($message));
         }
         if (empty($response['data'][0]['b64_json'])) {
             throw new AiServiceException(__('No modified image data returned from OpenAI API.'));
@@ -137,7 +140,7 @@ class ImageModification implements ImageModificationServiceInterface
     /**
      * Modify via Google Gemini — the original image is sent inline with the prompt.
      *
-     * @param string                                        $prompt
+     * @param string                                             $prompt
      * @param array{data: string, mimeType: string, ext: string} $original
      * @return array
      * @throws AiServiceException
@@ -148,13 +151,6 @@ class ImageModification implements ImageModificationServiceInterface
         if (!$apiKey) {
             throw new AiServiceException(__('Gemini API Key not found. Please check configuration.'));
         }
-
-        $curl = $this->curlFactory->create();
-        $curl->setTimeout(180);
-        $curl->setHeaders([
-            'Content-Type'   => 'application/json',
-            'x-goog-api-key' => $apiKey,
-        ]);
 
         $payload = $this->json->serialize([
             'contents' => [
@@ -176,23 +172,26 @@ class ImageModification implements ImageModificationServiceInterface
             ],
         ]);
 
-        $model = $this->config->getGeminiImageModel();
-        $curl->post(
+        $model  = $this->config->getGeminiImageModel();
+        $result = $this->httpClient->postJson(
             $this->config->getGeminiBaseUrl() . '/v1beta/models/' . $model . ':generateContent',
-            $payload
+            $payload,
+            ['Content-Type' => 'application/json', 'x-goog-api-key' => $apiKey],
+            180
         );
 
-        $status = $curl->getStatus();
-        if ($status === 401 || $status === 403) {
+        if ($result['status'] === 401 || $result['status'] === 403) {
             throw new AiServiceException(__('Unauthorized response. Please check Gemini API key.'));
         }
-        if ($status >= 500) {
+        if ($result['status'] >= 500) {
             throw new AiServiceException(__('Gemini server error.'));
         }
 
-        $response = $this->json->unserialize($curl->getBody());
+        $response = $this->json->unserialize($result['body']);
         if (isset($response['error'])) {
-            throw new AiServiceException(__($response['error']['message'] ?? 'Unknown Gemini API error.'));
+            $message = $response['error']['message'] ?? 'Unknown Gemini API error.';
+            $this->logger->error('MagentoAI Gemini modify error', ['message' => $message]);
+            throw new AiServiceException(__($message));
         }
 
         $finishReason = $response['candidates'][0]['finishReason'] ?? '';

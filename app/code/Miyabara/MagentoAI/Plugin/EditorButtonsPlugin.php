@@ -6,7 +6,7 @@
  * @package   MagentoAI
  *
  * @copyright © 2026 Diego M. Miyabara. All rights reserved.
- * @author    Diego M. Miyabara <diego.miyabara@hotmail.com>
+ * @author    Diego M. Miyabara <diego.miyabara@gmail.com>
  */
 
 declare(strict_types=1);
@@ -15,7 +15,7 @@ namespace Miyabara\MagentoAI\Plugin;
 
 use Magento\Framework\Data\Form\Element\Editor;
 use Magento\Framework\Escaper;
-use Miyabara\MagentoAI\Api\ConfigInterface;
+use Miyabara\MagentoAI\Api\GeneralConfigInterface;
 
 /**
  * Injects MagentoAI generate buttons into the TinyMCE editor element HTML.
@@ -23,24 +23,22 @@ use Miyabara\MagentoAI\Api\ConfigInterface;
  * Uses an after plugin on getElementHtml() instead of a full class rewrite (preference),
  * which keeps the core Editor class untouched. The buttons carry a data-editor-id attribute
  * so the JS can locate the linked textarea/iframe by ID rather than fragile DOM traversal.
+ * The allowed-fields list is injectable so third-party modules can extend it via virtual type.
  */
 class EditorButtonsPlugin
 {
     /**
-     * @param string[]
-     */
-    private const ALLOWED_FIELDS = [
-        'product_form_description',
-        'product_form_short_description',
-    ];
-
-    /**
-     * @param ConfigInterface $config
-     * @param Escaper         $escaper
+     * @param GeneralConfigInterface $config
+     * @param Escaper                $escaper
+     * @param string[]               $allowedFields HTML element IDs of editor fields that should show MagentoAI buttons
      */
     public function __construct(
-        private readonly ConfigInterface $config,
-        private readonly Escaper $escaper
+        private readonly GeneralConfigInterface $config,
+        private readonly Escaper $escaper,
+        private readonly array $allowedFields = [
+            'product_form_description',
+            'product_form_short_description',
+        ],
     ) {}
 
     /**
@@ -57,7 +55,7 @@ class EditorButtonsPlugin
         }
 
         $htmlId = $subject->getHtmlId();
-        if (!in_array($htmlId, self::ALLOWED_FIELDS, true)) {
+        if (!in_array($htmlId, $this->allowedFields, true)) {
             return $result;
         }
 

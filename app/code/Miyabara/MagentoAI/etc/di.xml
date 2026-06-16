@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Miyabara_MagentoAI
+ *
+ * @vendor    Miyabara
+ * @package   MagentoAI
+ *
+ * @copyright © 2026 Diego M. Miyabara. All rights reserved.
+ * @author    Diego M. Miyabara <diego.miyabara@gmail.com>
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Service contract preferences (global scope so CLI / cron contexts can also use these services) -->
+    <preference for="Miyabara\MagentoAI\Api\GeneralConfigInterface"
+                type="Miyabara\MagentoAI\Model\Config"/>
+    <preference for="Miyabara\MagentoAI\Api\TextConfigInterface"
+                type="Miyabara\MagentoAI\Model\Config"/>
+    <preference for="Miyabara\MagentoAI\Api\ImageConfigInterface"
+                type="Miyabara\MagentoAI\Model\Config"/>
+    <preference for="Miyabara\MagentoAI\Api\ConfigInterface"
+                type="Miyabara\MagentoAI\Model\Config"/>
+
+    <preference for="Miyabara\MagentoAI\Api\TextGenerationServiceInterface"
+                type="Miyabara\MagentoAI\Model\Service\TextGeneration"/>
+    <preference for="Miyabara\MagentoAI\Api\ImageGenerationServiceInterface"
+                type="Miyabara\MagentoAI\Model\Service\ImageGeneration"/>
+    <preference for="Miyabara\MagentoAI\Api\ImageModificationServiceInterface"
+                type="Miyabara\MagentoAI\Model\Service\ImageModification"/>
+
+    <preference for="Miyabara\MagentoAI\Api\Http\HttpClientInterface"
+                type="Miyabara\MagentoAI\Model\Http\HttpClient"/>
+
+</config>

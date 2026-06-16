@@ -6,7 +6,7 @@
  * @package   MagentoAI
  *
  * @copyright © 2026 Diego M. Miyabara. All rights reserved.
- * @author    Diego M. Miyabara <diego.miyabara@hotmail.com>
+ * @author    Diego M. Miyabara <diego.miyabara@gmail.com>
  */
 
 declare(strict_types=1);
@@ -22,6 +22,7 @@ use Miyabara\MagentoAI\Api\ConfigInterface;
 use Miyabara\MagentoAI\Api\ImageGenerationServiceInterface;
 use Miyabara\MagentoAI\Model\AttributeData\Formatter as AttributeFormatter;
 use Miyabara\MagentoAI\Model\Service\Exception\AiServiceException;
+use Psr\Log\LoggerInterface;
 
 class GenerateImage extends Action implements HttpPostActionInterface
 {
@@ -31,18 +32,20 @@ class GenerateImage extends Action implements HttpPostActionInterface
     public const ADMIN_RESOURCE = 'Miyabara_MagentoAI::generate';
 
     /**
-     * @param Context                          $context
-     * @param JsonFactory                      $jsonFactory
-     * @param ConfigInterface                  $config
-     * @param ImageGenerationServiceInterface  $imageService
-     * @param AttributeFormatter               $attributeFormatter
+     * @param Context                         $context
+     * @param JsonFactory                     $jsonFactory
+     * @param ConfigInterface                 $config
+     * @param ImageGenerationServiceInterface $imageService
+     * @param AttributeFormatter              $attributeFormatter
+     * @param LoggerInterface                 $logger
      */
     public function __construct(
         Context $context,
         private readonly JsonFactory $jsonFactory,
         private readonly ConfigInterface $config,
         private readonly ImageGenerationServiceInterface $imageService,
-        private readonly AttributeFormatter $attributeFormatter
+        private readonly AttributeFormatter $attributeFormatter,
+        private readonly LoggerInterface $logger,
     ) {
         parent::__construct($context);
     }
@@ -75,8 +78,10 @@ class GenerateImage extends Action implements HttpPostActionInterface
 
                 $response = $this->imageService->generate($prompt);
             } catch (AiServiceException $e) {
+                $this->logger->error('MagentoAI image generation failed', ['exception' => $e]);
                 $response = ['error' => true, 'data' => $e->getMessage()];
             } catch (\Exception $e) {
+                $this->logger->error('MagentoAI image generation unexpected error', ['exception' => $e]);
                 $response = ['error' => true, 'data' => $e->getMessage()];
             }
         }

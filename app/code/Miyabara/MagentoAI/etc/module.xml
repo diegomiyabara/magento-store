@@ -7,10 +7,17 @@
  * @package   MagentoAI
  *
  * @copyright © 2026 Diego M. Miyabara. All rights reserved.
- * @author    Diego M. Miyabara <diego.miyabara@hotmail.com>
+ * @author    Diego M. Miyabara <diego.miyabara@gmail.com>
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Miyabara_MagentoAI"/>
+    <module name="Miyabara_MagentoAI">
+        <sequence>
+            <module name="Magento_Backend"/>
+            <module name="Magento_Catalog"/>
+            <module name="Magento_Eav"/>
+            <module name="Magento_Config"/>
+        </sequence>
+    </module>
 </config>
