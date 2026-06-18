@@ -81,6 +81,7 @@ export interface CartItemModel {
   uid: string;
   id: string;
   quantity: number;
+  isActive: boolean;
   product: CartItemProductModel;
   configuredVariant: CartItemConfiguredVariantModel | null;
   raw: RawObject;
@@ -375,10 +376,6 @@ function getNumber(value: unknown, fallback = 0): number {
   return typeof value === 'number' ? value : fallback;
 }
 
-function getNumberOrNull(value: unknown): number | null {
-  return typeof value === 'number' ? value : null;
-}
-
 function getBoolean(value: unknown): boolean {
   return Boolean(value);
 }
@@ -573,6 +570,7 @@ function createCartItemModel(item: unknown): CartItemModel | null {
     uid: getString(i['uid']),
     id: getString(i['id']),
     quantity: getNumber(i['quantity']),
+    isActive: getBoolean(i['is_active'] ?? true),
     product: {
       uid: getString(product['uid']),
       sku: getString(product['sku']),
@@ -1018,6 +1016,3 @@ export function createCustomerDashboardModel(customer: RawObject | null | undefi
 
 // Re-export helper types for consumers
 export type { RawObject };
-
-// Suppress unused variable warnings for helper functions used via inference
-void getNumberOrNull;

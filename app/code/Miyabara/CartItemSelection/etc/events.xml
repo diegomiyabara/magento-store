@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="checkout_submit_all_after">
+        <observer name="miyabara_cart_item_selection_create_remnant_cart"
+                  instance="Miyabara\CartItemSelection\Observer\CreateRemnantCartAfterOrder"/>
+    </event>
+</config>

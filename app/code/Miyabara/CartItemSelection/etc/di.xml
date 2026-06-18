@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Quote\Model\Quote">
+        <plugin name="miyabara_cart_item_selection_filter_inactive_quote"
+                type="Miyabara\CartItemSelection\Plugin\FilterInactiveQuoteItems"/>
+    </type>
+    <type name="Magento\Quote\Model\Quote\Address">
+        <plugin name="miyabara_cart_item_selection_filter_inactive_address"
+                type="Miyabara\CartItemSelection\Plugin\FilterInactiveAddressItems"/>
+    </type>
+    <type name="Magento\QuoteGraphQl\Model\Resolver\CartItems">
+        <plugin name="miyabara_cart_item_selection_show_all_items"
+                type="Miyabara\CartItemSelection\Plugin\CartItemsGraphQlResolver"/>
+    </type>
+    <type name="Miyabara\CartItemSelection\Model\Resolver\SetCartItemSelected">
+        <arguments>
+            <argument name="getCartForUser" xsi:type="object">Magento\QuoteGraphQl\Model\Cart\GetCartForUser</argument>
+            <argument name="quoteResource" xsi:type="object">Magento\Quote\Model\ResourceModel\Quote</argument>
+            <argument name="uidEncoder" xsi:type="object">Magento\Framework\GraphQl\Query\Uid</argument>
+            <argument name="resourceConnection" xsi:type="object">Magento\Framework\App\ResourceConnection</argument>
+        </arguments>
+    </type>
+    <type name="Miyabara\CartItemSelection\Model\Resolver\SetCartItemsSelected">
+        <arguments>
+            <argument name="getCartForUser" xsi:type="object">Magento\QuoteGraphQl\Model\Cart\GetCartForUser</argument>
+            <argument name="quoteResource" xsi:type="object">Magento\Quote\Model\ResourceModel\Quote</argument>
+            <argument name="uidEncoder" xsi:type="object">Magento\Framework\GraphQl\Query\Uid</argument>
+            <argument name="resourceConnection" xsi:type="object">Magento\Framework\App\ResourceConnection</argument>
+        </arguments>
+    </type>
+</config>

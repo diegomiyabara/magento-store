@@ -2,6 +2,7 @@ export const CART_ITEM_FIELDS: string = `
   uid
   id
   quantity
+  is_active
   product {
     uid
     sku
@@ -337,6 +338,26 @@ export const PLACE_ORDER_MUTATION: string = `
       errors {
         code
         message
+      }
+    }
+  }
+`;
+
+export const SET_CART_ITEM_SELECTED_MUTATION: string = `
+  mutation SetCartItemSelectedMutation($cartId: String!, $cartItemUid: ID!, $isActive: Boolean!) {
+    setCartItemSelected(input: { cart_id: $cartId, cart_item_uid: $cartItemUid, is_active: $isActive }) {
+      cart {
+        ${CART_DETAIL_FIELDS}
+      }
+    }
+  }
+`;
+
+export const SET_CART_ITEMS_SELECTED_MUTATION: string = `
+  mutation SetCartItemsSelectedMutation($cartId: String!, $items: [CartItemSelectionInput!]!) {
+    setCartItemsSelected(input: { cart_id: $cartId, items: $items }) {
+      cart {
+        ${CART_DETAIL_FIELDS}
       }
     }
   }
